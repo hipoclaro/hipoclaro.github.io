@@ -482,10 +482,10 @@ function defaultState(){
   return {
     titulares: { t1: 'Titular 1', t2: 'Titular 2' },
     perfil: {
-      p1:{tipoContrato:'',antiguedad:'',pruebaSuperada:false,brutoAnual:'',pagas:'12',netoMensual:'',notas:'',avalPuede:false,historialLimpio:null},
-      p2:{tipoContrato:'',antiguedad:'',pruebaSuperada:false,brutoAnual:'',pagas:'12',netoMensual:'',notas:'',avalPuede:false,historialLimpio:null}
+      p1:{tipoContrato:'',antiguedad:'',pruebaSuperada:false,brutoAnual:'',pagas:'12',netoMensual:'',notas:'',avalPuede:false,historialLimpio:null,edad:'',familiaNumerosa:null},
+      p2:{tipoContrato:'',antiguedad:'',pruebaSuperada:false,brutoAnual:'',pagas:'12',netoMensual:'',notas:'',avalPuede:false,historialLimpio:null,edad:'',familiaNumerosa:null}
     },
-    ahorros: { t1:{efectivo:'',inversiones:'',expanded:true}, t2:{efectivo:'',inversiones:'',expanded:true}, total:{efectivo:'',inversiones:'',expanded:true}, colchon:'', notas:'' },
+    ahorros: { modo:'titular', t1:{efectivo:'',inversiones:'',expanded:true}, t2:{efectivo:'',inversiones:'',expanded:true}, total:{efectivo:'',inversiones:'',expanded:true}, colchon:'', notas:'' },
     deudas: { escenarios: [{id:uid(), nombre:'Escenario 01', expanded:true, ahorroUsado:'', deudas:[]}], seleccionado: null },
     viviendas: [{id:uid(), nombre:'', activa:true, ubicaciones:'Madrid', tipoInmueble:'', precioMin:'', precioMax:'', tipo:'segunda-mano', reparto:'50/50', notas:''}],
     hipoteca: { escenarios: [], seleccionado: null },
@@ -496,22 +496,27 @@ function defaultState(){
     brokers: [],
     documentos: [],
     gastosFijos: { mensuales: [
-        {id:uid(), nombre:'Alquiler', importe:''},
-        {id:uid(), nombre:'Internet / fibra', importe:''},
-        {id:uid(), nombre:'Móvil (línea telefónica)', importe:''},
-        {id:uid(), nombre:'Electricidad', importe:''},
-        {id:uid(), nombre:'Gas', importe:''},
-        {id:uid(), nombre:'Agua', importe:''},
-        {id:uid(), nombre:'Seguro de salud', importe:''},
-        {id:uid(), nombre:'Gimnasio', importe:''},
-        {id:uid(), nombre:'Alimentación (supermercado)', importe:''},
-        {id:uid(), nombre:'Combustible', importe:''},
-        {id:uid(), nombre:'Guardería / colegio', importe:''}
+        {id:uid(), nombre:'Alquiler', importeAntes:'', importeDespues:''},
+        {id:uid(), nombre:'Internet / fibra', importeAntes:'', importeDespues:''},
+        {id:uid(), nombre:'Móvil (línea telefónica)', importeAntes:'', importeDespues:''},
+        {id:uid(), nombre:'Electricidad', importeAntes:'', importeDespues:''},
+        {id:uid(), nombre:'Gas', importeAntes:'', importeDespues:''},
+        {id:uid(), nombre:'Agua', importeAntes:'', importeDespues:''},
+        {id:uid(), nombre:'Seguro de salud', importeAntes:'', importeDespues:''},
+        {id:uid(), nombre:'Gimnasio', importeAntes:'', importeDespues:''},
+        {id:uid(), nombre:'Alimentación (supermercado)', importeAntes:'', importeDespues:''},
+        {id:uid(), nombre:'Combustible', importeAntes:'', importeDespues:''},
+        {id:uid(), nombre:'Guardería / colegio', importeAntes:'', importeDespues:''},
+        {id:uid(), nombre:'Comunidad de vecinos', importeAntes:'', importeDespues:''},
+        {id:uid(), nombre:'Mantenimiento / reparaciones', importeAntes:'', importeDespues:''},
+        {id:uid(), nombre:'Alarma', importeAntes:'', importeDespues:''}
       ], anuales: [
-        {id:uid(), nombre:'Seguro del coche/moto', importe:''},
-        {id:uid(), nombre:'Seguro de inquilino', importe:''},
-        {id:uid(), nombre:'Suscripciones (Amazon Prime, streaming…)', importe:''},
-        {id:uid(), nombre:'Seguro de vida', importe:''}
+        {id:uid(), nombre:'Seguro del coche/moto', importeAntes:'', importeDespues:''},
+        {id:uid(), nombre:'Seguro de inquilino', importeAntes:'', importeDespues:''},
+        {id:uid(), nombre:'Suscripciones (Amazon Prime, streaming…)', importeAntes:'', importeDespues:''},
+        {id:uid(), nombre:'Seguro de vida', importeAntes:'', importeDespues:''},
+        {id:uid(), nombre:'IBI', importeAntes:'', importeDespues:''},
+        {id:uid(), nombre:'Seguro de hogar', importeAntes:'', importeDespues:''}
       ] },
     notas: [],
     express: { ingresos:'', ahorroDisponible:'', deudasCuota:'', gastosFijos:'', precio:'', pctFinanciacion:'100', plazoAnios:'30', personalPlazoMeses:'60', extra:'' }
@@ -530,7 +535,7 @@ function backfillDefaults(obj, template){
 function normalizeState(){
   (state.viviendas||[]).forEach(v=>backfillDefaults(v, {nombre:'',activa:false,ubicaciones:'',tipoInmueble:'',precioMin:'',precioMax:'',tipo:'segunda-mano',reparto:'',notas:'',expanded:true}));
   (state.hipoteca.escenarios||[]).forEach(e=>{
-    backfillDefaults(e, {nombre:'',importe:'',pctFinanciacion:'100',tin:'',plazoAnios:'30',tipoInteres:'fijo',vinculaciones:[],notas:'',expanded:true});
+    backfillDefaults(e, {nombre:'',importe:'',pctFinanciacion:'100',tin:'',plazoAnios:'30',tipoInteres:'fijo',tinTramoFijo:'',aniosTramoFijo:'',diferencialTramoVariable:'',euriborSupuesto:'',diferencialVariable:'',euriborActual:'',vinculaciones:[],notas:'',expanded:true});
     if(typeof e.vinculaciones === 'string'){
       e.vinculaciones = e.vinculaciones.trim() ? [{id:uid(), nombre:e.vinculaciones, importe:'', periodicidad:'anual'}] : [];
     }
@@ -538,7 +543,7 @@ function normalizeState(){
   });
   (state.gastos.provincias||[]).forEach(p=>backfillDefaults(p, {nombre:'',provincia:'',hipotecaEscenarioId:'',itpPct:'',notaria:'',registro:'',gestoria:'',tasacion:'',expanded:true}));
   (state.personal.escenarios||[]).forEach(e=>{
-    backfillDefaults(e, {nombre:'',importe:'',tin:'',comisionApertura:'',plazoMeses:'60',proposito:'',notas:'',expanded:true});
+    backfillDefaults(e, {nombre:'',importe:'',tin:'',comisionApertura:'',plazoMeses:'60',proposito:'',notas:'',expanded:true,incluirPostCompra:false});
     if(!Array.isArray(e.gastosPostCompra)) e.gastosPostCompra = [];
   });
   (state.deudas.escenarios||[]).forEach(e=>{
@@ -554,14 +559,18 @@ function normalizeState(){
     if(!b.checklist) b.checklist = {};
   });
   (state.documentos||[]).forEach(d=>backfillDefaults(d, {nombre:'',categoria:'',fecha:'',fileName:'',fileType:'',fileSize:0}));
-  (state.gastosFijos.mensuales||[]).forEach(g=>backfillDefaults(g,{nombre:'',importe:''}));
-  (state.gastosFijos.anuales||[]).forEach(g=>backfillDefaults(g,{nombre:'',importe:''}));
+  (state.gastosFijos.mensuales||[]).forEach(g=>backfillDefaults(g,{nombre:'',importeAntes:'',importeDespues:''}));
+  (state.gastosFijos.anuales||[]).forEach(g=>backfillDefaults(g,{nombre:'',importeAntes:'',importeDespues:''}));
   backfillDefaults(state.express, {ingresos:'',ahorroDisponible:'',deudasCuota:'',gastosFijos:'',precio:'',pctFinanciacion:'100',plazoAnios:'30',personalPlazoMeses:'60',extra:''});
   backfillDefaults(state.ahorros.t1, {efectivo:'',inversiones:'',expanded:true});
   backfillDefaults(state.ahorros.t2, {efectivo:'',inversiones:'',expanded:true});
   backfillDefaults(state.ahorros.total, {efectivo:'',inversiones:'',expanded:true});
-  backfillDefaults(state.perfil.p1, {tipoContrato:'',antiguedad:'',pruebaSuperada:false,brutoAnual:'',pagas:'12',netoMensual:'',notas:'',historialLimpio:null});
-  backfillDefaults(state.perfil.p2, {tipoContrato:'',antiguedad:'',pruebaSuperada:false,brutoAnual:'',pagas:'12',netoMensual:'',notas:'',historialLimpio:null});
+  if(!state.ahorros.modo){
+    const sumaTitularesMig = num(state.ahorros.t1.efectivo)+num(state.ahorros.t1.inversiones)+num(state.ahorros.t2.efectivo)+num(state.ahorros.t2.inversiones);
+    state.ahorros.modo = sumaTitularesMig>0 ? 'titular' : 'total';
+  }
+  backfillDefaults(state.perfil.p1, {tipoContrato:'',antiguedad:'',pruebaSuperada:false,brutoAnual:'',pagas:'12',netoMensual:'',notas:'',historialLimpio:null,edad:'',familiaNumerosa:null});
+  backfillDefaults(state.perfil.p2, {tipoContrato:'',antiguedad:'',pruebaSuperada:false,brutoAnual:'',pagas:'12',netoMensual:'',notas:'',historialLimpio:null,edad:'',familiaNumerosa:null});
   if(state.perfil.p1.aval){ state.perfil.p1.avalPuede = !!state.perfil.p1.aval.puede; delete state.perfil.p1.aval; }
   if(state.perfil.p2.aval){ state.perfil.p2.avalPuede = !!state.perfil.p2.aval.puede; delete state.perfil.p2.aval; }
   if(state.perfil.p1.avalPuede===undefined) state.perfil.p1.avalPuede = false;
@@ -594,6 +603,16 @@ async function loadState(){
           anuales: old.filter(g=>g.periodicidad==='anual').map(g=>({id:g.id,nombre:g.nombre,importe:g.importe}))
         };
       }
+      ['mensuales','anuales'].forEach(tipo=>{
+        (state.gastosFijos[tipo]||[]).forEach(g=>{
+          if(g.importeAntes===undefined && g.importe!==undefined){
+            const desapareceAlComprar = /alquiler|inquilino/i.test(g.nombre||'');
+            g.importeAntes = g.importe;
+            g.importeDespues = desapareceAlComprar ? '' : g.importe;
+            delete g.importe;
+          }
+        });
+      });
       normalizeState();
     }
   }catch(e){ /* no hay datos guardados todavía */ }
@@ -650,9 +669,8 @@ function toggleAhorroBlock(key){
 }
 function ahorroTotalCalc(){
   const a = state.ahorros;
-  const sumaTitulares = num(a.t1.efectivo)+num(a.t1.inversiones)+num(a.t2.efectivo)+num(a.t2.inversiones);
-  if(sumaTitulares>0) return sumaTitulares;
-  return num(a.total.efectivo)+num(a.total.inversiones);
+  if(a.modo==='total') return num(a.total.efectivo)+num(a.total.inversiones);
+  return num(a.t1.efectivo)+num(a.t1.inversiones)+num(a.t2.efectivo)+num(a.t2.inversiones);
 }
 function cuotaFrancesa(principal, tinAnualPct, meses){
   principal = num(principal); meses = Math.round(num(meses));
@@ -660,6 +678,60 @@ function cuotaFrancesa(principal, tinAnualPct, meses){
   if(principal<=0 || meses<=0) return 0;
   if(r===0) return principal/meses;
   return principal * r * Math.pow(1+r,meses) / (Math.pow(1+r,meses)-1);
+}
+function saldoPendienteFrances(principal, tinAnualPct, mesesTotal, mesesTranscurridos){
+  principal = num(principal); mesesTotal = Math.round(num(mesesTotal)); mesesTranscurridos = Math.round(num(mesesTranscurridos));
+  if(principal<=0 || mesesTotal<=0) return 0;
+  if(mesesTranscurridos<=0) return principal;
+  if(mesesTranscurridos>=mesesTotal) return 0;
+  const r = num(tinAnualPct)/100/12;
+  if(r===0) return principal * (mesesTotal-mesesTranscurridos)/mesesTotal;
+  const fTotal = Math.pow(1+r, mesesTotal);
+  const fTrans = Math.pow(1+r, mesesTranscurridos);
+  return principal * (fTotal - fTrans) / (fTotal - 1);
+}
+// Motor central: calcula la cuota real según el tipo de interés del escenario (fija / mixta / variable), no solo un TIN único.
+function hipotecaCalc(e){
+  const importeFin = importeAFinanciar(e);
+  const mesesTotal = num(e.plazoAnios)*12;
+
+  if(e.tipoInteres==='mixto' && num(e.aniosTramoFijo)>0){
+    const mesesTramoFijo = Math.min(Math.round(num(e.aniosTramoFijo)*12), mesesTotal);
+    const cuotaTramoFijo = cuotaFrancesa(importeFin, e.tinTramoFijo, mesesTotal);
+    const saldoTrasFijo = saldoPendienteFrances(importeFin, e.tinTramoFijo, mesesTotal, mesesTramoFijo);
+    const mesesRestantes = mesesTotal - mesesTramoFijo;
+    const tinVariable = num(e.euriborSupuesto) + num(e.diferencialTramoVariable);
+    const cuotaTramoVariable = mesesRestantes>0 ? cuotaFrancesa(saldoTrasFijo, tinVariable, mesesRestantes) : 0;
+    const interesTramoFijo = cuotaTramoFijo*mesesTramoFijo - (importeFin - saldoTrasFijo);
+    const interesTramoVariable = mesesRestantes>0 ? (cuotaTramoVariable*mesesRestantes - saldoTrasFijo) : 0;
+    const interesesTotal = interesTramoFijo + interesTramoVariable;
+    return {
+      tipo:'mixto', importeFin, mesesTotal,
+      cuotaInicial: cuotaTramoFijo, mesesTramoFijo, aniosTramoFijo: mesesTramoFijo/12,
+      cuotaTrasCambio: cuotaTramoVariable, mesesRestantes, tinVariable,
+      interesesTotal, totalPagado: importeFin+interesesTotal
+    };
+  }
+
+  if(e.tipoInteres==='variable' && (num(e.euriborActual)>0 || num(e.diferencialVariable)>0)){
+    const tinActual = num(e.euriborActual) + num(e.diferencialVariable);
+    const cuotaInicial = cuotaFrancesa(importeFin, tinActual, mesesTotal);
+    const interesesTotal = cuotaInicial*mesesTotal - importeFin;
+    const escenariosSubida = [-1,0,1,2].map(delta=>({
+      delta, tin: Math.max(0, tinActual+delta),
+      cuota: cuotaFrancesa(importeFin, Math.max(0, tinActual+delta), mesesTotal)
+    }));
+    return {
+      tipo:'variable', importeFin, mesesTotal, tinActual,
+      cuotaInicial, interesesTotal, totalPagado: importeFin+interesesTotal,
+      escenariosSubida
+    };
+  }
+
+  // Fija (o mixta/variable sin datos suficientes todavía: se trata como fija con el TIN dado, para no romper nada mientras se rellena)
+  const cuotaInicial = cuotaFrancesa(importeFin, e.tin, mesesTotal);
+  const interesesTotal = cuotaInicial*mesesTotal - importeFin;
+  return { tipo:'fijo', importeFin, mesesTotal, cuotaInicial, interesesTotal, totalPagado: importeFin+interesesTotal };
 }
 
 /* ---------- Navegación ---------- */
@@ -717,7 +789,7 @@ function tabHasData(id){
     case 'gastos': return state.gastos.provincias.some(p=>(p.provincia&&p.provincia!=='Madrid')||(p.itpPct&&p.itpPct!=='6')||p.notaria||p.registro||p.gestoria||p.tasacion);
     case 'personal': return state.personal.escenarios.some(e=>e.importe||e.tin);
     case 'brokers': return state.brokers.some(b=>(b.nombre&&b.nombre!=='Nuevo asesor')||b.contactoNombre||b.contactoEmail);
-    case 'gastosfijos': return state.gastosFijos.mensuales.some(g=>g.importe) || state.gastosFijos.anuales.some(g=>g.importe);
+    case 'gastosfijos': return state.gastosFijos.mensuales.some(g=>g.importeAntes||g.importeDespues) || state.gastosFijos.anuales.some(g=>g.importeAntes||g.importeDespues);
     case 'notas': return state.notas.length>0;
     default: return false;
   }
@@ -788,7 +860,7 @@ function digitsBefore(str, pos){ let c=0; for(let i=0;i<pos && i<str.length;i++)
 function posAfterDigits(str, n){ if(n<=0) return 0; let c=0; for(let i=0;i<str.length;i++){ if(/\d/.test(str[i])) c++; if(c===n) return i+1; } return str.length; }
 function bindGenericInputs(){
   document.querySelectorAll('[data-path]').forEach(el=>{
-    const evt = (el.type==='checkbox' || el.tagName==='SELECT') ? 'change' : 'input';
+    const evt = (el.type==='checkbox' || el.type==='radio' || el.tagName==='SELECT') ? 'change' : 'input';
     el.addEventListener(evt, e=>{
       if(e.target.dataset.format==='miles'){
         const oldVal = e.target.value;
@@ -1005,12 +1077,13 @@ function renderResumen(){
   const deudasCuota = cuotaTotalEscenarioDeuda(deudaEscSel);
   const hipSel = state.hipoteca.escenarios.find(e=>e.id===state.hipoteca.seleccionado) || state.hipoteca.escenarios[0];
   const perSel = personalEscenarioSeleccionado();
-  const importeFinHip = hipSel ? importeAFinanciar(hipSel) : 0;
-  const mesesHip = hipSel ? num(hipSel.plazoAnios)*12 : 0;
-  const cuotaHip = hipSel ? cuotaFrancesa(importeFinHip, hipSel.tin, mesesHip) : 0;
-  const interesesHip = hipSel ? (cuotaHip*mesesHip - importeFinHip) : 0;
-  const cuotaPer = perSel ? cuotaFrancesa(perSel.importe, perSel.tin, perSel.plazoMeses) : 0;
-  const interesesPer = perSel ? (cuotaPer*num(perSel.plazoMeses) - num(perSel.importe)) : 0;
+  const hipCalc = hipSel ? hipotecaCalc(hipSel) : null;
+  const importeFinHip = hipCalc ? hipCalc.importeFin : 0;
+  const vincMensualHip = hipSel ? vinculacionesAnualTotal(hipSel)/12 : 0;
+  const cuotaHip = hipCalc ? hipCalc.cuotaInicial + vincMensualHip : 0;
+  const interesesHip = hipCalc ? hipCalc.interesesTotal : 0;
+  const cuotaPer = perSel ? cuotaFrancesa(importeEfectivoPersonal(perSel), perSel.tin, perSel.plazoMeses) : 0;
+  const interesesPer = perSel ? (cuotaPer*num(perSel.plazoMeses) - importeEfectivoPersonal(perSel)) : 0;
   const totalCuotas = deudasCuota + cuotaHip + cuotaPer;
   const ratio = ingresos>0 ? (totalCuotas/ingresos*100) : 0;
   const ahorroTotal = ahorroTotalCalc();
@@ -1019,9 +1092,8 @@ function renderResumen(){
   const provSelResumen = state.gastos.provincias.find(p=>p.id===state.personal.provinciaSeleccionada) || state.gastos.provincias[0];
   let necesarioResumen = 0;
   if(provSelResumen){
-    const escVincResumen = hipotecaVinculada(provSelResumen);
-    const entradaResumen = escVincResumen ? (num(escVincResumen.importe) - importeAFinanciar(escVincResumen)) : 0;
-    necesarioResumen = Math.max(0, entradaResumen) + calcGastoCompra(provSelResumen);
+    const entradaResumen = hipCalc ? Math.max(0, num(hipSel.importe) - hipCalc.importeFin) : 0;
+    necesarioResumen = entradaResumen + calcGastoCompra(provSelResumen);
   }
   const ahorroUsado = Math.min(Math.max(necesarioResumen,0), Math.max(ahorroDisponible,0));
   const ahorroRestante = ahorroTotal - ahorroUsado;
@@ -1033,8 +1105,10 @@ function renderResumen(){
   const estadosBrokers = {};
   state.brokers.forEach(b=>{ estadosBrokers[b.estado] = (estadosBrokers[b.estado]||0)+1; });
 
-  const gastosFijosTotal = totalGastosFijosMensual();
-  const disponibleLibre = ingresos - totalCuotas - gastosFijosTotal;
+  const gastosFijosAntes = totalGastosFijosMensual('antes');
+  const gastosFijosDespues = totalGastosFijosMensual('despues');
+  const disponibleLibreAlquilando = ingresos - totalCuotas - gastosFijosAntes;
+  const disponibleLibrePropietario = ingresos - totalCuotas - gastosFijosDespues;
   const mesesRestantesMax = (deudaEscSel && deudaEscSel.deudas ? deudaEscSel.deudas : []).reduce((max,d)=>Math.max(max, num(d.mesesRestantes)), 0);
 
   const obligacionesFuturo = [];
@@ -1045,14 +1119,14 @@ function renderResumen(){
     const todasConMeses = obligacionesFuturo.every(o=>o.meses>0);
     if(todasConMeses){
       // ordenamos por cuál acaba antes, y vamos acumulando: para cuando acaba la que más tarda, las anteriores ya están liberadas también
-      let acumulado = disponibleLibre;
+      let acumulado = disponibleLibrePropietario;
       lineasDisponibleFuturo = [...obligacionesFuturo].sort((a,b)=>a.meses-b.meses).map(o=>{
         acumulado += o.cuota;
         return `<div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Cuando termines de pagar ${o.label} (Hoja ${o.hoja}, ${mesesAAnios(o.meses)}): <strong style="color:var(--ink-soft);">${fmtMoney(acumulado)}</strong>/mes</div>`;
       }).join('');
     }else{
       // no podemos ordenar con seguridad (falta algún dato de plazo) — mostramos cada una por separado, sin acumular
-      lineasDisponibleFuturo = obligacionesFuturo.map(o=>`<div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Cuando termines de pagar ${o.label} (Hoja ${o.hoja}${o.meses>0?', '+mesesAAnios(o.meses):''}): <strong style="color:var(--ink-soft);">${fmtMoney(disponibleLibre+o.cuota)}</strong>/mes</div>`).join('');
+      lineasDisponibleFuturo = obligacionesFuturo.map(o=>`<div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Cuando termines de pagar ${o.label} (Hoja ${o.hoja}${o.meses>0?', '+mesesAAnios(o.meses):''}): <strong style="color:var(--ink-soft);">${fmtMoney(disponibleLibrePropietario+o.cuota)}</strong>/mes</div>`).join('');
     }
   }
 
@@ -1103,7 +1177,7 @@ function renderResumen(){
 
     <div class="stat-row" style="grid-template-columns:repeat(3,1fr);">
       <div class="stat"><div class="label">Ingresos netos / mes</div><div class="value">${fmtMoney(ingresos)}</div></div>
-      <div class="stat"><div class="label">Cuotas totales / mes</div><div class="value">${fmtMoney(totalCuotas)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">Deudas ${fmtMoney(deudasCuota)} · Hipoteca ${fmtMoney(cuotaHip)} · Personal ${fmtMoney(cuotaPer)}</div></div>
+      <div class="stat"><div class="label">Cuotas totales / mes</div><div class="value">${fmtMoney(totalCuotas)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">Deudas ${fmtMoney(deudasCuota)} · Hipoteca ${fmtMoney(cuotaHip)} · Personal ${fmtMoney(cuotaPer)}</div>${vincMensualHip>0?`<div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">La hipoteca ya incluye ${fmtMoney(vincMensualHip)}/mes de productos vinculados.</div>`:''}</div>
       <div class="stat"><div class="label">Brokers activos</div><div class="value">${state.brokers.length}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">${Object.entries(estadosBrokers).map(([k,v])=>`${v} ${k.toLowerCase()}`).join(' · ') || 'sin brokers todavía'}</div></div>
     </div>
 
@@ -1111,12 +1185,14 @@ function renderResumen(){
       <div class="card">
         <div class="stat"><div class="label">Ahorro total actual</div><div class="value small">${fmtMoney(ahorroTotal)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">de la Hoja 02 — Ahorros</div></div>
         <div class="hr"></div>
-        <div class="stat"><div class="label">Ahorro que queda según escenarios elegidos</div><div class="value small">${fmtMoney(ahorroRestante)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">${provSelResumen ? `tras cubrir entrada + gastos de compra de "${provSelResumen.nombre||'la ubicación elegida'}"` : 'sin escenario de referencia elegido en la Hoja 07'}</div></div>
+        <div class="stat"><div class="label">Ahorro que queda según escenarios elegidos</div><div class="value small">${fmtMoney(ahorroRestante)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">${provSelResumen ? `tras cubrir entrada + gastos de compra de "${provSelResumen.nombre||'la ubicación elegida'}"` : 'sin escenario de gastos de compra elegido en la Hoja 06'}</div></div>
       </div>
       <div class="card">
-        <div class="stat"><div class="label">Otros gastos fijos / mes <span style="font-weight:400;text-transform:none;">(suministros, seguros…)</span></div><div class="value small">${fmtMoney(gastosFijosTotal)}</div></div>
+        <div class="stat"><div class="label">Otros gastos fijos / mes — ahora</div><div class="value small">${fmtMoney(gastosFijosAntes)}</div></div>
         <div class="hr"></div>
-        <div class="stat"><div class="label">Disponible libre al mes</div><div class="value small">${fmtMoney(disponibleLibre)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">ingresos − cuotas − gastos fijos · para gastos variables y ahorro</div>${lineasDisponibleFuturo}</div>
+        <div class="stat"><div class="label">Disponible libre — alquilando</div><div class="value small">${fmtMoney(disponibleLibreAlquilando)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">ingresos − cuotas − gastos fijos de ahora</div></div>
+        <div class="hr"></div>
+        <div class="stat"><div class="label">Disponible libre — como propietario</div><div class="value small">${fmtMoney(disponibleLibrePropietario)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">mismas cuotas, pero con IBI/comunidad/etc. en vez de alquiler (Hoja 09)</div>${lineasDisponibleFuturo}</div>
       </div>
       <div class="card">
         <div class="stat"><div class="label">Total en intereses</div><div class="value">${fmtMoney(interesesHip+interesesPer)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">según los escenarios elegidos en las Hojas 05 y 07 — cuanto más ahorro uses, menos pagarás aquí</div></div>
@@ -1146,6 +1222,7 @@ function renderResumen(){
       <div class="grid3">
         <div class="field"><label>Escenario de deudas usado</label>
           <select data-path="deudas.seleccionado" data-rerender="true">
+            <option value="" ${state.deudas.seleccionado===''?'selected':''}>Sin deuda — Saldo: 0 € — Cuota: 0 €/mes</option>
             ${state.deudas.escenarios.map(e=>`<option value="${e.id}" ${e.id===(deudaEscSel&&deudaEscSel.id)?'selected':''}>${e.nombre||'Escenario'} — Saldo: ${fmtMoney(saldoTotalEscenarioDeuda(e))} — Cuota: ${fmtMoney(cuotaTotalEscenarioDeuda(e))}/mes</option>`).join('')}
           </select>
         </div>
@@ -1160,7 +1237,9 @@ function renderResumen(){
             ${state.personal.escenarios.map(e=>`<option value="${e.id}" ${e.id===(perSel&&perSel.id)?'selected':''}>${labelEscenarioPersonal(e)}</option>`).join('')}
           </select>
         </div>
-      </div>` : ''}
+      </div>
+      <div class="note-block" style="margin-top:12px;margin-bottom:0;">⚠️ Estos tres escenarios se eligen de forma libre e independiente — no están atados entre sí. Si tienes varios escenarios de hipoteca y de préstamo personal, asegúrate de elegir aquí una combinación que tenga sentido junta (idealmente, el préstamo personal calculado para ESTE escenario de hipoteca en concreto, no para otro).</div>
+      ` : ''}
     </div>
 
     <div class="grid2">
@@ -1202,12 +1281,14 @@ function generarTextoPerfil(){
   ['p1','p2'].forEach((k,i)=>{
     const p = state.perfil[k];
     const nombre = state.titulares[k==='p1'?'t1':'t2'] || ('Titular '+(i+1));
-    if(p.tipoContrato || p.netoMensual || p.brutoAnual){
+    if(p.tipoContrato || p.netoMensual || p.brutoAnual || p.edad){
       add(`TITULAR ${i+1}${nombre?' — '+nombre:''}`);
+      if(p.edad) add(`- Edad: ${p.edad} años`);
       if(p.tipoContrato) add(`- Situación laboral: ${p.tipoContrato}${p.antiguedad?' ('+p.antiguedad+')':''}`);
       if(p.brutoAnual) add(`- Bruto anual: ${fmtMoney(p.brutoAnual)}`);
       if(p.netoMensual) add(`- Neto mensual: ${fmtMoney(p.netoMensual)} (${p.pagas||'12'} pagas)`);
       if(p.avalPuede) add(`- Aval disponible: sí`);
+      if(p.familiaNumerosa==='si') add(`- Familia numerosa: sí`);
       if(p.historialLimpio==='si') add(`- Historial crediticio: sin incidencias`);
       if(p.historialLimpio==='no') add(`- Historial crediticio: con alguna incidencia`);
       add('');
@@ -1248,12 +1329,21 @@ function generarTextoPlan(){
   const hipSel = state.hipoteca.escenarios.find(e=>e.id===state.hipoteca.seleccionado) || state.hipoteca.escenarios[0];
   let importeFin = 0, cuota = 0;
   if(hipSel && hipSel.importe){
-    importeFin = importeAFinanciar(hipSel);
-    const meses = num(hipSel.plazoAnios)*12;
-    cuota = cuotaFrancesa(importeFin, hipSel.tin, meses);
+    const calc = hipotecaCalc(hipSel);
+    const vincMensualHip = vinculacionesAnualTotal(hipSel)/12;
+    importeFin = calc.importeFin;
+    cuota = calc.cuotaInicial + vincMensualHip;
     add(`🏠 HIPOTECA — "${hipSel.nombre||'Escenario'}"`);
     add(`   Precio: ${fmtMoney(hipSel.importe)} · Financiación: ${fmtPct(pctFinanciacionOf(hipSel),0)} → ${fmtMoney(importeFin)} a financiar`);
-    if(hipSel.tin) add(`   TIN ${hipSel.tin}% a ${hipSel.plazoAnios} años → 💶 ${fmtMoney(cuota)}/mes`);
+    if(calc.tipo==='mixto'){
+      add(`   TIN fijo ${hipSel.tinTramoFijo}% los primeros ${Math.round(calc.aniosTramoFijo)} años → 💶 ${fmtMoney(cuota)}/mes`);
+      if(calc.mesesRestantes>0) add(`   Después, variable (Euríbor asumido ${hipSel.euriborSupuesto}% + ${hipSel.diferencialTramoVariable}%) → 💶 ${fmtMoney(calc.cuotaTrasCambio+vincMensualHip)}/mes`);
+    } else if(calc.tipo==='variable'){
+      add(`   Variable: Euríbor ${hipSel.euriborActual}% + ${hipSel.diferencialVariable}% = ${fmtPct(calc.tinActual)} a ${hipSel.plazoAnios} años → 💶 ${fmtMoney(cuota)}/mes`);
+    } else if(hipSel.tin){
+      add(`   TIN ${hipSel.tin}% a ${hipSel.plazoAnios} años → 💶 ${fmtMoney(cuota)}/mes`);
+    }
+    if(vincMensualHip>0) add(`   (incluye ${fmtMoney(vincMensualHip)}/mes de productos vinculados)`);
     add('');
   }
   const provSel = state.gastos.provincias.find(p=>p.id===state.personal.provinciaSeleccionada) || state.gastos.provincias[0];
@@ -1267,10 +1357,15 @@ function generarTextoPlan(){
   const perSel = personalEscenarioSeleccionado();
   let cuotaPer = 0;
   if(perSel && perSel.importe){
-    cuotaPer = cuotaFrancesa(perSel.importe, perSel.tin, perSel.plazoMeses);
+    const importeEfectivoPer = importeEfectivoPersonal(perSel);
+    cuotaPer = cuotaFrancesa(importeEfectivoPer, perSel.tin, perSel.plazoMeses);
     add(`🏦 PRÉSTAMO PERSONAL — "${perSel.nombre||'Escenario'}"`);
-    add(`   ${fmtMoney(perSel.importe)}${perSel.tin?' al '+perSel.tin+'% TIN':''}${perSel.plazoMeses?', '+perSel.plazoMeses+' meses':''} → 💶 ${fmtMoney(cuotaPer)}/mes`);
-    if(totalGastosPostCompra(perSel)>0) add(`   Gastos previstos tras la compra (reforma, muebles, mudanza…): ${fmtMoney(totalGastosPostCompra(perSel))} — no incluido en el importe de arriba, es orientativo`);
+    add(`   ${fmtMoney(importeEfectivoPer)}${perSel.tin?' al '+perSel.tin+'% TIN':''}${perSel.plazoMeses?', '+perSel.plazoMeses+' meses':''} → 💶 ${fmtMoney(cuotaPer)}/mes`);
+    if(totalGastosPostCompra(perSel)>0){
+      add(perSel.incluirPostCompra
+        ? `   Incluye gastos post-compra (reforma, muebles, mudanza…): ${fmtMoney(totalGastosPostCompra(perSel))}`
+        : `   Gastos previstos tras la compra (reforma, muebles, mudanza…): ${fmtMoney(totalGastosPostCompra(perSel))} — no incluido en el importe de arriba, es orientativo`);
+    }
     add('');
   }
 
@@ -1292,17 +1387,20 @@ function generarTextoPlan(){
   const deudaEscTexto = deudaEscenarioSeleccionado();
   const deudasCuota = cuotaTotalEscenarioDeuda(deudaEscTexto);
   const totalCuotas = deudasCuota + cuota + cuotaPer;
-  const gastosFijosTotal = totalGastosFijosMensual();
-  const disponibleLibre = ingresos - totalCuotas - gastosFijosTotal;
+  const gastosFijosAntes = totalGastosFijosMensual('antes');
+  const gastosFijosDespues = totalGastosFijosMensual('despues');
+  const disponibleLibreAlquilando = ingresos - totalCuotas - gastosFijosAntes;
+  const disponibleLibrePropietario = ingresos - totalCuotas - gastosFijosDespues;
   if(ingresos>0){
-    add(`📈 DISPONIBLE LIBRE AL MES: ${fmtMoney(disponibleLibre)}`);
-    add(`   ${fmtMoney(ingresos)} de ingresos − ${fmtMoney(totalCuotas)} de cuotas − ${fmtMoney(gastosFijosTotal)} de gastos fijos`);
+    add(`📈 DISPONIBLE LIBRE AL MES`);
+    add(`   Alquilando (ahora): ${fmtMoney(disponibleLibreAlquilando)} — ${fmtMoney(ingresos)} de ingresos − ${fmtMoney(totalCuotas)} de cuotas − ${fmtMoney(gastosFijosAntes)} de gastos fijos`);
+    add(`   Como propietario: ${fmtMoney(disponibleLibrePropietario)} — mismas cuotas, con IBI/comunidad/etc. en vez de alquiler (Hoja 09)`);
     const mesesRestantesMax = (deudaEscTexto && deudaEscTexto.deudas ? deudaEscTexto.deudas : []).reduce((max,d)=>Math.max(max, num(d.mesesRestantes)), 0);
     const obligacionesFuturo = [];
     if(deudasCuota>0) obligacionesFuturo.push({label:'tus deudas actuales', meses: mesesRestantesMax, cuota: deudasCuota});
     if(cuotaPer>0 && perSel) obligacionesFuturo.push({label:'el préstamo personal', meses: num(perSel.plazoMeses), cuota: cuotaPer});
     if(obligacionesFuturo.length>0 && obligacionesFuturo.every(o=>o.meses>0)){
-      let acumulado = disponibleLibre;
+      let acumulado = disponibleLibrePropietario;
       [...obligacionesFuturo].sort((a,b)=>a.meses-b.meses).forEach(o=>{
         acumulado += o.cuota;
         add(`   Cuando termines de pagar ${o.label} (${mesesAAnios(o.meses)}): ${fmtMoney(acumulado)}/mes`);
@@ -1345,8 +1443,16 @@ function renderPersonaForm(key, persona, titularNombre){
   return `
     <div class="card">
       <h3 class="card-title">${titularNombre}</h3>
-      <div class="grid2">
+      <div class="grid3" style="grid-template-columns:1.3fr 0.55fr 0.95fr 1.2fr;gap:10px;">
         <div class="field"><label>Nombre del titular</label><input type="text" data-path="titulares.${key==='p1'?'t1':'t2'}" value="${state.titulares[key==='p1'?'t1':'t2']}" data-rerender="true"></div>
+        <div class="field"><label>Edad</label><input type="text" inputmode="numeric" data-numeric="true" data-path="perfil.${key}.edad" value="${persona.edad}"></div>
+        <div class="field"><label>Familia numerosa</label>
+          <select data-path="perfil.${key}.familiaNumerosa">
+            <option value="" ${persona.familiaNumerosa===null||persona.familiaNumerosa===''?'selected':''}>— Sin indicar —</option>
+            <option value="si" ${persona.familiaNumerosa==='si'?'selected':''}>Sí</option>
+            <option value="no" ${persona.familiaNumerosa==='no'?'selected':''}>No</option>
+          </select>
+        </div>
         <div class="field"><label>Neto mensual estimado (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="perfil.${key}.netoMensual" value="${persona.netoMensual}"></div>
       </div>
       <div class="grid3" style="grid-template-columns:0.85fr 1.15fr 0.85fr 1fr 1.4fr;gap:10px;">
@@ -1401,6 +1507,7 @@ function renderAhorros(){
   const sumT1 = num(a.t1.efectivo)+num(a.t1.inversiones);
   const sumT2 = num(a.t2.efectivo)+num(a.t2.inversiones);
   const total = ahorroTotalCalc();
+  const colchonExcede = num(a.colchon) > total;
   const disponible = total - num(a.colchon);
   const bloque = (key, titulo, obj) => `
     <div class="card">
@@ -1419,19 +1526,31 @@ function renderAhorros(){
     </div>`;
   return `
     <div class="sheet-header"><span class="sheet-num">HOJA 02</span>${tabIcon('ahorros')}<span class="sheet-title">Ahorros</span></div>
-    <p class="sheet-sub">El ahorro (y cuánto de él estáis dispuestos a usar) suele ser el verdadero cuello de botella de la operación, más que el salario. Rellenad por titular si queréis verlo separado, o solo el total si preferís no dividirlo — el que tenga algo relleno es el que se usa.</p>
+    <p class="sheet-sub">El ahorro (y cuánto de él estáis dispuestos a usar) suele ser el verdadero cuello de botella de la operación, más que el salario.</p>
+    <div class="card">
+      <label style="font-weight:600;display:block;margin-bottom:10px;">¿Cómo quieres introducir los ahorros?</label>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;">
+        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-weight:400;"><input type="radio" name="ahorrosModo" value="titular" data-path="ahorros.modo" data-rerender="true" ${a.modo!=='total'?'checked':''} style="width:16px;height:16px;"> Por titular</label>
+        <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-weight:400;"><input type="radio" name="ahorrosModo" value="total" data-path="ahorros.modo" data-rerender="true" ${a.modo==='total'?'checked':''} style="width:16px;height:16px;"> Como total conjunto</label>
+      </div>
+    </div>
     <div class="stat-row" style="grid-template-columns:repeat(3,1fr);">
       <div class="stat"><div class="label">Ahorro total</div><div class="value small">${fmtMoney(total)}</div></div>
       <div class="stat"><div class="label">Ahorro ${state.titulares.t1||'Titular 1'}</div><div class="value small">${fmtMoney(sumT1)}</div></div>
       <div class="stat"><div class="label">Ahorro ${state.titulares.t2||'Titular 2'}</div><div class="value small">${fmtMoney(sumT2)}</div></div>
     </div>
+    ${a.modo==='total' ? bloque('total', 'Total conjunto', a.total) : `
     ${bloque('t1', state.titulares.t1||'Titular 1', a.t1)}
     ${bloque('t2', state.titulares.t2||'Titular 2', a.t2)}
-    ${bloque('total', 'Total (si no queréis dividirlo por titular)', a.total)}
+    `}
     <div class="card">
-      <div class="field"><label>Colchón que queréis conservar tras la compra (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="ahorros.colchon" value="${a.colchon}" data-rerender="true"></div>
+      <div class="field">
+        <label>Colchón que queréis conservar tras la compra (€)</label>
+        <input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="ahorros.colchon" value="${a.colchon}" data-rerender="true" style="${colchonExcede?'border-color:var(--red);':''}">
+        ${colchonExcede ? '<div style="font-size:11.5px;color:var(--red);margin-top:4px;font-weight:600;">⚠ El colchón no puede superar tus ahorros disponibles.</div>' : ''}
+      </div>
       <div class="hr"></div>
-      <div class="stat"><div class="label">Disponible para la compra</div><div class="value">${fmtMoney(disponible)}</div></div>
+      <div class="stat"><div class="label">Disponible para la compra</div><div class="value" style="${colchonExcede?'color:var(--red);':''}">${fmtMoney(disponible)}</div></div>
       <div class="field" style="margin-top:16px;"><label>Notas</label><textarea data-path="ahorros.notas">${a.notas}</textarea></div>
     </div>`;
 }
@@ -1458,7 +1577,10 @@ function addDeuda(escIdx){ state.deudas.escenarios[escIdx].deudas.push({id:uid()
 function removeDeuda(escIdx, deudaId){ state.deudas.escenarios[escIdx].deudas = state.deudas.escenarios[escIdx].deudas.filter(d=>d.id!==deudaId); saveState(); render(); }
 function cuotaTotalEscenarioDeuda(e){ return e ? (e.deudas||[]).reduce((s,d)=>s+num(d.cuotaMensual),0) : 0; }
 function saldoTotalEscenarioDeuda(e){ return e ? (e.deudas||[]).reduce((s,d)=>s+num(d.saldoPendiente),0) : 0; }
-function deudaEscenarioSeleccionado(){ return state.deudas.escenarios.find(e=>e.id===state.deudas.seleccionado) || state.deudas.escenarios[0]; }
+function deudaEscenarioSeleccionado(){
+  if(state.deudas.seleccionado === '') return null; // el usuario eligió explícitamente "Sin deuda"
+  return state.deudas.escenarios.find(e=>e.id===state.deudas.seleccionado) || state.deudas.escenarios[0];
+}
 function personalEscenarioSeleccionado(){
   if(state.personal.seleccionado === '') return null; // el usuario eligió explícitamente "— Sin préstamo personal —"
   return state.personal.escenarios.find(e=>e.id===state.personal.seleccionado) || state.personal.escenarios[0];
@@ -1599,7 +1721,7 @@ function renderVivienda(){
 }
 
 /* ---------- 05 HIPOTECA ---------- */
-function addEscenarioHipoteca(){ state.hipoteca.escenarios.push({id:uid(), nombre:'Nuevo escenario', importe:'', pctFinanciacion:'100', tin:'', plazoAnios:'30', tipoInteres:'fijo', vinculaciones:[], notas:''}); saveState(); render(); }
+function addEscenarioHipoteca(){ state.hipoteca.escenarios.push({id:uid(), nombre:'Nuevo escenario', importe:'', pctFinanciacion:'100', tin:'', plazoAnios:'30', tipoInteres:'fijo', tinTramoFijo:'', aniosTramoFijo:'', diferencialTramoVariable:'', euriborSupuesto:'', diferencialVariable:'', euriborActual:'', vinculaciones:[], notas:''}); saveState(); render(); }
 function duplicarEscenarioHipoteca(id){
   const e = state.hipoteca.escenarios.find(x=>x.id===id);
   if(!e) return;
@@ -1627,7 +1749,7 @@ function vinculacionesAnualTotal(e){ return (e.vinculaciones||[]).reduce((s,v)=>
 function vinculacionesCosteTotalPlazo(e){ return vinculacionesAnualTotal(e) * num(e.plazoAnios); }
 function importeAFinanciar(e){ return num(e.importe) * pctFinanciacionOf(e) / 100; }
 function labelEscenarioHipoteca(e){ return `${e.nombre||'Escenario'} — ${fmtMoney(importeAFinanciar(e))} · ${fmtPct(pctFinanciacionOf(e),0)}`; }
-function labelEscenarioPersonal(e){ const cuota = cuotaFrancesa(e.importe, e.tin, e.plazoMeses); return `${e.nombre||'Escenario'} — ${fmtMoney(e.importe)} — ${fmtMoney(cuota)}/mes`; }
+function labelEscenarioPersonal(e){ const importeEf = importeEfectivoPersonal(e); const cuota = cuotaFrancesa(importeEf, e.tin, e.plazoMeses); return `${e.nombre||'Escenario'} — ${fmtMoney(importeEf)} — ${fmtMoney(cuota)}/mes`; }
 function renderHipoteca(){
   const va = viviendaActiva();
   const rangoMin = va ? num(va.precioMin) : 0, rangoMax = va ? num(va.precioMax) : 0;
@@ -1637,12 +1759,13 @@ function renderHipoteca(){
     <p class="sheet-sub">Crea tantos escenarios como quieras dentro del rango que definiste en la Hoja 04 (p.ej. distintos precios y % de financiación) y compáralos. La cuota se calcula con el sistema de amortización francés (el habitual en España).</p>
     ${state.hipoteca.escenarios.length>1 ? expandCollapseButtons('hipoteca.escenarios') : ''}
     ${state.hipoteca.escenarios.length===0 ? '<div class="card"><div class="empty">Sin escenarios todavía.</div></div>' : state.hipoteca.escenarios.map((e,i)=>{
-      const meses = num(e.plazoAnios)*12;
-      const importeFin = importeAFinanciar(e);
-      const cuota = cuotaFrancesa(importeFin, e.tin, meses);
-      const totalPagado = cuota*meses;
-      const intereses = totalPagado - importeFin;
+      const calc = hipotecaCalc(e);
+      const importeFin = calc.importeFin;
+      const cuota = calc.cuotaInicial;
+      const totalPagado = calc.totalPagado;
+      const intereses = calc.interesesTotal;
       const entrada = num(e.importe) - importeFin;
+      const vincMensual = vinculacionesAnualTotal(e)/12;
       return `
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer;" onclick="toggleExpand('hipoteca.escenarios', ${i})">
@@ -1669,17 +1792,35 @@ function renderHipoteca(){
           </div>
         </div>
         ${entrada>0 ? `<div class="note-block" style="margin-top:0;">La hipoteca no cubre <strong>${fmtMoney(entrada)}</strong> del precio de la vivienda (la entrada). Eso hay que aportarlo con ahorro o completarlo con un préstamo personal — en la Hoja 07 se suma junto con los gastos de compra para saber cuánto pedir.</div>` : ''}
-        <div class="grid3">
-          <div class="field"><label>TIN estimado (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="hipoteca.escenarios.${i}.tin" value="${e.tin}" data-rerender="true"><div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">El TIN es el interés puro. El banco también te dará la TAE (TIN + comisiones y gastos) — esa es la cifra real para comparar ofertas.</div></div>
+        <div class="grid2">
           <div class="field"><label>Plazo (años)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="hipoteca.escenarios.${i}.plazoAnios" value="${e.plazoAnios}" data-rerender="true"></div>
           <div class="field"><label>Tipo de interés</label>
-            <select data-path="hipoteca.escenarios.${i}.tipoInteres">
+            <select data-path="hipoteca.escenarios.${i}.tipoInteres" data-rerender="true">
               <option value="fijo" ${e.tipoInteres==='fijo'?'selected':''}>Fijo</option>
               <option value="mixto" ${e.tipoInteres==='mixto'?'selected':''}>Mixto</option>
               <option value="variable" ${e.tipoInteres==='variable'?'selected':''}>Variable</option>
             </select>
           </div>
         </div>
+        ${e.tipoInteres==='mixto' ? `
+        <div class="grid3" style="grid-template-columns:repeat(4,1fr);gap:10px;">
+          <div class="field"><label>TIN tramo fijo (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="hipoteca.escenarios.${i}.tinTramoFijo" value="${e.tinTramoFijo}" data-rerender="true"></div>
+          <div class="field"><label>Años tramo fijo</label><input type="text" inputmode="decimal" data-numeric="true" data-path="hipoteca.escenarios.${i}.aniosTramoFijo" value="${e.aniosTramoFijo}" data-rerender="true"></div>
+          <div class="field"><label>Diferencial después (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="hipoteca.escenarios.${i}.diferencialTramoVariable" value="${e.diferencialTramoVariable}" data-rerender="true"></div>
+          <div class="field"><label>Euríbor asumido (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="hipoteca.escenarios.${i}.euriborSupuesto" value="${e.euriborSupuesto}" placeholder="p.ej. 2,94" data-rerender="true"></div>
+        </div>
+        <div class="note-block" style="margin-top:0;">Los primeros años pagas el TIN fijo. Al acabar ese tramo, la cuota se recalcula sobre lo que quede pendiente, al Euríbor que asumas + tu diferencial — nadie sabe el Euríbor real de dentro de ${e.aniosTramoFijo||'X'} años, así que esto es una simulación, no una promesa.</div>
+        ` : ''}
+        ${e.tipoInteres==='variable' ? `
+        <div class="grid2">
+          <div class="field"><label>Diferencial sobre Euríbor (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="hipoteca.escenarios.${i}.diferencialVariable" value="${e.diferencialVariable}" data-rerender="true"></div>
+          <div class="field"><label>Euríbor actual (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="hipoteca.escenarios.${i}.euriborActual" value="${e.euriborActual}" placeholder="p.ej. 2,94 (media agosto 2026)" data-rerender="true"></div>
+        </div>
+        ${calc.tinActual ? `<div class="stat" style="margin-bottom:12px;"><div class="label">TIN actual (Euríbor + diferencial)</div><div class="value small">${fmtPct(calc.tinActual)}</div></div>` : ''}
+        ` : ''}
+        ${e.tipoInteres==='fijo' ? `
+        <div class="field"><label>TIN estimado (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="hipoteca.escenarios.${i}.tin" value="${e.tin}" data-rerender="true"><div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">No es la TAE (incluye comisiones).</div></div>
+        ` : ''}
         <div class="hr"></div>
         <div class="section-flag"><strong style="font-size:13.5px;">Productos vinculados</strong> <span style="font-size:11px;color:var(--ink-faint);">(seguros, nómina, tarjetas… lo que el banco exige para bonificar el TIN — un TIN más bajo con vinculaciones caras puede no salir más barato)</span></div>
         ${(e.vinculaciones||[]).length===0 ? '<div class="empty">Sin productos vinculados en este escenario.</div>' : (e.vinculaciones||[]).map((v,vi)=>`
@@ -1698,10 +1839,22 @@ function renderHipoteca(){
         <button class="btn secondary small" onclick="addVinculacion(${i})">+ Añadir producto vinculado</button>
         <div class="hr"></div>
         <div class="stat-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:8px;">
-          <div class="stat"><div class="label">Cuota mensual</div><div class="value">${fmtMoney(cuota)}</div></div>
+          <div class="stat"><div class="label">${calc.tipo==='mixto'?'Cuota tramo fijo (total)':'Cuota mensual'}</div><div class="value">${fmtMoney(cuota+vincMensual)}</div>${vincMensual>0?`<div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">Hipoteca ${fmtMoney(cuota)} + Vinculaciones ${fmtMoney(vincMensual)}</div>`:''}</div>
           <div class="stat"><div class="label">Intereses totales</div><div class="value small">${fmtMoney(intereses)}</div></div>
           <div class="stat"><div class="label">Total pagado</div><div class="value small">${fmtMoney(totalPagado)}</div></div>
         </div>
+        ${calc.tipo==='mixto' && calc.mesesRestantes>0 ? `
+        <div class="note-block" style="margin-top:0;margin-bottom:12px;">A partir del año ${Math.round(calc.aniosTramoFijo)}, la cuota pasaría a ser de <strong>${fmtMoney(calc.cuotaTrasCambio+vincMensual)}/mes</strong> (al ${fmtPct(calc.tinVariable)} asumido${vincMensual>0?', incluye vinculaciones':''}), sobre un saldo pendiente de ${fmtMoney(saldoPendienteFrances(importeFin, e.tinTramoFijo, calc.mesesTotal, calc.mesesTramoFijo))}.</div>
+        ` : ''}
+        ${calc.tipo==='variable' && calc.escenariosSubida ? `
+        <div class="section-flag" style="margin-top:0;"><strong style="font-size:13.5px;">Si el Euríbor se mueve</strong> <span style="font-size:11px;color:var(--ink-faint);">misma hipoteca, mismo diferencial — solo cambia el Euríbor</span></div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:12px;">
+          <thead><tr style="text-align:left;border-bottom:1px solid var(--border-strong);"><th style="padding:4px 6px;">Escenario</th><th class="num" style="padding:4px 6px;">TIN</th><th class="num" style="padding:4px 6px;">Cuota mensual</th></tr></thead>
+          <tbody>
+            ${calc.escenariosSubida.map(s=>`<tr style="${s.delta===0?'font-weight:700;':''}border-bottom:1px solid var(--border);"><td style="padding:4px 6px;">${s.delta===0?'Euríbor actual':(s.delta>0?`Euríbor +${s.delta}`:`Euríbor ${s.delta}`)}</td><td class="num" style="padding:4px 6px;">${fmtPct(s.tin)}</td><td class="num" style="padding:4px 6px;">${fmtMoney(s.cuota)}/mes</td></tr>`).join('')}
+          </tbody>
+        </table>
+        ` : ''}
         ${(e.vinculaciones||[]).length>0 ? `
         <div class="stat-row" style="grid-template-columns:repeat(2,1fr);margin-bottom:8px;">
           <div class="stat"><div class="label">Vinculaciones / año</div><div class="value small">${fmtMoney(vinculacionesAnualTotal(e))}</div></div>
@@ -1717,10 +1870,10 @@ function renderHipoteca(){
 }
 function renderComparativaHipoteca(){
   const filas = state.hipoteca.escenarios.map(e=>{
-    const importeFin = importeAFinanciar(e);
-    const meses = num(e.plazoAnios)*12;
-    const cuota = cuotaFrancesa(importeFin, e.tin, meses);
-    const intereses = cuota*meses - importeFin;
+    const calc = hipotecaCalc(e);
+    const importeFin = calc.importeFin;
+    const cuota = calc.cuotaInicial;
+    const intereses = calc.interesesTotal;
     const vincAnual = vinculacionesAnualTotal(e);
     const vincTotal = vinculacionesCosteTotalPlazo(e);
     const costeTotalReal = intereses + vincTotal;
@@ -1748,7 +1901,7 @@ function renderComparativaHipoteca(){
 /* ---------- 07 PRESTAMO PERSONAL ---------- */
 function addEscenarioPersonal(){
   state.personal.escenarios.push({
-    id:uid(), nombre:'Nuevo préstamo', importe:'', tin:'', comisionApertura:'', plazoMeses:'60', proposito:'', notas:'',
+    id:uid(), nombre:'Nuevo préstamo', importe:'', tin:'', comisionApertura:'', plazoMeses:'60', proposito:'', notas:'', incluirPostCompra:false,
     gastosPostCompra: [
       {id:uid(), valor:'', concepto:'Reforma'},
       {id:uid(), valor:'', concepto:'Muebles y electrodomésticos'},
@@ -1761,6 +1914,7 @@ function removeEscenarioPersonal(id){ state.personal.escenarios = state.personal
 function addGastoPostCompra(escIdx){ state.personal.escenarios[escIdx].gastosPostCompra.push({id:uid(), valor:'', concepto:''}); saveState(); render(); }
 function removeGastoPostCompra(escIdx, gastoId){ state.personal.escenarios[escIdx].gastosPostCompra = state.personal.escenarios[escIdx].gastosPostCompra.filter(g=>g.id!==gastoId); saveState(); render(); }
 function totalGastosPostCompra(e){ return (e.gastosPostCompra||[]).reduce((s,g)=>s+num(g.valor),0); }
+function importeEfectivoPersonal(e){ return num(e.importe) + (e.incluirPostCompra ? totalGastosPostCompra(e) : 0); }
 function crearPersonalDesdeResumen(importe){
   state.personal.escenarios.push({id:uid(), nombre:'Entrada + gastos de compra', importe: String(Math.round(importe)), tin:'', comisionApertura:'', plazoMeses:'60', proposito:'Cubrir la entrada no financiada por la hipoteca y los gastos de compra no cubiertos por el ahorro', notas:''});
   saveState(); render();
@@ -1816,10 +1970,11 @@ function renderPersonal(){
     <div class="hr"></div>
     ${state.personal.escenarios.length>1 ? expandCollapseButtons('personal.escenarios') : ''}
     ${state.personal.escenarios.length===0 ? '<div class="card"><div class="empty">Sin escenarios todavía.</div></div>' : state.personal.escenarios.map((e,i)=>{
-      const cuota = cuotaFrancesa(e.importe, e.tin, e.plazoMeses);
+      const importeEf = importeEfectivoPersonal(e);
+      const cuota = cuotaFrancesa(importeEf, e.tin, e.plazoMeses);
       const totalPagado = cuota*num(e.plazoMeses);
-      const intereses = totalPagado - num(e.importe);
-      const apertura = num(e.importe)*num(e.comisionApertura)/100;
+      const intereses = totalPagado - importeEf;
+      const apertura = importeEf*num(e.comisionApertura)/100;
       return `
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer;" onclick="toggleExpand('personal.escenarios', ${i})">
@@ -1840,6 +1995,7 @@ function renderPersonal(){
           <div class="field"><label>Comisión apertura (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="personal.escenarios.${i}.comisionApertura" value="${e.comisionApertura}" data-rerender="true"></div>
         </div>
         <div class="field"><label>Finalidad</label><input type="text" placeholder="p.ej. impuestos y gastos de compra" data-path="personal.escenarios.${i}.proposito" value="${e.proposito}"></div>
+        ${e.incluirPostCompra && totalGastosPostCompra(e)>0 ? `<div class="note-block" style="margin-top:0;">Importe efectivo usado en el cálculo: <strong>${fmtMoney(importeEf)}</strong> (${fmtMoney(e.importe)} solicitado + ${fmtMoney(totalGastosPostCompra(e))} de gastos post-compra incluidos).</div>` : ''}
         <div class="hr"></div>
         <div class="stat-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:8px;">
           <div class="stat"><div class="label">Cuota mensual</div><div class="value">${fmtMoney(cuota)}</div></div>
@@ -1848,7 +2004,6 @@ function renderPersonal(){
         </div>
         <div class="hr"></div>
         <div class="section-flag"><strong style="font-size:13.5px;">Gastos post-compra</strong> <span style="font-size:11px;color:var(--ink-faint);">(reforma, muebles, mudanza… lo que este préstamo va a cubrir aparte de la entrada y los gastos de compra)</span></div>
-        <div style="font-size:11px;color:var(--ink-faint);margin-top:4px;margin-bottom:8px;">Esto no se suma solo al Importe de arriba — es solo un recordatorio para que decidas tú cuánto meter en el Importe.</div>
         ${(e.gastosPostCompra||[]).length===0 ? '<div class="empty" style="margin-top:8px;">Sin gastos post-compra en este escenario.</div>' : (e.gastosPostCompra||[]).map((g,gi)=>`
           <div style="display:flex;gap:8px;align-items:center;margin-top:6px;">
             <input type="text" inputmode="decimal" data-numeric="true" data-format="miles" placeholder="€" style="width:110px;flex-shrink:0;" data-path="personal.escenarios.${i}.gastosPostCompra.${gi}.valor" value="${g.valor}" data-rerender="true">
@@ -1860,6 +2015,7 @@ function renderPersonal(){
           <button class="btn secondary small" onclick="addGastoPostCompra(${i})">+ Añadir gasto</button>
           <div class="stat" style="padding:0;"><div class="label" style="margin-bottom:0;">Total post-compra</div><div class="value small">${fmtMoney(totalGastosPostCompra(e))}</div></div>
         </div>
+        <label style="display:flex;align-items:center;gap:8px;margin-top:12px;cursor:pointer;font-weight:400;"><input type="checkbox" style="width:16px;height:16px;" data-path="personal.escenarios.${i}.incluirPostCompra" ${e.incluirPostCompra?'checked':''} data-rerender="true"> Incluir estos gastos en el importe solicitado</label>
         <div class="hr"></div>
         <div class="field" style="margin-top:10px;"><label>Notas</label><textarea data-path="personal.escenarios.${i}.notas">${e.notas}</textarea></div>
         `}
@@ -1871,10 +2027,11 @@ function renderPersonal(){
 }
 function renderComparativaPersonal(){
   const filas = state.personal.escenarios.map(e=>{
-    const cuota = cuotaFrancesa(e.importe, e.tin, e.plazoMeses);
-    const intereses = cuota*num(e.plazoMeses) - num(e.importe);
-    const apertura = num(e.importe)*num(e.comisionApertura)/100;
-    return {nombre: e.nombre||'Escenario', importe: num(e.importe), cuota, costeTotal: intereses+apertura};
+    const importeEf = importeEfectivoPersonal(e);
+    const cuota = cuotaFrancesa(importeEf, e.tin, e.plazoMeses);
+    const intereses = cuota*num(e.plazoMeses) - importeEf;
+    const apertura = importeEf*num(e.comisionApertura)/100;
+    return {nombre: e.nombre||'Escenario', importe: importeEf, cuota, costeTotal: intereses+apertura};
   });
   const minCoste = Math.min(...filas.map(f=>f.costeTotal));
   return `
@@ -2036,7 +2193,17 @@ function addBroker(){
   });
   saveState(); render();
 }
-function removeBroker(id){ if(!confirm('¿Eliminar este broker y todo su seguimiento?')) return; state.brokers = state.brokers.filter(b=>b.id!==id); saveState(); render(); }
+async function removeBroker(id){
+  if(!confirm('¿Eliminar este broker y todo su seguimiento?')) return;
+  const broker = state.brokers.find(b=>b.id===id);
+  state.brokers = state.brokers.filter(b=>b.id!==id);
+  saveState(); render();
+  if(broker && Array.isArray(broker.adjuntos)){
+    for(const adj of broker.adjuntos){
+      try{ await storageAdapter.delete('broker-doc-'+adj.id, false); }catch(e){ /* puede que ya no existiera */ }
+    }
+  }
+}
 function toggleBroker(id){ const b = state.brokers.find(x=>x.id===id); b.expanded = !b.expanded; render(); }
 function toggleCheckItem(bi, listName, itemId){
   const b = state.brokers[bi];
@@ -2369,60 +2536,68 @@ function renderDocumentos(){
 }
 
 /* ---------- 09 OTROS GASTOS FIJOS ---------- */
-function addGastoFijo(tipo){ state.gastosFijos[tipo].push({id:uid(), nombre:'', importe:''}); saveState(); render(); }
+function addGastoFijo(tipo){ state.gastosFijos[tipo].push({id:uid(), nombre:'', importeAntes:'', importeDespues:''}); saveState(); render(); }
 function removeGastoFijo(tipo, id){ state.gastosFijos[tipo] = state.gastosFijos[tipo].filter(g=>g.id!==id); saveState(); render(); }
-function totalGastosFijosMensual(){
-  const mensual = state.gastosFijos.mensuales.reduce((s,g)=>s+num(g.importe),0);
-  const anual = state.gastosFijos.anuales.reduce((s,g)=>s+num(g.importe),0);
+function totalGastosFijosMensual(momento){
+  const campo = momento==='despues' ? 'importeDespues' : 'importeAntes';
+  const mensual = state.gastosFijos.mensuales.reduce((s,g)=>s+num(g[campo]),0);
+  const anual = state.gastosFijos.anuales.reduce((s,g)=>s+num(g[campo]),0);
   return mensual + anual/12;
 }
 function renderGastosFijos(){
-  const totalMensual = state.gastosFijos.mensuales.reduce((s,g)=>s+num(g.importe),0);
-  const totalAnual = state.gastosFijos.anuales.reduce((s,g)=>s+num(g.importe),0);
-  const totalGeneral = totalMensual + totalAnual/12;
+  const totalAntes = totalGastosFijosMensual('antes');
+  const totalDespues = totalGastosFijosMensual('despues');
+  const filaGasto = (tipo, g, i, esAnual) => `
+    <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 32px;gap:8px;margin-bottom:5px;align-items:center;">
+      <input type="text" placeholder="Concepto" data-path="gastosFijos.${tipo}.${i}.nombre" value="${g.nombre}">
+      <input type="text" inputmode="decimal" data-numeric="true" data-format="miles" placeholder="€" data-path="gastosFijos.${tipo}.${i}.importeAntes" value="${g.importeAntes}" data-rerender="true">
+      <input type="text" inputmode="decimal" data-numeric="true" data-format="miles" placeholder="€" data-path="gastosFijos.${tipo}.${i}.importeDespues" value="${g.importeDespues}" data-rerender="true">
+      <button class="btn danger small" onclick="removeGastoFijo('${tipo}','${g.id}')" style="padding:6px;">✕</button>
+    </div>`;
+  const cabecera = (unidad) => `
+    <div style="display:grid;grid-template-columns:1.6fr 1fr 1fr 32px;gap:8px;margin-bottom:4px;">
+      <div style="font-size:10.5px;color:var(--ink-faint);font-weight:700;text-transform:uppercase;letter-spacing:.03em;">Concepto</div>
+      <div style="font-size:10.5px;color:var(--ink-faint);font-weight:700;text-transform:uppercase;letter-spacing:.03em;">Antes de comprar (${unidad})</div>
+      <div style="font-size:10.5px;color:var(--ink-faint);font-weight:700;text-transform:uppercase;letter-spacing:.03em;">Después de comprar (${unidad})</div>
+      <div></div>
+    </div>`;
   return `
     <div class="sheet-header"><span class="sheet-num">HOJA 09</span>${tabIcon('gastosfijos')}<span class="sheet-title">Otros gastos fijos</span></div>
-    <p class="sheet-sub">Suministros, seguros, teléfono… lo que gastáis con regularidad ahora mismo, de alquiler, aunque no sea una deuda. Sepáralos según cómo los pagáis: los anuales se convierten solos a su equivalente mensual. Ya puse algunos ejemplos habituales — bórralos si no aplican, o añade los tuyos.</p>
+    <p class="sheet-sub">Suministros, seguros, teléfono… lo que gastáis con regularidad, separado en dos columnas: lo que pagáis <strong>ahora, de alquiler</strong>, y lo que pagaréis <strong>una vez seáis propietarios</strong> — no son lo mismo. El alquiler (o el seguro de inquilino) normalmente desaparece al comprar; en cambio el IBI, la comunidad o el seguro de hogar solo empiezan a existir entonces. Ya puse algunos ejemplos habituales — bórralos si no aplican, o añade los tuyos.</p>
 
-    <div class="stat-row" style="grid-template-columns:repeat(3,1fr);">
-      <div class="stat"><div class="label">Total gastos fijos / mes</div><div class="value small">${fmtMoney(totalGeneral)}</div></div>
-      <div class="stat"><div class="label">Subtotal mensual</div><div class="value small">${fmtMoney(totalMensual)}</div></div>
-      <div class="stat"><div class="label">Subtotal anual</div><div class="value small">${fmtMoney(totalAnual)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">equivale a ${fmtMoney(totalAnual/12)}/mes</div></div>
+    <div class="stat-row" style="grid-template-columns:repeat(2,1fr);">
+      <div class="stat"><div class="label">Total gastos fijos / mes — ahora (alquilando)</div><div class="value small">${fmtMoney(totalAntes)}</div></div>
+      <div class="stat"><div class="label">Total gastos fijos / mes — como propietario</div><div class="value small">${fmtMoney(totalDespues)}</div></div>
     </div>
 
     <div class="card">
-      <h3 class="card-title">Mensual <small>el Importe es directamente el gasto mensual</small></h3>
-      ${state.gastosFijos.mensuales.length===0 ? '<div class="empty">Sin gastos mensuales registrados todavía.</div>' : state.gastosFijos.mensuales.map((g,i)=>`
-        <div class="grid3" style="margin-bottom:16px;align-items:end;">
-          <div class="field"><label>Concepto</label><input type="text" placeholder="p.ej. Electricidad" data-path="gastosFijos.mensuales.${i}.nombre" value="${g.nombre}"></div>
-          <div class="field"><label>Importe (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="gastosFijos.mensuales.${i}.importe" value="${g.importe}" data-rerender="true"></div>
-          <div><button class="btn danger small" onclick="removeGastoFijo('mensuales','${g.id}')">Eliminar</button></div>
-        </div>
-      `).join('')}
-      <button class="btn secondary" onclick="addGastoFijo('mensuales')">+ Añadir gasto mensual</button>
+      <h3 class="card-title">Mensual <small>el importe es directamente el gasto de ese mes</small></h3>
+      ${cabecera('€')}
+      ${state.gastosFijos.mensuales.length===0 ? '<div class="empty">Sin gastos mensuales registrados todavía.</div>' : state.gastosFijos.mensuales.map((g,i)=>filaGasto('mensuales',g,i,false)).join('')}
+      <button class="btn secondary small" onclick="addGastoFijo('mensuales')" style="margin-top:6px;">+ Añadir gasto mensual</button>
       <div class="hr"></div>
-      <div class="stat"><div class="label">Subtotal mensual</div><div class="value small">${fmtMoney(totalMensual)}</div></div>
+      <div class="grid2">
+        <div class="stat"><div class="label">Subtotal mensual — ahora</div><div class="value small">${fmtMoney(state.gastosFijos.mensuales.reduce((s,g)=>s+num(g.importeAntes),0))}</div></div>
+        <div class="stat"><div class="label">Subtotal mensual — propietario</div><div class="value small">${fmtMoney(state.gastosFijos.mensuales.reduce((s,g)=>s+num(g.importeDespues),0))}</div></div>
+      </div>
     </div>
 
     <div class="card">
-      <h3 class="card-title">Anual <small>el Importe es el gasto del año; se divide entre 12 automáticamente</small></h3>
-      ${state.gastosFijos.anuales.length===0 ? '<div class="empty">Sin gastos anuales registrados todavía.</div>' : state.gastosFijos.anuales.map((g,i)=>{
-        const mensual = num(g.importe)/12;
-        return `
-        <div class="grid3" style="margin-bottom:6px;align-items:end;">
-          <div class="field"><label>Concepto</label><input type="text" placeholder="p.ej. Seguro de hogar" data-path="gastosFijos.anuales.${i}.nombre" value="${g.nombre}"></div>
-          <div class="field"><label>Importe (€/año)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="gastosFijos.anuales.${i}.importe" value="${g.importe}" data-rerender="true"></div>
-          <div><button class="btn danger small" onclick="removeGastoFijo('anuales','${g.id}')">Eliminar</button></div>
-        </div>
-        <div style="margin-bottom:16px;font-size:12px;color:var(--ink-faint);">Valor mensual: ${fmtMoney(mensual)}</div>
-        `;
-      }).join('')}
-      <button class="btn secondary" onclick="addGastoFijo('anuales')">+ Añadir gasto anual</button>
+      <h3 class="card-title">Anual <small>el importe es el gasto del año; se divide entre 12 automáticamente</small></h3>
+      ${cabecera('€/año')}
+      ${state.gastosFijos.anuales.length===0 ? '<div class="empty">Sin gastos anuales registrados todavía.</div>' : state.gastosFijos.anuales.map((g,i)=>filaGasto('anuales',g,i,true)).join('')}
+      <button class="btn secondary small" onclick="addGastoFijo('anuales')" style="margin-top:6px;">+ Añadir gasto anual</button>
       <div class="hr"></div>
-      <div class="stat"><div class="label">Subtotal anual</div><div class="value small">${fmtMoney(totalAnual)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">equivalente a ${fmtMoney(totalAnual/12)}/mes</div></div>
+      <div class="grid2">
+        <div class="stat"><div class="label">Subtotal anual — ahora</div><div class="value small">${fmtMoney(state.gastosFijos.anuales.reduce((s,g)=>s+num(g.importeAntes),0))}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">≈ ${fmtMoney(state.gastosFijos.anuales.reduce((s,g)=>s+num(g.importeAntes),0)/12)}/mes</div></div>
+        <div class="stat"><div class="label">Subtotal anual — propietario</div><div class="value small">${fmtMoney(state.gastosFijos.anuales.reduce((s,g)=>s+num(g.importeDespues),0))}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">≈ ${fmtMoney(state.gastosFijos.anuales.reduce((s,g)=>s+num(g.importeDespues),0)/12)}/mes</div></div>
+      </div>
     </div>
 
-    <div class="stat"><div class="label">Total gastos fijos / mes</div><div class="value">${fmtMoney(totalGeneral)}</div></div>
+    <div class="stat-row" style="grid-template-columns:repeat(2,1fr);">
+      <div class="stat"><div class="label">Total gastos fijos / mes — ahora (alquilando)</div><div class="value">${fmtMoney(totalAntes)}</div></div>
+      <div class="stat"><div class="label">Total gastos fijos / mes — como propietario</div><div class="value">${fmtMoney(totalDespues)}</div></div>
+    </div>
   `;
 }
 
