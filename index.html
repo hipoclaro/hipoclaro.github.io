@@ -2487,7 +2487,7 @@ function resetAll(){
 /* ---------- Consentimiento de cookies ---------- */
 // Código del sitio en GoatCounter — vacío hasta que la web esté publicada de verdad.
 // Mientras esté vacío, no se carga ningún script externo, pase lo que pase con el consentimiento.
-const GOATCOUNTER_CODE = '';
+const GOATCOUNTER_CODE = 'hipoclaro';
 
 function getCookieConsent(){
   try{ const v = localStorage.getItem('cookie-consent'); return v ? JSON.parse(v) : null; }catch(e){ return null; }
