@@ -1004,7 +1004,7 @@ function renderResumen(){
   const deudaEscSel = deudaEscenarioSeleccionado();
   const deudasCuota = cuotaTotalEscenarioDeuda(deudaEscSel);
   const hipSel = state.hipoteca.escenarios.find(e=>e.id===state.hipoteca.seleccionado) || state.hipoteca.escenarios[0];
-  const perSel = state.personal.escenarios.find(e=>e.id===state.personal.seleccionado) || state.personal.escenarios[0];
+  const perSel = personalEscenarioSeleccionado();
   const importeFinHip = hipSel ? importeAFinanciar(hipSel) : 0;
   const mesesHip = hipSel ? num(hipSel.plazoAnios)*12 : 0;
   const cuotaHip = hipSel ? cuotaFrancesa(importeFinHip, hipSel.tin, mesesHip) : 0;
@@ -1264,7 +1264,7 @@ function generarTextoPlan(){
     add(`   Estimados en ${fmtMoney(gastoCompra)}`);
     add('');
   }
-  const perSel = state.personal.escenarios.find(e=>e.id===state.personal.seleccionado) || state.personal.escenarios[0];
+  const perSel = personalEscenarioSeleccionado();
   let cuotaPer = 0;
   if(perSel && perSel.importe){
     cuotaPer = cuotaFrancesa(perSel.importe, perSel.tin, perSel.plazoMeses);
@@ -1459,6 +1459,10 @@ function removeDeuda(escIdx, deudaId){ state.deudas.escenarios[escIdx].deudas = 
 function cuotaTotalEscenarioDeuda(e){ return e ? (e.deudas||[]).reduce((s,d)=>s+num(d.cuotaMensual),0) : 0; }
 function saldoTotalEscenarioDeuda(e){ return e ? (e.deudas||[]).reduce((s,d)=>s+num(d.saldoPendiente),0) : 0; }
 function deudaEscenarioSeleccionado(){ return state.deudas.escenarios.find(e=>e.id===state.deudas.seleccionado) || state.deudas.escenarios[0]; }
+function personalEscenarioSeleccionado(){
+  if(state.personal.seleccionado === '') return null; // el usuario eligió explícitamente "— Sin préstamo personal —"
+  return state.personal.escenarios.find(e=>e.id===state.personal.seleccionado) || state.personal.escenarios[0];
+}
 function renderDeudas(){
   return `
     <div class="sheet-header"><span class="sheet-num">HOJA 03</span>${tabIcon('deudas')}<span class="sheet-title">Deudas actuales</span></div>
