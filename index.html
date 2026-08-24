@@ -1,0 +1,2593 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏠</text></svg>">
+<title>Hipoclaro</title>
+<meta name="description" content="Organiza tu hipoteca a tu ritmo: escenarios de hipoteca, ahorro, deudas y gastos de compra, sin depender de ningún broker.">
+<meta property="og:title" content="Hipoclaro — Tu hipoteca. Tus números. Decide en minutos.">
+<meta property="og:description" content="Organiza tu hipoteca a tu ritmo: escenarios de hipoteca, ahorro, deudas y gastos de compra, sin depender de ningún broker.">
+<meta property="og:type" content="website">
+<!-- TODO: rellenar con la URL real en cuanto la web esté publicada -->
+<meta property="og:url" content="https://hipoclaro.github.io">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "Hipoclaro",
+  "description": "Organiza tu hipoteca a tu ritmo: escenarios de hipoteca, ahorro, deudas y gastos de compra, sin depender de ningún broker.",
+  "applicationCategory": "FinanceApplication",
+  "operatingSystem": "Any (navegador web)",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "EUR" },
+  "inLanguage": "es"
+}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F3EE; --surface:#FFFFFF; --border:#DEDACB; --border-strong:#918C7D;
+  --ink:#1F2A24; --ink-soft:#5B665F; --ink-faint:#727868;
+  --navy:#2F4858; --navy-deep:#1C2E38;
+  --brass:#A8792A; --brass-soft:#F1E7D2; --brass-text:#976D26;
+  --green:#3F6B4A; --green-soft:#E5EEE6;
+  --red:#A8433A; --red-soft:#F6E5E2;
+  --yellow:#866913; --yellow-soft:#F7EFD8;
+  --radius:10px;
+  --font-display:'Fraunces',serif; --font-body:'Inter',sans-serif; --font-mono:'IBM Plex Mono',monospace;
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body);line-height:1.45;}
+#app{display:flex;min-height:100vh;}
+::selection{background:var(--brass-soft);}
+
+/* Sidebar */
+#sidebar{width:240px;flex-shrink:0;background:var(--navy-deep);color:#EDEAE0;padding:28px 0;position:sticky;top:0;height:100vh;overflow-y:auto;}
+.brand{padding:0 20px 22px 20px;border-bottom:1px solid rgba(255,255,255,0.12);margin-bottom:14px;}
+.brand-eyebrow{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;color:var(--brass-soft);text-transform:uppercase;opacity:.85;}
+.brand-title{font-family:var(--font-display);font-size:22px;font-weight:600;margin-top:4px;}
+.navlist{list-style:none;margin:0;padding:0;}
+.navitem{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 20px;cursor:pointer;font-size:14.5px;color:#C9CFC5;border-left:3px solid transparent;}
+.navitem .nav-left{display:flex;align-items:baseline;gap:10px;min-width:0;}
+.navitem .num{font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);}
+.navitem:hover{background:rgba(255,255,255,0.05);color:#fff;}
+.navitem.active{background:rgba(255,255,255,0.08);color:#fff;border-left-color:var(--brass);}
+.navitem.active .num{color:var(--brass-soft);}
+.nav-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;background:transparent;border:1px solid rgba(255,255,255,0.28);}
+.nav-dot.filled{background:var(--brass);border-color:var(--brass);}
+.sidebar-foot{padding:16px 20px 0 20px;margin-top:14px;border-top:1px solid rgba(255,255,255,0.12);}
+.sidebar-foot button{width:100%;text-align:left;background:none;border:none;color:#B9C0B5;font-family:var(--font-body);font-size:12.5px;padding:6px 0;cursor:pointer;}
+.sidebar-foot button:hover{color:#fff;}
+
+/* Main */
+#main{flex:1;min-width:0;padding:36px 44px 80px 44px;}
+.sheet-header{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border-strong);padding-bottom:10px;margin-bottom:18px;}
+.sheet-num{font-family:var(--font-mono);font-size:12px;color:var(--brass-text);letter-spacing:.08em;}
+.sheet-title{font-family:var(--font-display);font-size:30px;font-weight:600;}
+.sheet-sub{font-family:var(--font-body);font-size:14px;color:var(--ink-soft);margin-top:-12px;margin-bottom:16px;}
+
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:14px;}
+.card-title{font-family:var(--font-display);font-size:18px;font-weight:600;margin:0 0 10px 0;}
+.card-title small{font-family:var(--font-body);font-size:12px;font-weight:400;color:var(--ink-faint);margin-left:8px;}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+@media (max-width:760px){.grid2,.grid3{grid-template-columns:1fr;}}
+
+label{display:block;font-size:12px;color:var(--ink-soft);margin-bottom:5px;font-weight:500;}
+input[type=text],input[type=number],input[type=date],select,textarea{
+  width:100%;border:1px solid var(--border-strong);border-radius:7px;background:#FBFAF7;
+  padding:7px 9px;font-family:var(--font-body);font-size:14px;color:var(--ink);
+}
+input[data-numeric=true]{font-family:var(--font-body);font-variant-numeric:tabular-nums;}
+textarea{resize:vertical;min-height:60px;}
+.field{margin-bottom:10px;}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--navy);outline-offset:1px;border-color:var(--navy);}
+
+.btn{display:inline-flex;align-items:center;gap:6px;background:var(--navy);color:#fff;border:none;border-radius:7px;padding:9px 14px;font-size:13.5px;font-family:var(--font-body);font-weight:600;cursor:pointer;}
+.btn:hover{background:var(--navy-deep);}
+.btn.secondary{background:transparent;color:var(--navy);border:1px solid var(--border-strong);}
+.btn.secondary:hover{background:#EFEDE5;}
+.btn.danger{background:transparent;color:var(--red);border:1px solid var(--red-soft);}
+.btn.danger:hover{background:var(--red-soft);}
+.btn.small{padding:5px 10px;font-size:12px;}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px;}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);font-weight:600;padding:0 8px 8px 0;border-bottom:1px solid var(--border);}
+td{padding:8px 8px 8px 0;border-bottom:1px solid var(--border);vertical-align:middle;}
+td.num,th.num{text-align:right;font-family:var(--font-body);font-variant-numeric:tabular-nums;}
+tr:last-child td{border-bottom:none;}
+
+.badge{display:inline-block;font-family:var(--font-mono);font-size:11px;padding:3px 9px;border-radius:20px;white-space:nowrap;}
+.badge.green{background:var(--green-soft);color:var(--green);}
+.badge.yellow{background:var(--yellow-soft);color:var(--yellow);}
+.badge.red{background:var(--red-soft);color:var(--red);font-weight:700;border:1px solid var(--red);}
+.badge.grey{background:#EEEBE1;color:var(--ink-soft);}
+
+@keyframes bounceDownload{0%,100%{transform:translateY(0);}50%{transform:translateY(4px);}}
+@keyframes pulseRing{0%{transform:scale(0.85);opacity:0.55;}70%{transform:scale(1.5);opacity:0;}100%{opacity:0;}}
+.download-banner{display:flex;align-items:center;gap:16px;background:linear-gradient(135deg,var(--brass-soft),#FFFDF8);border:1.5px solid var(--brass);border-radius:12px;padding:16px 18px;margin-bottom:20px;flex-wrap:wrap;}
+.download-icon-wrap{position:relative;width:46px;height:46px;flex-shrink:0;display:flex;align-items:center;justify-content:center;}
+.download-icon-ring{position:absolute;inset:0;border-radius:50%;background:var(--brass);animation:pulseRing 2.4s ease-out infinite;}
+.download-icon-svg{position:relative;animation:bounceDownload 1.8s ease-in-out infinite;}
+.download-banner-text{flex:1;min-width:180px;}
+.download-banner-title{font-weight:700;font-size:15px;color:#5B4419;}
+.download-banner-sub{font-size:12.5px;color:#8A6A2E;margin-top:2px;}
+.highlight-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+.highlight-card{display:flex;flex-direction:column;gap:10px;background:linear-gradient(135deg,var(--brass-soft),#FFFDF8);border:1.5px solid var(--brass);border-radius:12px;padding:14px 16px;}
+.highlight-card-head{display:flex;align-items:center;gap:10px;}
+.highlight-card .download-icon-wrap{width:30px;height:30px;}
+.highlight-card .download-banner-title{font-size:13.5px;line-height:1.3;}
+.highlight-card .btn{width:100%;text-align:center;}
+@media (max-width:760px){ .highlight-row{grid-template-columns:1fr;} }
+
+.cookie-bar{position:fixed;left:0;right:0;bottom:0;z-index:500;background:var(--navy-deep);color:#EDEAE0;box-shadow:0 -2px 16px rgba(0,0,0,0.25);max-height:80vh;overflow-y:auto;}
+.cookie-bar-inner{max-width:900px;margin:0 auto;padding:16px 20px;}
+.cookie-bar p{margin:0 0 8px 0;font-size:13px;line-height:1.5;color:#C9CFC5;}
+.cookie-bar p.cookie-lead{color:#EDEAE0;font-size:14px;font-weight:500;}
+.cookie-bar .cookie-title{font-family:var(--font-display);font-size:17px;font-weight:600;color:#EDEAE0;margin-bottom:8px;}
+.cookie-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
+.cookie-btn{font-family:var(--font-body);font-size:13px;font-weight:600;padding:10px 18px;border-radius:7px;cursor:pointer;border:1.5px solid transparent;}
+.cookie-btn.primary{background:var(--brass);color:#1C2E38;border-color:var(--brass);}
+.cookie-btn.secondary{background:transparent;color:#EDEAE0;border-color:#5B665F;}
+.cookie-btn.link{background:transparent;color:#C9CFC5;text-decoration:underline;padding:10px 4px;}
+.cookie-cat{border-top:1px solid rgba(255,255,255,0.12);padding:12px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
+.cookie-cat:last-of-type{border-bottom:1px solid rgba(255,255,255,0.12);margin-bottom:12px;}
+.cookie-cat-name{font-weight:600;color:#EDEAE0;font-size:13.5px;margin-bottom:3px;}
+.cookie-cat-desc{color:#C9CFC5;font-size:12.5px;line-height:1.4;}
+.cookie-cat-status{font-size:12px;color:var(--brass-soft);white-space:nowrap;flex-shrink:0;padding-top:2px;}
+.cookie-toggle{position:relative;width:40px;height:22px;flex-shrink:0;}
+.cookie-toggle input{opacity:0;width:0;height:0;}
+.cookie-toggle .slider{position:absolute;inset:0;background:#4A5560;border-radius:22px;cursor:pointer;transition:background .15s;}
+.cookie-toggle .slider:before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .15s;}
+.cookie-toggle input:checked + .slider{background:var(--green);}
+.cookie-toggle input:checked + .slider:before{transform:translateX(18px);}
+#cookiePrefsLink{cursor:pointer;text-decoration:underline;}
+@media (max-width:640px){ .cookie-btns{flex-direction:column;} .cookie-btn{width:100%;text-align:center;} }
+
+.stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+@media (max-width:900px){.stat-row{grid-template-columns:repeat(2,1fr);}}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;}
+.stat .label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);margin-bottom:4px;}
+.stat .value{font-family:var(--font-body);font-variant-numeric:tabular-nums;font-size:24px;font-weight:600;}
+.stat .value.small{font-size:17px;}
+
+.gauge-wrap{margin-top:6px;}
+.gauge-track{height:8px;border-radius:4px;background:#EEEBE1;overflow:hidden;}
+.gauge-fill{height:100%;border-radius:4px;}
+.gauge-labels{display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10.5px;color:var(--ink-faint);margin-top:4px;}
+
+.hr{border:none;border-top:1px dashed var(--border-strong);margin:12px 0;}
+
+.item-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;}
+.item-row input{flex:1;}
+.item-row .btn{flex-shrink:0;}
+
+.checklist{list-style:none;padding:0;margin:0 0 10px 0;}
+.checklist li{display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:1px solid var(--border);font-size:13.5px;}
+.checklist li:last-child{border-bottom:none;}
+.checklist li.done{color:var(--ink-faint);}
+.checklist li.done .clabel{text-decoration:line-through;}
+.checklist input[type=checkbox]{width:16px;height:16px;flex-shrink:0;accent-color:var(--green);}
+.checklist .clabel{flex:1;}
+.checklist .rm{background:none;border:none;color:var(--ink-faint);cursor:pointer;font-size:15px;line-height:1;padding:2px 4px;}
+.checklist .rm:hover{color:var(--red);}
+.add-check-row{display:flex;gap:8px;margin-top:6px;}
+.add-check-row input{flex:1;}
+
+.broker-card{border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);margin-bottom:18px;overflow:hidden;}
+.broker-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;gap:14px;}
+.broker-head:hover{background:#FBFAF6;}
+.broker-head-left{display:flex;align-items:center;gap:12px;min-width:0;}
+.broker-name-input{font-family:var(--font-display);font-size:18px;font-weight:600;border:none;background:transparent;padding:2px 0;min-width:120px;}
+.broker-name-input:focus{outline:none;border-bottom:1px solid var(--navy);}
+.broker-body{padding:6px 20px 22px 20px;border-top:1px dashed var(--border-strong);}
+.chevron{font-family:var(--font-mono);color:var(--ink-faint);flex-shrink:0;}
+.doc-cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:16px;}
+@media (max-width:900px){.doc-cols{grid-template-columns:1fr;}}
+.doc-col-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em;color:var(--ink-soft);margin-bottom:8px;}
+
+.log-entry{display:grid;grid-template-columns:110px 1fr auto;gap:10px;align-items:start;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.log-entry:last-child{border-bottom:none;}
+.log-date{font-family:var(--font-mono);color:var(--ink-faint);font-size:12px;padding-top:8px;}
+.log-text{white-space:pre-wrap;padding-top:1px;}
+.log-entry.done .log-text{color:var(--ink-faint);text-decoration:line-through;}
+.log-entry.done .log-date{opacity:.6;}
+.log-actions{display:flex;gap:2px;padding-top:2px;}
+.item-row textarea{flex:1;min-height:42px;resize:vertical;}
+tr.compare-best td{background:var(--green-soft);}
+.compare-tag{font-family:var(--font-mono);font-size:10px;color:var(--green);font-weight:600;margin-left:6px;}
+
+.combo{position:relative;}
+.combo-trigger{width:100%;text-align:left;border:1px solid var(--border-strong);border-radius:7px;background:#FBFAF7;padding:7px 9px;font-family:var(--font-body);font-size:14px;color:var(--ink);cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:8px;}
+.combo-trigger:hover{border-color:var(--navy);}
+.combo-trigger .placeholder{color:var(--ink-faint);}
+.combo-arrow{color:var(--ink-faint);font-size:11px;flex-shrink:0;}
+.combo-list{position:absolute;z-index:30;top:calc(100% + 4px);left:0;right:0;max-height:300px;overflow-y:auto;background:var(--surface);border:1px solid var(--border-strong);border-radius:8px;box-shadow:0 10px 28px rgba(20,30,25,0.16);padding:6px;}
+.combo-group-label{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-faint);padding:8px 8px 4px 8px;}
+.combo-option{padding:7px 8px;border-radius:6px;cursor:pointer;}
+.combo-option:hover{background:var(--brass-soft);}
+.combo-option.selected{background:var(--green-soft);}
+.combo-option .opt-name{font-weight:600;font-size:13.5px;color:var(--ink);}
+.combo-option .opt-desc{display:block;font-size:11.5px;color:var(--ink-faint);margin-top:1px;}
+
+.empty{color:var(--ink-faint);font-size:13.5px;font-style:italic;padding:10px 0;}
+.note-block{background:var(--brass-soft);border-radius:8px;padding:12px 14px;font-size:13px;color:#5B4419;margin-bottom:18px;}
+.section-flag{display:flex;align-items:center;gap:8px;margin-bottom:4px;}
+.pill-select{display:inline-flex;border:1px solid var(--border-strong);border-radius:20px;overflow:hidden;}
+.pill-select button{background:transparent;border:none;padding:6px 12px;font-size:12.5px;font-family:var(--font-body);cursor:pointer;color:var(--ink-soft);}
+.pill-select button.active{background:var(--navy);color:#fff;}
+
+@media (max-width:800px){
+  #app{flex-direction:column;}
+  #sidebar{width:100%;height:auto;position:relative;padding:16px 0;}
+  .navlist{display:flex;overflow-x:auto;gap:2px;padding:0 12px;}
+  .navitem{border-left:none;border-bottom:3px solid transparent;white-space:nowrap;padding:8px 12px;}
+  .navitem.active{border-left:none;border-bottom-color:var(--brass);}
+  .sidebar-foot{display:none;}
+  #main{padding:24px 18px 60px 18px;}
+  .stat-row{grid-template-columns:1fr 1fr;}
+}
+
+.brokers-layout{display:grid;grid-template-columns:1fr 380px;gap:22px;align-items:start;}
+.docs-col{position:sticky;top:20px;}
+@media (max-width:1050px){
+  .brokers-layout{grid-template-columns:1fr;}
+  .docs-col{position:static;}
+}
+.doc-item{border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:10px;}
+.doc-item-row{display:grid;grid-template-columns:1fr 140px;gap:8px;margin-bottom:8px;}
+.doc-item-meta{font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);display:flex;gap:6px;margin-bottom:10px;word-break:break-all;}
+.doc-item-actions{display:flex;gap:8px;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<div id="cookieBar" class="cookie-bar" style="display:none;">
+  <div id="cookieBarContent"></div>
+</div>
+<button id="cookiePrefsPill" onclick="abrirPreferenciasCookies()" style="position:fixed;left:14px;bottom:14px;z-index:400;background:var(--navy-deep);color:#C9CFC5;border:none;border-radius:20px;padding:7px 14px;font-size:11.5px;font-family:var(--font-body);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.2);">🍪 Cookies</button>
+
+<div id="legalOverlay" style="display:none;position:fixed;inset:0;background:rgba(28,46,56,0.55);z-index:600;padding:24px;overflow-y:auto;">
+  <div style="max-width:760px;margin:0 auto;background:var(--surface);border-radius:12px;padding:28px 32px;position:relative;">
+    <button onclick="cerrarLegal()" aria-label="Cerrar" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink-faint);">✕</button>
+    <div id="legalContent"></div>
+  </div>
+</div>
+
+<!-- Contenido real en HTML estático (visible desde el código fuente, sin depender de un click) para que Google y las IAs puedan leerlo. Oculto solo visualmente con display:none; el overlay de arriba lo muestra copiándolo. -->
+<div style="display:none;">
+  <div id="staticComoFunciona">
+    <h2 style="font-family:var(--font-display);margin-top:0;">¿Cómo funciona todo esto?</h2>
+    <p>Si quieres un número rápido antes de meterte en detalle, empieza por <strong>Simulación express</strong>. Ahí solo pides lo esencial — tus ingresos, el precio de la casa, cuánto ahorro tienes — y el resto (el tipo de interés, los gastos de compra) lo calculamos con medias nacionales reales, no inventadas. Sirve para hacerte una idea en un minuto. Cuando quieras algo más fino, cada hoja te deja afinar esos mismos números con tus datos reales.</p>
+    <p>Todo lo demás empieza sabiendo quiénes sois y cuánto ganáis — eso es el <strong>Perfil financiero</strong>: tu situación laboral, tus ingresos netos, y algún detalle que un banco siempre pregunta, como si tenéis historial crediticio limpio o si alguien os puede avalar.</p>
+    <p>Con eso claro, toca ver con qué contáis. Primero, lo que tenéis ahorrado — la hoja de <strong>Ahorros</strong>, con el "colchón" que no queréis tocar aparte del resto. Y justo al lado, lo que ya debéis hoy — un coche, una tarjeta — porque eso también le importa al banco, y a veces vale la pena simular qué pasaría si cancelarais una deuda con parte de ese ahorro: por eso <strong>Deudas actuales</strong> te deja crear más de un escenario, incluida la posibilidad de una "deuda cero".</p>
+    <p>Después decidís qué buscáis: en <strong>Vivienda objetivo</strong> apuntas dónde, qué tipo de casa, y en qué rango de precio os movéis.</p>
+    <p>Con esos tres bloques ya montados, empieza la parte de números grandes. En <strong>Hipoteca</strong> creas escenarios — más de uno, para comparar entre sí — con el precio, el porcentaje que financiáis, el interés, y los años. Ahí también entran los productos que el banco os puede pedir a cambio de un interés más bajo (seguros, nómina domiciliada...), porque a veces esa rebaja no compensa lo que cuestan esos productos, y esta hoja hace la cuenta real por ti. La siguiente parada son los <strong>Gastos de compra</strong>: impuestos, notaría, registro, gestoría — todo lo que hay que pagar aparte del precio de la vivienda, y que varía según dónde compréis.</p>
+    <p>Si con el ahorro no llega para cubrir la entrada y esos gastos, existe una hoja de <strong>Préstamo personal</strong> para calcular cuánto tendríais que pedir de más, y qué cuota tendría.</p>
+    <p>Todo esto se junta solo en el <strong>Resumen</strong>: cuánto os queda de ahorro, cuánto os queda libre al mes, cuánto pagaríais de intereses en total, y si vuestro nivel de endeudamiento es cómodo, ajustado o elevado. Ahí también puedes copiar dos textos ya redactados — uno con tu perfil, listo para un asesor nuevo, y otro con el plan que tengáis elegido en ese momento — y descargar una copia de seguridad de todo, por si cambias de dispositivo.</p>
+    <p>Cuando llega el momento de hablar con bancos o intermediarios de verdad, <strong>Asesores/Brokers</strong> te deja llevar varios en paralelo — sin comprometerte con ninguno antes de tiempo — con un checklist de qué documentación le falta a cada uno y un espacio para guardar esos documentos.</p>
+    <p>Para que el "disponible libre al mes" del Resumen sea real y no optimista, <strong>Otros gastos fijos</strong> recoge lo que ya gastáis viviendo hoy — suministros, seguros, lo de siempre — aparte de cualquier deuda o cuota.</p>
+    <p>Y por último, <strong>Notas</strong> es simplemente el sitio libre para apuntar lo que no encaja en ningún otro casillero — una duda para el banco, algo que recordar, lo que sea.</p>
+  </div>
+  <div id="staticPoliticaCookies">
+    <h2 style="font-family:var(--font-display);margin-top:0;">Política de Cookies</h2>
+    <p style="color:var(--ink-faint);font-size:12px;">Última actualización: <span id="fechaPoliticaCookies"></span></p>
+    <p>Una cookie (o una tecnología de almacenamiento equivalente, como el "almacenamiento local" del navegador) es un pequeño archivo que un sitio web guarda en tu dispositivo. Aquí te contamos exactamente qué usamos, para qué, y durante cuánto tiempo — sin párrafos genéricos de relleno.</p>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;margin:16px 0;">
+      <thead><tr style="text-align:left;border-bottom:2px solid var(--border-strong);"><th style="padding:6px 8px;">Nombre</th><th style="padding:6px 8px;">Para qué</th><th style="padding:6px 8px;">Quién</th><th style="padding:6px 8px;">Duración</th><th style="padding:6px 8px;">¿Requiere tu permiso?</th></tr></thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 8px;">dosier-vivienda-state</td><td style="padding:6px 8px;">Guardar los datos que rellenas en la herramienta, para que no los pierdas al cerrar la pestaña</td><td style="padding:6px 8px;">Propia</td><td style="padding:6px 8px;">Hasta que tú lo borres</td><td style="padding:6px 8px;">No — imprescindible para que la herramienta funcione</td></tr>
+        <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 8px;">cookie-consent</td><td style="padding:6px 8px;">Recordar tu elección sobre esta misma política, para no volver a preguntarte cada vez</td><td style="padding:6px 8px;">Propia</td><td style="padding:6px 8px;">Hasta que cambies de opinión o borres los datos del navegador</td><td style="padding:6px 8px;">No — imprescindible</td></tr>
+        <tr><td style="padding:6px 8px;">GoatCounter</td><td style="padding:6px 8px;">Contar visitas, de dónde vienen y qué se usa más</td><td style="padding:6px 8px;">GoatCounter (alojado en la UE)</td><td style="padding:6px 8px;">No coloca cookies persistentes — usa un código temporal que se descarta a las pocas horas</td><td style="padding:6px 8px;">Sí</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Nada de lo que rellenas dentro de la herramienta</strong> (tus ingresos, ahorros, escenarios de hipoteca, etc.) es una cookie ni se envía a ningún sitio — se queda guardado únicamente en tu propio navegador.</p>
+    <p>Puedes aceptar, rechazar o cambiar tu elección cuando quieras desde el botón "🍪 Cookies", siempre visible abajo a la izquierda.</p>
+    <p>Más información sobre cómo tratamos los datos en general en la <a href="#" onclick="event.preventDefault();abrirPoliticaPrivacidad();">Política de Privacidad</a>.</p>
+  </div>
+  <div id="staticPoliticaPrivacidad">
+    <h2 style="font-family:var(--font-display);margin-top:0;">Política de Privacidad</h2>
+    <p style="color:var(--ink-faint);font-size:12px;">Última actualización: <span id="fechaPoliticaPrivacidad"></span></p>
+    <p><strong>1. Responsable del tratamiento</strong><br>[Tu nombre] · Contacto: [tu email]</p>
+    <p><strong>2. Qué datos recogemos, y por qué</strong><br>
+    Todo lo que rellenas dentro de la herramienta (perfil financiero, ahorros, deudas, escenarios de hipoteca, préstamo personal, notas, documentos que adjuntes...) se guarda <strong>únicamente en tu propio navegador</strong>. Nunca sale de tu dispositivo, nunca llega a ningún servidor nuestro, no lo vemos ni lo almacenamos en ningún sitio. Si borras el archivo o los datos del navegador, desaparece — no tenemos copia.<br><br>
+    Si aceptas las cookies de estadísticas, GoatCounter recoge datos de navegación completamente anónimos: qué páginas visitas, desde dónde llegas y qué navegador usas. No identifican a nadie ni permiten distinguir tus visitas de las de otra persona.</p>
+    <p><strong>3. Base legal</strong><br>Tu consentimiento explícito, dado a través del banner de cookies, revocable en cualquier momento desde el botón "🍪 Cookies".</p>
+    <p><strong>4. Cuánto tiempo se conserva</strong><br>Los datos que rellenas en la herramienta: mientras tú no los borres. Las estadísticas anónimas de GoatCounter: mientras mantengas activada esa opción.</p>
+    <p><strong>5. Con quién se comparte</strong><br>
+    — <strong>GoatCounter</strong> (alojado en la Unión Europea), como encargado del tratamiento de las estadísticas anónimas.<br>
+    — <strong>GitHub Pages</strong>, que aloja los archivos de la web. Al ser una web puramente estática (sin servidor propio), no procesa ningún dato personal de quien la visita más allá de la entrega técnica de los archivos.<br>
+    No compartimos nada con nadie más. No hay formularios, no pedimos tu email, no hay newsletter.</p>
+    <p><strong>6. Transferencias internacionales</strong><br>Ninguna — todo permanece dentro de la Unión Europea.</p>
+    <p><strong>7. Tus derechos</strong><br>Puedes pedir acceder a tu dato, corregirlo, borrarlo, oponerte a su uso o pedir que lo limitemos, escribiendo a [tu email]. También puedes reclamar ante la Agencia Española de Protección de Datos (aepd.es) si consideras que no se ha tratado correctamente.</p>
+    <p><strong>8. Cambios en esta política</strong><br>Si algo cambia (por ejemplo, si en el futuro añadimos algún servicio nuevo), lo actualizaremos aquí con la fecha de la modificación.</p>
+  </div>
+</div>
+<input type="file" id="importFile" accept="application/json" style="display:none">
+
+<script>
+/* ---------- Adaptador de almacenamiento: window.storage (Claude.ai) con reserva en localStorage (archivo independiente) ---------- */
+const LS_PREFIX = 'dosier_vivienda__';
+function lsGet(key){
+  try{
+    const v = localStorage.getItem(LS_PREFIX+key);
+    return v===null ? null : {key, value:v};
+  }catch(e){ return null; }
+}
+function lsSet(key, value){
+  try{ localStorage.setItem(LS_PREFIX+key, value); return {key, value}; }
+  catch(e){ console.error('localStorage falló al guardar', e); return null; }
+}
+function lsDelete(key){
+  try{ localStorage.removeItem(LS_PREFIX+key); }catch(e){}
+}
+const storageAdapter = {
+  async get(key, shared){
+    if(typeof window.storage!=='undefined' && window.storage){
+      try{ const r = await window.storage.get(key, shared); if(r) return r; }catch(e){}
+    }
+    return lsGet(key);
+  },
+  async set(key, value, shared){
+    if(typeof window.storage!=='undefined' && window.storage){
+      try{ const r = await window.storage.set(key, value, shared); if(r) return r; }catch(e){}
+    }
+    return lsSet(key, value);
+  },
+  async delete(key, shared){
+    if(typeof window.storage!=='undefined' && window.storage){
+      try{ await window.storage.delete(key, shared); }catch(e){}
+    }
+    lsDelete(key);
+  }
+};
+
+/* ---------- Catálogo de provincias y tipos de ITP/AJD de referencia ---------- */
+const TIPOS_INMUEBLE = [
+  { grupo:'Pisos, áticos y dúplex', items: [
+    {nombre:'Piso', descripcion:'Vivienda dentro de un edificio con vecinos alrededor'},
+    {nombre:'Ático', descripcion:'El piso de arriba del todo, con terraza'},
+    {nombre:'Dúplex', descripcion:'Vivienda en dos plantas conectadas por escalera interior'}
+  ]},
+  { grupo:'Casas y chalets', items: [
+    {nombre:'Chalet independiente', descripcion:'Casa sola, no toca con ninguna otra'},
+    {nombre:'Chalet pareado', descripcion:'Comparte 1 pared con la casa vecina'},
+    {nombre:'Adosado', descripcion:'Comparte 2 paredes (una a cada lado)'},
+    {nombre:'Casa rústica', descripcion:'Vivienda de campo, normalmente de piedra/tradicional'}
+  ]},
+  { grupo:'Otras denominaciones (etiquetas comerciales)', items: [
+    {nombre:'Apartamento', descripcion:'En la práctica, piso pequeño'},
+    {nombre:'Villa', descripcion:'En la práctica, chalet independiente de gama alta'},
+    {nombre:'Loft', descripcion:'Espacio diáfano, normalmente antiguo local reconvertido'},
+    {nombre:'Casa baja', descripcion:'Vivienda de una sola planta, sin vecinos arriba ni abajo'}
+  ]}
+];
+
+const PROVINCIAS = [
+  {nombre:'Almería', comunidad:'Andalucía'}, {nombre:'Cádiz', comunidad:'Andalucía'}, {nombre:'Córdoba', comunidad:'Andalucía'},
+  {nombre:'Granada', comunidad:'Andalucía'}, {nombre:'Huelva', comunidad:'Andalucía'}, {nombre:'Jaén', comunidad:'Andalucía'},
+  {nombre:'Málaga', comunidad:'Andalucía'}, {nombre:'Sevilla', comunidad:'Andalucía'},
+  {nombre:'Huesca', comunidad:'Aragón'}, {nombre:'Teruel', comunidad:'Aragón'}, {nombre:'Zaragoza', comunidad:'Aragón'},
+  {nombre:'Asturias', comunidad:'Asturias'},
+  {nombre:'Illes Balears', comunidad:'Islas Baleares'},
+  {nombre:'Las Palmas', comunidad:'Canarias'}, {nombre:'Santa Cruz de Tenerife', comunidad:'Canarias'},
+  {nombre:'Cantabria', comunidad:'Cantabria'},
+  {nombre:'Albacete', comunidad:'Castilla-La Mancha'}, {nombre:'Ciudad Real', comunidad:'Castilla-La Mancha'}, {nombre:'Cuenca', comunidad:'Castilla-La Mancha'},
+  {nombre:'Guadalajara', comunidad:'Castilla-La Mancha'}, {nombre:'Toledo', comunidad:'Castilla-La Mancha'},
+  {nombre:'Ávila', comunidad:'Castilla y León'}, {nombre:'Burgos', comunidad:'Castilla y León'}, {nombre:'León', comunidad:'Castilla y León'},
+  {nombre:'Palencia', comunidad:'Castilla y León'}, {nombre:'Salamanca', comunidad:'Castilla y León'}, {nombre:'Segovia', comunidad:'Castilla y León'},
+  {nombre:'Soria', comunidad:'Castilla y León'}, {nombre:'Valladolid', comunidad:'Castilla y León'}, {nombre:'Zamora', comunidad:'Castilla y León'},
+  {nombre:'Barcelona', comunidad:'Cataluña'}, {nombre:'Girona', comunidad:'Cataluña'}, {nombre:'Lleida', comunidad:'Cataluña'}, {nombre:'Tarragona', comunidad:'Cataluña'},
+  {nombre:'Alicante', comunidad:'Comunidad Valenciana'}, {nombre:'Castellón', comunidad:'Comunidad Valenciana'}, {nombre:'Valencia', comunidad:'Comunidad Valenciana'},
+  {nombre:'Badajoz', comunidad:'Extremadura'}, {nombre:'Cáceres', comunidad:'Extremadura'},
+  {nombre:'A Coruña', comunidad:'Galicia'}, {nombre:'Lugo', comunidad:'Galicia'}, {nombre:'Ourense', comunidad:'Galicia'}, {nombre:'Pontevedra', comunidad:'Galicia'},
+  {nombre:'Madrid', comunidad:'Comunidad de Madrid'},
+  {nombre:'Murcia', comunidad:'Región de Murcia'},
+  {nombre:'Navarra', comunidad:'Comunidad Foral de Navarra'},
+  {nombre:'Álava', comunidad:'País Vasco'}, {nombre:'Gipuzkoa', comunidad:'País Vasco'}, {nombre:'Bizkaia', comunidad:'País Vasco'},
+  {nombre:'La Rioja', comunidad:'La Rioja'},
+  {nombre:'Ceuta', comunidad:'Ceuta'}, {nombre:'Melilla', comunidad:'Melilla'}
+];
+// Solo se incluyen aquí tipos generales VERIFICADOS por búsqueda (ago. 2026). El resto de comunidades se deja en blanco a propósito
+// para no sugerir una cifra sin comprobar — cada una fija y revisa su propio tipo, y suele haber reducciones (edad, familia numerosa,
+// vivienda habitual...) que esta tabla no puede validar.
+const TASAS_ITP_VERIFICADAS = {
+  'Comunidad de Madrid': {itp:6, ajd:0.75},
+  'Castilla-La Mancha': {itp:9, ajd:1.5}
+};
+function comunidadDeProvincia(nombreProvincia){ const p = PROVINCIAS.find(x=>x.nombre===nombreProvincia); return p ? p.comunidad : null; }
+function opcionesProvincias(selected){
+  const porComunidad = {};
+  PROVINCIAS.forEach(p=>{ (porComunidad[p.comunidad] = porComunidad[p.comunidad]||[]).push(p.nombre); });
+  return '<option value="">— Selecciona provincia —</option>' + Object.keys(porComunidad).sort().map(com=>
+    `<optgroup label="${com}">${porComunidad[com].map(n=>`<option value="${n}" ${n===selected?'selected':''}>${n}</option>`).join('')}</optgroup>`
+  ).join('');
+}
+
+/* ---------- Combo desplegable con nombre + descripción (nombre solo, cerrado; nombre y descripción, abierto) ---------- */
+let openComboId = null;
+function toggleCombo(comboId){ openComboId = (openComboId===comboId) ? null : comboId; render(); }
+function selectCombo(path, value){
+  setPath(state, path, value);
+  saveState();
+  openComboId = null;
+  render();
+}
+function renderCombo(comboId, path, currentValue, groups, placeholder){
+  const isOpen = openComboId === comboId;
+  return `
+    <div class="combo">
+      <button type="button" class="combo-trigger" onclick="event.stopPropagation(); toggleCombo('${comboId}')">
+        <span class="${currentValue?'':'placeholder'}">${currentValue || placeholder || '— Selecciona —'}</span>
+        <span class="combo-arrow">▾</span>
+      </button>
+      ${isOpen ? `
+      <div class="combo-list" onclick="event.stopPropagation();">
+        ${groups.map(g=>`
+          <div class="combo-group-label">${g.grupo}</div>
+          ${g.items.map(it=>`
+            <div class="combo-option ${it.nombre===currentValue?'selected':''}" onclick="selectCombo('${path}','${it.nombre}')">
+              <span class="opt-name">${it.nombre}</span>
+              <span class="opt-desc">${it.descripcion}</span>
+            </div>
+          `).join('')}
+        `).join('')}
+      </div>` : ''}
+    </div>
+  `;
+}
+function toggleExpand(arrPath, idx){
+  const arr = getPath(state, arrPath);
+  if(!arr || !arr[idx]) return;
+  arr[idx].expanded = (arr[idx].expanded===false) ? true : false;
+  saveState(); render();
+}
+function setExpandAll(arrPath, value){
+  const arr = getPath(state, arrPath);
+  if(!arr) return;
+  arr.forEach(x=>{ x.expanded = value; });
+  saveState(); render();
+}
+function expandCollapseButtons(arrPath){
+  return `<div style="margin-bottom:12px;display:flex;gap:8px;">
+    <button class="btn secondary small" onclick="setExpandAll('${arrPath}', false)">Ver todas resumidas</button>
+    <button class="btn secondary small" onclick="setExpandAll('${arrPath}', true)">Ver todas completas</button>
+  </div>`;
+}
+
+document.addEventListener('click', (e)=>{
+  if(openComboId && !e.target.closest('.combo')){ openComboId = null; render(); }
+});
+document.addEventListener('keydown', (e)=>{
+  if(!e.altKey || (e.key!=='ArrowDown' && e.key!=='ArrowUp')) return;
+  e.preventDefault();
+  const idx = TABS.findIndex(t=>t.id===activeTab);
+  if(idx<0) return;
+  const next = e.key==='ArrowDown' ? Math.min(idx+1, TABS.length-1) : Math.max(idx-1, 0);
+  if(next!==idx) setTab(TABS[next].id);
+});
+
+/* ---------- Modelo de datos ---------- */
+const uid = () => 'id' + Math.random().toString(36).slice(2,9);
+
+const CHECKLIST_T1 = ['DNI','Vida laboral (actualizada)','Contrato de trabajo','Últimas 3 nóminas','Renta año anterior / certificado de retenciones'];
+const CHECKLIST_T2 = ['DNI','Vida laboral (actualizada)','Contrato de trabajo','Últimas 3 nóminas','Renta año anterior / certificado de retenciones'];
+const CHECKLIST_OTROS = ['Contrato de alquiler + últimos 3 recibos','Plan de amortización de préstamos vigentes','Nota simple de la vivienda','Nota de encargo firmada'];
+
+function makeChecklist(labels){ return labels.map(l => ({id:uid(), label:l, done:false})); }
+
+function defaultState(){
+  return {
+    titulares: { t1: 'Titular 1', t2: 'Titular 2' },
+    perfil: {
+      p1:{tipoContrato:'',antiguedad:'',pruebaSuperada:false,brutoAnual:'',pagas:'12',netoMensual:'',notas:'',avalPuede:false,historialLimpio:null},
+      p2:{tipoContrato:'',antiguedad:'',pruebaSuperada:false,brutoAnual:'',pagas:'12',netoMensual:'',notas:'',avalPuede:false,historialLimpio:null}
+    },
+    ahorros: { t1:{efectivo:'',inversiones:'',expanded:true}, t2:{efectivo:'',inversiones:'',expanded:true}, total:{efectivo:'',inversiones:'',expanded:true}, colchon:'', notas:'' },
+    deudas: { escenarios: [{id:uid(), nombre:'Escenario 01', expanded:true, ahorroUsado:'', deudas:[]}], seleccionado: null },
+    viviendas: [{id:uid(), nombre:'', activa:true, ubicaciones:'Madrid', tipoInmueble:'', precioMin:'', precioMax:'', tipo:'segunda-mano', reparto:'50/50', notas:''}],
+    hipoteca: { escenarios: [], seleccionado: null },
+    personal: { escenarios: [], seleccionado: null, provinciaSeleccionada: null },
+    gastos: { seleccionado: null, provincias: [
+        {id:uid(), nombre:'Madrid', provincia:'Madrid', hipotecaEscenarioId:'', itpPct:'6', notaria:'', registro:'', gestoria:'', tasacion:''}
+      ]},
+    brokers: [],
+    documentos: [],
+    gastosFijos: { mensuales: [
+        {id:uid(), nombre:'Alquiler', importe:''},
+        {id:uid(), nombre:'Internet / fibra', importe:''},
+        {id:uid(), nombre:'Móvil (línea telefónica)', importe:''},
+        {id:uid(), nombre:'Electricidad', importe:''},
+        {id:uid(), nombre:'Gas', importe:''},
+        {id:uid(), nombre:'Agua', importe:''},
+        {id:uid(), nombre:'Seguro de salud', importe:''},
+        {id:uid(), nombre:'Gimnasio', importe:''},
+        {id:uid(), nombre:'Alimentación (supermercado)', importe:''},
+        {id:uid(), nombre:'Combustible', importe:''},
+        {id:uid(), nombre:'Guardería / colegio', importe:''}
+      ], anuales: [
+        {id:uid(), nombre:'Seguro del coche/moto', importe:''},
+        {id:uid(), nombre:'Seguro de inquilino', importe:''},
+        {id:uid(), nombre:'Suscripciones (Amazon Prime, streaming…)', importe:''},
+        {id:uid(), nombre:'Seguro de vida', importe:''}
+      ] },
+    notas: [],
+    express: { ingresos:'', ahorroDisponible:'', deudasCuota:'', gastosFijos:'', precio:'', pctFinanciacion:'100', plazoAnios:'30', personalPlazoMeses:'60', extra:'' }
+  };
+}
+
+let state = defaultState();
+let activeTab = 'express';
+let saveTimer = null;
+
+/* ---------- Persistencia ---------- */
+function backfillDefaults(obj, template){
+  if(!obj) return;
+  Object.keys(template).forEach(k=>{ if(obj[k]===undefined) obj[k] = template[k]; });
+}
+function normalizeState(){
+  (state.viviendas||[]).forEach(v=>backfillDefaults(v, {nombre:'',activa:false,ubicaciones:'',tipoInmueble:'',precioMin:'',precioMax:'',tipo:'segunda-mano',reparto:'',notas:'',expanded:true}));
+  (state.hipoteca.escenarios||[]).forEach(e=>{
+    backfillDefaults(e, {nombre:'',importe:'',pctFinanciacion:'100',tin:'',plazoAnios:'30',tipoInteres:'fijo',vinculaciones:[],notas:'',expanded:true});
+    if(typeof e.vinculaciones === 'string'){
+      e.vinculaciones = e.vinculaciones.trim() ? [{id:uid(), nombre:e.vinculaciones, importe:'', periodicidad:'anual'}] : [];
+    }
+    if(!Array.isArray(e.vinculaciones)) e.vinculaciones = [];
+  });
+  (state.gastos.provincias||[]).forEach(p=>backfillDefaults(p, {nombre:'',provincia:'',hipotecaEscenarioId:'',itpPct:'',notaria:'',registro:'',gestoria:'',tasacion:'',expanded:true}));
+  (state.personal.escenarios||[]).forEach(e=>{
+    backfillDefaults(e, {nombre:'',importe:'',tin:'',comisionApertura:'',plazoMeses:'60',proposito:'',notas:'',expanded:true});
+    if(!Array.isArray(e.gastosPostCompra)) e.gastosPostCompra = [];
+  });
+  (state.deudas.escenarios||[]).forEach(e=>{
+    backfillDefaults(e, {nombre:'',expanded:true,ahorroUsado:''});
+    if(!Array.isArray(e.deudas)) e.deudas = [];
+    e.deudas.forEach(d=>backfillDefaults(d, {nombre:'',saldoPendiente:'',cuotaMensual:'',mesesRestantes:'',comisionCancelacion:''}));
+  });
+  (state.brokers||[]).forEach(b=>{
+    backfillDefaults(b, {nombre:'Nuevo asesor',contactoNombre:'',contactoEmail:'',contactoTelefono:'',estado:'Por contactar',motivoDescarte:'',pctFinanciacion:'',bancos:'',honorarios:'',honorariosCuando:'',ultimoContacto:'',expanded:true});
+    if(!b.notaEncargo) b.notaEncargo = {firmada:false, condiciones:''};
+    if(!Array.isArray(b.adjuntos)) b.adjuntos = [];
+    if(!Array.isArray(b.log)) b.log = [];
+    if(!b.checklist) b.checklist = {};
+  });
+  (state.documentos||[]).forEach(d=>backfillDefaults(d, {nombre:'',categoria:'',fecha:'',fileName:'',fileType:'',fileSize:0}));
+  (state.gastosFijos.mensuales||[]).forEach(g=>backfillDefaults(g,{nombre:'',importe:''}));
+  (state.gastosFijos.anuales||[]).forEach(g=>backfillDefaults(g,{nombre:'',importe:''}));
+  backfillDefaults(state.express, {ingresos:'',ahorroDisponible:'',deudasCuota:'',gastosFijos:'',precio:'',pctFinanciacion:'100',plazoAnios:'30',personalPlazoMeses:'60',extra:''});
+  backfillDefaults(state.ahorros.t1, {efectivo:'',inversiones:'',expanded:true});
+  backfillDefaults(state.ahorros.t2, {efectivo:'',inversiones:'',expanded:true});
+  backfillDefaults(state.ahorros.total, {efectivo:'',inversiones:'',expanded:true});
+  backfillDefaults(state.perfil.p1, {tipoContrato:'',antiguedad:'',pruebaSuperada:false,brutoAnual:'',pagas:'12',netoMensual:'',notas:'',historialLimpio:null});
+  backfillDefaults(state.perfil.p2, {tipoContrato:'',antiguedad:'',pruebaSuperada:false,brutoAnual:'',pagas:'12',netoMensual:'',notas:'',historialLimpio:null});
+  if(state.perfil.p1.aval){ state.perfil.p1.avalPuede = !!state.perfil.p1.aval.puede; delete state.perfil.p1.aval; }
+  if(state.perfil.p2.aval){ state.perfil.p2.avalPuede = !!state.perfil.p2.aval.puede; delete state.perfil.p2.aval; }
+  if(state.perfil.p1.avalPuede===undefined) state.perfil.p1.avalPuede = false;
+  if(state.perfil.p2.avalPuede===undefined) state.perfil.p2.avalPuede = false;
+}
+async function loadState(){
+  try{
+    const r = await storageAdapter.get('dosier-vivienda-state', false);
+    if(r && r.value){
+      const parsed = JSON.parse(r.value);
+      state = Object.assign(defaultState(), parsed);
+      if(parsed.ahorros && (typeof parsed.ahorros.efectivo !== 'undefined') && !parsed.ahorros.total){
+        state.ahorros = {
+          t1:{efectivo:'',inversiones:'',expanded:true}, t2:{efectivo:'',inversiones:'',expanded:true},
+          total:{efectivo:parsed.ahorros.efectivo||'', inversiones:parsed.ahorros.inversiones||'', expanded:true},
+          colchon: parsed.ahorros.colchon||'', notas: parsed.ahorros.notas||''
+        };
+      }
+      if(parsed.vivienda && !Array.isArray(parsed.viviendas)){
+        state.viviendas = [Object.assign({id:uid(), nombre:'', activa:true}, parsed.vivienda)];
+      }
+      if(Array.isArray(state.deudas)){
+        state.deudas = { escenarios: [{id:uid(), nombre:'Escenario 01', expanded:true, ahorroUsado:'', deudas: state.deudas}], seleccionado: null };
+      }
+      if(Array.isArray(state.brokers)){ state.brokers.forEach(b=>{ if(!Array.isArray(b.adjuntos)) b.adjuntos = []; }); }
+      if(Array.isArray(state.gastosFijos)){
+        const old = state.gastosFijos;
+        state.gastosFijos = {
+          mensuales: old.filter(g=>g.periodicidad!=='anual').map(g=>({id:g.id,nombre:g.nombre,importe:g.importe})),
+          anuales: old.filter(g=>g.periodicidad==='anual').map(g=>({id:g.id,nombre:g.nombre,importe:g.importe}))
+        };
+      }
+      normalizeState();
+    }
+  }catch(e){ /* no hay datos guardados todavía */ }
+  render();
+}
+function saveState(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async ()=>{
+    try{ await storageAdapter.set('dosier-vivienda-state', JSON.stringify(state), false); }
+    catch(e){ console.error('Error guardando', e); }
+  }, 350);
+}
+
+/* ---------- Utilidades ---------- */
+function getPath(obj, path){ return path.split('.').reduce((o,k)=> (o==null?o:o[k]), obj); }
+function setPath(obj, path, value){
+  const keys = path.split('.'); let o = obj;
+  for(let i=0;i<keys.length-1;i++) o = o[keys[i]];
+  o[keys[keys.length-1]] = value;
+}
+function mesesAAnios(meses){
+  const n = num(meses);
+  if(!n) return '';
+  return (n/12).toFixed(1).replace('.', ',') + ' años';
+}
+function fmtMoney(n){
+  n = toNumber(n); if(isNaN(n)) return '—';
+  return n.toLocaleString('es-ES',{maximumFractionDigits:0}) + ' €';
+}
+function fmtPct(n,d=1){ n=toNumber(n); if(isNaN(n)) return '—'; return n.toFixed(d)+' %'; }
+function toNumber(v){
+  if(v===null || v===undefined || v==='') return NaN;
+  if(typeof v!=='string') return parseFloat(v);
+  let s = v.trim();
+  if(s==='') return NaN;
+  if(s.includes(',')){
+    // coma = decimal; cualquier punto es separador de miles
+    s = s.split('.').join('').replace(',', '.');
+  } else if(s.includes('.')){
+    const parts = s.split('.');
+    const pareceMiles = parts.length>1 && parts.slice(1).every(p=>p.length===3);
+    if(pareceMiles) s = parts.join('');
+    // si no, se deja el único punto como separador decimal (p.ej. "2.7")
+  }
+  return parseFloat(s);
+}
+function num(v){ const n = toNumber(v); return isNaN(n) ? 0 : n; }
+
+function toggleAhorroBlock(key){
+  const obj = state.ahorros[key];
+  if(!obj) return;
+  obj.expanded = (obj.expanded===false) ? true : false;
+  saveState(); render();
+}
+function ahorroTotalCalc(){
+  const a = state.ahorros;
+  const sumaTitulares = num(a.t1.efectivo)+num(a.t1.inversiones)+num(a.t2.efectivo)+num(a.t2.inversiones);
+  if(sumaTitulares>0) return sumaTitulares;
+  return num(a.total.efectivo)+num(a.total.inversiones);
+}
+function cuotaFrancesa(principal, tinAnualPct, meses){
+  principal = num(principal); meses = Math.round(num(meses));
+  const r = num(tinAnualPct)/100/12;
+  if(principal<=0 || meses<=0) return 0;
+  if(r===0) return principal/meses;
+  return principal * r * Math.pow(1+r,meses) / (Math.pow(1+r,meses)-1);
+}
+
+/* ---------- Navegación ---------- */
+const TAB_ICON_PATHS = {
+  express: '<path d="M9 1L3 9h4l-1 6 6-8H8l1-6z"/>',
+  resumen: '<rect x="2" y="9" width="3" height="6"/><rect x="6.5" y="5" width="3" height="10"/><rect x="11" y="2" width="3" height="13"/>',
+  perfil: '<circle cx="8" cy="5" r="3" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M2 15c0-3.3 2.7-6 6-6s6 2.7 6 6" fill="none" stroke="currentColor" stroke-width="1.3"/>',
+  ahorros: '<ellipse cx="8" cy="11.5" rx="6" ry="2.1" fill="none" stroke="currentColor" stroke-width="1.3"/><ellipse cx="8" cy="7.5" rx="6" ry="2.1" fill="none" stroke="currentColor" stroke-width="1.3"/><ellipse cx="8" cy="3.5" rx="6" ry="2.1" fill="none" stroke="currentColor" stroke-width="1.3"/>',
+  deudas: '<rect x="1.5" y="4" width="13" height="9" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.3"/><line x1="1.5" y1="7.3" x2="14.5" y2="7.3" stroke="currentColor" stroke-width="1.3"/>',
+  vivienda: '<path d="M2 8.5L8 3l6 5.5" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M4 7v7h8V7" fill="none" stroke="currentColor" stroke-width="1.3"/>',
+  hipoteca: '<circle cx="5" cy="8" r="3" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M8 8h6.5M11.5 8v2.5M13.7 8v1.7" fill="none" stroke="currentColor" stroke-width="1.3"/>',
+  gastos: '<path d="M4 1h8v14l-2-1-2 1-2-1-2 1V1z" fill="none" stroke="currentColor" stroke-width="1.2"/><line x1="6" y1="5.2" x2="10" y2="5.2" stroke="currentColor" stroke-width="1.2"/><line x1="6" y1="8" x2="10" y2="8" stroke="currentColor" stroke-width="1.2"/>',
+  personal: '<rect x="1.5" y="4.5" width="13" height="7" rx="1" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="1.8" fill="none" stroke="currentColor" stroke-width="1.3"/>',
+  brokers: '<rect x="2" y="5.5" width="12" height="8" rx="1" fill="none" stroke="currentColor" stroke-width="1.3"/><path d="M6 5.5V4a2 2 0 012-2 2 2 0 012 2v1.5" fill="none" stroke="currentColor" stroke-width="1.3"/>',
+  gastosfijos: '<rect x="2" y="3" width="12" height="11" rx="1" fill="none" stroke="currentColor" stroke-width="1.3"/><line x1="2" y1="6.5" x2="14" y2="6.5" stroke="currentColor" stroke-width="1.3"/><line x1="5" y1="1.5" x2="5" y2="4.5" stroke="currentColor" stroke-width="1.3"/><line x1="11" y1="1.5" x2="11" y2="4.5" stroke="currentColor" stroke-width="1.3"/>',
+  notas: '<path d="M11 2l3 3-8.5 8.5H2v-3z" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>'
+};
+function tabIcon(id){
+  const p = TAB_ICON_PATHS[id];
+  if(!p) return '';
+  return `<svg width="17" height="17" viewBox="0 0 16 16" style="vertical-align:-3px;margin-right:2px;color:var(--brass-text);flex-shrink:0;" fill="currentColor">${p}</svg>`;
+}
+
+const SITE_NAME = 'Hipoclaro';
+const SITE_TAGLINE = 'Tu hipoteca. Tus números. Decide en minutos.';
+const SITE_URL = 'https://hipoclaro.github.io';
+
+const TABS = [
+  {id:'express', num:'★', label:'Simulación express'},
+  {id:'resumen', num:'00', label:'Resumen'},
+  {id:'perfil', num:'01', label:'Perfil financiero'},
+  {id:'ahorros', num:'02', label:'Ahorros'},
+  {id:'deudas', num:'03', label:'Deudas actuales'},
+  {id:'vivienda', num:'04', label:'Vivienda objetivo'},
+  {id:'hipoteca', num:'05', label:'Hipoteca'},
+  {id:'gastos', num:'06', label:'Gastos de compra'},
+  {id:'personal', num:'07', label:'Préstamo personal'},
+  {id:'brokers', num:'08', label:'Asesores / Brokers'},
+  {id:'gastosfijos', num:'09', label:'Otros gastos fijos'},
+  {id:'notas', num:'10', label:'Notas'}
+];
+
+function setTab(id){ activeTab = id; render(); }
+
+function tabHasData(id){
+  switch(id){
+    case 'perfil': {
+      const p1=state.perfil.p1, p2=state.perfil.p2;
+      return !!(p1.tipoContrato||p1.brutoAnual||p1.netoMensual||p2.tipoContrato||p2.brutoAnual||p2.netoMensual);
+    }
+    case 'ahorros': { const a=state.ahorros; return !!(a.t1.efectivo||a.t1.inversiones||a.t2.efectivo||a.t2.inversiones||a.total.efectivo||a.total.inversiones||a.colchon); }
+    case 'deudas': return state.deudas.escenarios.some(e=>(e.deudas||[]).some(d=>d.nombre||d.cuotaMensual||d.saldoPendiente));
+    case 'vivienda': return state.viviendas.some(v=>(v.ubicaciones&&v.ubicaciones!=='Madrid')||v.precioMin||v.precioMax||v.nombre||v.tipoInmueble);
+    case 'hipoteca': return state.hipoteca.escenarios.some(e=>e.importe||e.tin);
+    case 'gastos': return state.gastos.provincias.some(p=>(p.provincia&&p.provincia!=='Madrid')||(p.itpPct&&p.itpPct!=='6')||p.notaria||p.registro||p.gestoria||p.tasacion);
+    case 'personal': return state.personal.escenarios.some(e=>e.importe||e.tin);
+    case 'brokers': return state.brokers.some(b=>(b.nombre&&b.nombre!=='Nuevo asesor')||b.contactoNombre||b.contactoEmail);
+    case 'gastosfijos': return state.gastosFijos.mensuales.some(g=>g.importe) || state.gastosFijos.anuales.some(g=>g.importe);
+    case 'notas': return state.notas.length>0;
+    default: return false;
+  }
+}
+
+/* ---------- Render raíz ---------- */
+function getSelSafe(el){
+  try{ return {start:el.selectionStart, end:el.selectionEnd}; }catch(e){ return null; }
+}
+function render(){
+  const active = document.activeElement;
+  let focusInfo = null;
+  if(active && active.dataset && (active.dataset.path || active.id)){
+    focusInfo = { path: active.dataset.path || null, id: active.id || null, sel: getSelSafe(active) };
+  }
+  const app = document.getElementById('app');
+  app.innerHTML = `
+    <nav id="sidebar">
+      <div class="brand">
+        <div class="brand-eyebrow">Dosier privado</div>
+        <div class="brand-title">${SITE_NAME}</div>
+        <div style="font-size:11.5px;color:#9BA398;margin-top:4px;">${SITE_TAGLINE}</div>
+        <a href="https://wa.me/?text=${encodeURIComponent(SITE_NAME+' — '+SITE_TAGLINE+(SITE_URL?' '+SITE_URL:''))}" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:11px;color:#9BA398;text-decoration:underline;">
+          <svg width="14" height="14" viewBox="0 0 32 32" style="flex-shrink:0;"><path fill="#25D366" d="M16.001 3C9.373 3 4 8.373 4 15c0 2.386.703 4.605 1.913 6.472L4 29l7.729-1.876A11.94 11.94 0 0016.001 27C22.628 27 28 21.627 28 15S22.628 3 16.001 3z"/><path fill="#fff" d="M22.02 18.996c-.319-.16-1.888-.933-2.181-1.04-.293-.107-.507-.16-.72.16-.213.319-.827 1.04-1.014 1.253-.187.213-.373.24-.692.08-.319-.16-1.347-.497-2.566-1.586-.949-.847-1.589-1.892-1.775-2.212-.187-.319-.02-.492.14-.652.144-.144.32-.373.48-.56.16-.187.213-.32.32-.533.107-.213.053-.4-.027-.56-.08-.16-.72-1.735-.987-2.375-.26-.626-.524-.541-.72-.551l-.613-.011c-.213 0-.56.08-.853.4-.293.319-1.12 1.094-1.12 2.669 0 1.574 1.147 3.096 1.307 3.309.16.213 2.257 3.445 5.468 4.83.764.33 1.36.527 1.826.674.767.244 1.465.21 2.017.127.615-.092 1.888-.772 2.155-1.518.267-.746.267-1.386.187-1.518-.08-.133-.293-.213-.613-.373z"/></svg>
+          Compartir por WhatsApp
+        </a>
+      </div>
+      <ul class="navlist">
+        ${TABS.map(t=>`<li class="navitem ${t.id===activeTab?'active':''}" onclick="setTab('${t.id}')"><span class="nav-left"><span class="num">${t.num}</span><span>${t.label}</span></span>${(t.id!=='resumen'&&t.id!=='express')?`<span class="nav-dot ${tabHasData(t.id)?'filled':''}" title="${tabHasData(t.id)?'Ya tiene datos rellenados':'Todavía vacía'}"></span>`:''}</li>`).join('')}
+      </ul>
+      <div class="sidebar-foot" style="padding-bottom:56px;">
+        <button onclick="exportData()">↓ Exportar copia (JSON)</button>
+        <button onclick="document.getElementById('importFile').click()">↑ Importar copia</button>
+        <button onclick="resetAll()">Restablecer todo</button>
+        <div style="font-size:11px;color:#7C8479;padding:8px 0 2px 0;">Alt + ↑ / ↓ para navegar entre hojas</div>
+        <div style="padding-top:8px;display:flex;flex-direction:column;gap:6px;align-items:flex-start;">
+          <button onclick="abrirComoFunciona()" style="font-size:11px;text-decoration:underline;">🧭 ¿Cómo funciona todo esto?</button>
+          <button onclick="abrirPoliticaPrivacidad()" style="font-size:11px;text-decoration:underline;">Política de privacidad</button>
+        </div>
+      </div>
+    </nav>
+    <main id="main">${renderTab(activeTab)}</main>
+  `;
+  bindGenericInputs();
+  if(focusInfo){
+    let el = null;
+    if(focusInfo.path) el = document.querySelector(`[data-path="${focusInfo.path}"]`);
+    if(!el && focusInfo.id) el = document.getElementById(focusInfo.id);
+    if(el){
+      el.focus();
+      if(focusInfo.sel && el.setSelectionRange){
+        try{ el.setSelectionRange(focusInfo.sel.start, focusInfo.sel.end); }catch(e){}
+      }
+    }
+  }
+}
+
+function formatMilesLive(raw){
+  let s = String(raw).replace(/[^\d,]/g, '');
+  const firstComma = s.indexOf(',');
+  if(firstComma !== -1) s = s.slice(0, firstComma+1) + s.slice(firstComma+1).replace(/,/g,'');
+  let [intPart, decPart] = s.split(',');
+  intPart = intPart.replace(/^0+(?=\d)/, '');
+  const withDots = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return decPart!==undefined ? withDots + ',' + decPart : withDots;
+}
+function digitsBefore(str, pos){ let c=0; for(let i=0;i<pos && i<str.length;i++){ if(/\d/.test(str[i])) c++; } return c; }
+function posAfterDigits(str, n){ if(n<=0) return 0; let c=0; for(let i=0;i<str.length;i++){ if(/\d/.test(str[i])) c++; if(c===n) return i+1; } return str.length; }
+function bindGenericInputs(){
+  document.querySelectorAll('[data-path]').forEach(el=>{
+    const evt = (el.type==='checkbox' || el.tagName==='SELECT') ? 'change' : 'input';
+    el.addEventListener(evt, e=>{
+      if(e.target.dataset.format==='miles'){
+        const oldVal = e.target.value;
+        const oldPos = e.target.selectionStart;
+        const nDigits = digitsBefore(oldVal, oldPos);
+        const formatted = formatMilesLive(oldVal);
+        e.target.value = formatted;
+        const newPos = posAfterDigits(formatted, nDigits);
+        try{ e.target.setSelectionRange(newPos, newPos); }catch(err){}
+      }
+      const path = e.target.dataset.path;
+      let value = e.target.type==='checkbox' ? e.target.checked : e.target.value;
+      if(e.target.dataset.numeric==='true' && value!=='') value = value; // keep as string, parsed on read
+      setPath(state, path, value);
+      saveState();
+      if(e.target.dataset.rerender==='true') render();
+    });
+  });
+}
+
+/* ---------- Router de pestañas ---------- */
+function renderTab(id){
+  switch(id){
+    case 'express': return renderExpress();
+    case 'resumen': return renderResumen();
+    case 'perfil': return renderPerfil();
+    case 'ahorros': return renderAhorros();
+    case 'deudas': return renderDeudas();
+    case 'vivienda': return renderVivienda();
+    case 'hipoteca': return renderHipoteca();
+    case 'personal': return renderPersonal();
+    case 'gastos': return renderGastos();
+    case 'brokers': return renderBrokers();
+    case 'gastosfijos': return renderGastosFijos();
+    case 'notas': return renderNotas();
+    default: return '';
+  }
+}
+
+/* ---------- 00 RESUMEN ---------- */
+/* ---------- SIMULACIÓN EXPRESS ---------- */
+let expressResultado = null; // {hipId, gastoId, personalId} tras aplicar, para mostrar confirmación
+const EXPRESS_ASUNCIONES = { tinHipoteca:3, gastosCompraPct:11, tinPersonal:5.5, comisionAperturaPersonal:1.5 };
+function renderExpress(){
+  const ex = state.express;
+  const a = EXPRESS_ASUNCIONES;
+  const pct = (ex.pctFinanciacion===''||ex.pctFinanciacion===undefined) ? 100 : num(ex.pctFinanciacion);
+  const importeFin = num(ex.precio) * pct/100;
+  const mesesHip = num(ex.plazoAnios)*12;
+  const cuotaHip = cuotaFrancesa(importeFin, a.tinHipoteca, mesesHip);
+  const entrada = num(ex.precio) - importeFin;
+  const gastoCompra = num(ex.precio) * a.gastosCompraPct/100;
+  const totalPersonal = Math.max(0, entrada + gastoCompra - num(ex.ahorroDisponible));
+  const totalPersonalConExtra = totalPersonal + num(ex.extra);
+  const cuotaPersonal = totalPersonalConExtra>0 ? cuotaFrancesa(totalPersonalConExtra, a.tinPersonal, ex.personalPlazoMeses) : 0;
+  const aperturaPersonal = totalPersonalConExtra * a.comisionAperturaPersonal/100;
+  const totalCuotas = num(ex.deudasCuota) + cuotaHip + cuotaPersonal;
+  const ratio = num(ex.ingresos)>0 ? (totalCuotas/num(ex.ingresos)*100) : 0;
+  let badgeClass='green', badgeText='Cómodo', gaugeColor='var(--green)';
+  if(ratio>=35){ badgeClass='red'; badgeText='⚠ Elevado'; gaugeColor='var(--red)'; } else if(ratio>=33){ badgeClass='yellow'; badgeText='Ajustado'; gaugeColor='var(--yellow)'; }
+  const disponibleLibre = num(ex.ingresos) - totalCuotas - num(ex.gastosFijos);
+
+  return `
+    <div class="sheet-header"><span class="sheet-num">★</span>${tabIcon('express')}<span class="sheet-title">Simulación express</span></div>
+    <p class="sheet-sub">Solo lo importante — el resto (TIN, gastos de compra) usamos una media nacional, que ves explicada abajo. Cuando te convenza, "Aplicar" traslada SOLO lo que tú rellenaste a Hipoteca, Gastos de compra y Préstamo personal — las medias asumidas no se copian, las rellenas allí de verdad si quieres afinar. <a href="#" onclick="event.preventDefault();abrirComoFunciona();" style="color:var(--brass-text);">🧭 Si quieres entender cómo funciona todo esto antes de meterte, aquí tienes la explicación completa.</a></p>
+
+    <div class="card">
+      <h3 class="card-title">Tus números base</h3>
+      <div class="grid3">
+        <div class="field">
+          <label>Ingresos netos / mes (€)</label>
+          <input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="express.ingresos" value="${ex.ingresos}" placeholder="p.ej. 2.800" data-rerender="true">
+          <div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Al aplicar → Hoja 01, primer titular.</div>
+        </div>
+        <div class="field">
+          <label>Ahorro disponible (€)</label>
+          <input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="express.ahorroDisponible" value="${ex.ahorroDisponible}" placeholder="p.ej. 20.000" data-rerender="true">
+          <div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Manual — rellénalo también en Hoja 02.</div>
+        </div>
+        <div class="field">
+          <label>Deudas actuales / mes (€)</label>
+          <input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="express.deudasCuota" value="${ex.deudasCuota}" placeholder="p.ej. 150" data-rerender="true">
+          <div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Manual — rellénalo también en Hoja 03.</div>
+        </div>
+      </div>
+      <div class="field" style="margin-top:0;">
+        <label>Otros gastos fijos / mes (€) <span style="font-weight:400;">(suministros, seguros…)</span></label>
+        <input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="express.gastosFijos" value="${ex.gastosFijos}" placeholder="p.ej. 200" data-rerender="true">
+        <div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Manual — rellénalo también en Hoja 09.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Hipoteca y gastos de compra</h3>
+      <div class="grid3">
+        <div class="field"><label>Precio de la vivienda (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="express.precio" value="${ex.precio}" placeholder="p.ej. 250.000" data-rerender="true"></div>
+        <div class="field"><label>% de financiación</label><input type="text" inputmode="decimal" data-numeric="true" data-path="express.pctFinanciacion" value="${ex.pctFinanciacion}" placeholder="p.ej. 80" data-rerender="true"></div>
+        <div class="field"><label>Plazo (años)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="express.plazoAnios" value="${ex.plazoAnios}" placeholder="p.ej. 30" data-rerender="true"></div>
+      </div>
+      <div class="grid3">
+        <div class="stat"><div class="label">Importe a financiar</div><div class="value small">${fmtMoney(importeFin)}</div></div>
+        <div class="stat"><div class="label">Gasto de compra estimado</div><div class="value small">${fmtMoney(gastoCompra)}</div></div>
+        <div class="stat"><div class="label">${entrada>0?'Entrada no cubierta':'Entrada'}</div><div class="value small" style="color:${entrada>0?'var(--red)':'var(--green)'};">${fmtMoney(entrada)}</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Préstamo personal <small>solo si hace falta</small></h3>
+      <div class="field" style="max-width:260px;">
+        <label>Plazo (meses)</label>
+        <input type="text" inputmode="decimal" data-numeric="true" data-path="express.personalPlazoMeses" value="${ex.personalPlazoMeses}" placeholder="p.ej. 60" data-rerender="true">
+        ${ex.personalPlazoMeses?`<div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">${mesesAAnios(ex.personalPlazoMeses)}</div>`:''}
+      </div>
+      <div class="grid3">
+        <div class="stat"><div class="label">Importe necesario</div><div class="value small" style="color:${totalPersonal>0?'var(--red)':'var(--green)'};">${fmtMoney(totalPersonal)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">= Entrada + Gasto de compra − Ahorro</div></div>
+        <div class="stat"><div class="label">Cuota mensual estimada</div><div class="value small">${fmtMoney(cuotaPersonal)}</div></div>
+        <div class="stat"><div class="label">Comisión de apertura</div><div class="value small">${fmtMoney(aperturaPersonal)}</div></div>
+      </div>
+      <div class="hr"></div>
+      <div class="grid2">
+        <div class="field">
+          <label>Importe extra a pedir (€) <span style="font-weight:400;">(opcional)</span></label>
+          <input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="express.extra" value="${ex.extra}" placeholder="p.ej. 5.000" data-rerender="true">
+          <div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Para reformas, muebles, imprevistos… se suma a lo necesario y recalcula todo.</div>
+        </div>
+        <div class="stat"><div class="label">Total del préstamo personal</div><div class="value small">${fmtMoney(totalPersonalConExtra)}</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Resultado</h3>
+      <div class="grid3">
+        <div class="stat"><div class="label">Cuotas totales / mes</div><div class="value small">${fmtMoney(totalCuotas)}</div></div>
+        <div class="stat"><div class="label">Cuota hipoteca</div><div class="value small">${fmtMoney(cuotaHip)}</div></div>
+        <div class="stat"><div class="label">Cuota préstamo personal</div><div class="value small">${fmtMoney(cuotaPersonal)}</div></div>
+      </div>
+      <div class="stat" style="margin-top:10px;"><div class="label">Disponible libre al mes</div><div class="value small">${fmtMoney(disponibleLibre)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">= Ingresos − Cuotas totales − Gastos fijos · para gastos variables y ahorro</div></div>
+      <div class="hr"></div>
+      <div class="card-title" style="font-size:15px;margin-bottom:8px;">Endeudamiento total <small style="font-weight:400;">cuotas / ingresos — orientativo, no un límite oficial</small></div>
+      <div class="gauge-wrap">
+        <div class="gauge-track"><div class="gauge-fill" style="width:${Math.min(ratio,100)}%;background:${gaugeColor};"></div></div>
+        <div class="gauge-labels"><span>0%</span><span>33%</span><span>35%</span><span>100%</span></div>
+      </div>
+      <div style="margin-top:10px;"><span class="badge ${badgeClass}">${fmtPct(ratio)} — ${badgeText}</span></div>
+      <div class="hr"></div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button class="btn" onclick="crearEscenarioExpress()">Aplicar a las hojas correspondientes</button>
+        <button class="btn secondary" onclick="resetExpress()">Restablecer simulación</button>
+      </div>
+      ${expressResultado ? `
+        <div class="note-block" style="margin-top:12px;">Creado como "Escenario express" en las Hojas 05, 06${expressResultado.personalId?' y 07':''}, e "Ingresos netos" guardado en la Hoja 01. Las medias asumidas (TIN, % de gastos) NO se copiaron — rellénalas allí si quieres un cálculo real.
+          <span style="display:inline-flex;gap:10px;margin-left:8px;">
+            <a style="cursor:pointer;text-decoration:underline;" onclick="setTab('perfil')">Ver en 01</a>
+            <a style="cursor:pointer;text-decoration:underline;" onclick="setTab('hipoteca')">Ver en 05</a>
+            <a style="cursor:pointer;text-decoration:underline;" onclick="setTab('gastos')">Ver en 06</a>
+            ${expressResultado.personalId?`<a style="cursor:pointer;text-decoration:underline;" onclick="setTab('personal')">Ver en 07</a>`:''}
+          </span>
+        </div>` : ''}
+      <div class="hr"></div>
+      <div style="font-size:11px;color:var(--ink-faint);">Para este cálculo hemos asumido, como medias nacionales orientativas (no personalizadas): <strong>TIN hipoteca ${a.tinHipoteca}%</strong> (interés medio de las hipotecas en España, INE mayo 2026: 2,98%), <strong>gastos de compra ${a.gastosCompraPct}% del precio</strong> (impuestos + notaría + registro + gestoría + tasación), <strong>TIN préstamo personal ${a.tinPersonal}%</strong> (asumiendo nómina domiciliada, habitual en quien pide este tipo de préstamo) y <strong>comisión de apertura ${a.comisionAperturaPersonal}%</strong>. Son puntos de partida razonables, no tu oferta real — edítalos en las Hojas 05, 06 y 07 con los datos que te den de verdad.</div>
+    </div>
+  `;
+}
+function resetExpress(){
+  if(!confirm('¿Borrar los valores de esta simulación? No afecta a lo que ya hayas creado en otras hojas.')) return;
+  state.express = {ingresos:'', ahorroDisponible:'', deudasCuota:'', gastosFijos:'', precio:'', pctFinanciacion:'100', plazoAnios:'30', personalPlazoMeses:'60', extra:''};
+  expressResultado = null;
+  saveState(); render();
+}
+function crearEscenarioExpress(){
+  const ex = state.express;
+  const a = EXPRESS_ASUNCIONES;
+  const pct = (ex.pctFinanciacion===''||ex.pctFinanciacion===undefined) ? 100 : num(ex.pctFinanciacion);
+  const importeFin = num(ex.precio) * pct/100;
+  const entrada = num(ex.precio) - importeFin;
+  const gastoCompra = num(ex.precio) * a.gastosCompraPct/100;
+  const totalPersonal = Math.max(0, entrada + gastoCompra - num(ex.ahorroDisponible));
+  const totalPersonalConExtra = totalPersonal + num(ex.extra);
+
+  if(ex.ingresos!==''&&ex.ingresos!==undefined){ state.perfil.p1.netoMensual = ex.ingresos; }
+
+  const hipId = uid();
+  state.hipoteca.escenarios.push({
+    id: hipId, nombre:'Escenario express', importe: ex.precio, pctFinanciacion: ex.pctFinanciacion,
+    tin:'', plazoAnios: ex.plazoAnios, tipoInteres:'fijo', vinculaciones:'',
+    notas:'Creado desde Simulación express — rellena aquí el TIN real que te ofrezcan.', expanded:true
+  });
+  const gastoId = uid();
+  state.gastos.provincias.push({
+    id: gastoId, nombre:'Escenario express', provincia:'', hipotecaEscenarioId: hipId,
+    itpPct:'', notaria:'', registro:'', gestoria:'', tasacion:'', expanded:true
+  });
+  let personalId = null;
+  if(totalPersonalConExtra>0){
+    personalId = uid();
+    state.personal.escenarios.push({
+      id: personalId, nombre:'Escenario express', importe: String(Math.round(totalPersonalConExtra)),
+      tin:'', comisionApertura:'', plazoMeses: ex.personalPlazoMeses,
+      proposito:'Generado desde Simulación express', notas:'', expanded:true
+    });
+  }
+  state.hipoteca.seleccionado = hipId;
+  state.personal.provinciaSeleccionada = gastoId;
+  if(personalId) state.personal.seleccionado = personalId;
+  expressResultado = {hipId, gastoId, personalId};
+  saveState(); render();
+}
+
+/* ---------- 00 RESUMEN ---------- */
+function renderResumen(){
+  const p1 = state.perfil.p1, p2 = state.perfil.p2;
+  const ingresos = num(p1.netoMensual) + num(p2.netoMensual);
+  const deudaEscSel = deudaEscenarioSeleccionado();
+  const deudasCuota = cuotaTotalEscenarioDeuda(deudaEscSel);
+  const hipSel = state.hipoteca.escenarios.find(e=>e.id===state.hipoteca.seleccionado) || state.hipoteca.escenarios[0];
+  const perSel = state.personal.escenarios.find(e=>e.id===state.personal.seleccionado) || state.personal.escenarios[0];
+  const importeFinHip = hipSel ? importeAFinanciar(hipSel) : 0;
+  const mesesHip = hipSel ? num(hipSel.plazoAnios)*12 : 0;
+  const cuotaHip = hipSel ? cuotaFrancesa(importeFinHip, hipSel.tin, mesesHip) : 0;
+  const interesesHip = hipSel ? (cuotaHip*mesesHip - importeFinHip) : 0;
+  const cuotaPer = perSel ? cuotaFrancesa(perSel.importe, perSel.tin, perSel.plazoMeses) : 0;
+  const interesesPer = perSel ? (cuotaPer*num(perSel.plazoMeses) - num(perSel.importe)) : 0;
+  const totalCuotas = deudasCuota + cuotaHip + cuotaPer;
+  const ratio = ingresos>0 ? (totalCuotas/ingresos*100) : 0;
+  const ahorroTotal = ahorroTotalCalc();
+  const ahorroDisponible = ahorroTotal - num(state.ahorros.colchon);
+
+  const provSelResumen = state.gastos.provincias.find(p=>p.id===state.personal.provinciaSeleccionada) || state.gastos.provincias[0];
+  let necesarioResumen = 0;
+  if(provSelResumen){
+    const escVincResumen = hipotecaVinculada(provSelResumen);
+    const entradaResumen = escVincResumen ? (num(escVincResumen.importe) - importeAFinanciar(escVincResumen)) : 0;
+    necesarioResumen = Math.max(0, entradaResumen) + calcGastoCompra(provSelResumen);
+  }
+  const ahorroUsado = Math.min(Math.max(necesarioResumen,0), Math.max(ahorroDisponible,0));
+  const ahorroRestante = ahorroTotal - ahorroUsado;
+
+  let gaugeColor = 'var(--green)', badgeClass='green', badgeText='Cómodo';
+  if(ratio>=35){ gaugeColor='var(--red)'; badgeClass='red'; badgeText='⚠ Elevado'; }
+  else if(ratio>=33){ gaugeColor='var(--yellow)'; badgeClass='yellow'; badgeText='Ajustado'; }
+
+  const estadosBrokers = {};
+  state.brokers.forEach(b=>{ estadosBrokers[b.estado] = (estadosBrokers[b.estado]||0)+1; });
+
+  const gastosFijosTotal = totalGastosFijosMensual();
+  const disponibleLibre = ingresos - totalCuotas - gastosFijosTotal;
+  const mesesRestantesMax = (deudaEscSel && deudaEscSel.deudas ? deudaEscSel.deudas : []).reduce((max,d)=>Math.max(max, num(d.mesesRestantes)), 0);
+
+  const obligacionesFuturo = [];
+  if(deudasCuota>0) obligacionesFuturo.push({label:'tus deudas actuales', hoja:'03', meses: mesesRestantesMax, cuota: deudasCuota});
+  if(cuotaPer>0 && perSel) obligacionesFuturo.push({label:'el préstamo personal', hoja:'07', meses: num(perSel.plazoMeses), cuota: cuotaPer});
+  let lineasDisponibleFuturo = '';
+  if(obligacionesFuturo.length>0){
+    const todasConMeses = obligacionesFuturo.every(o=>o.meses>0);
+    if(todasConMeses){
+      // ordenamos por cuál acaba antes, y vamos acumulando: para cuando acaba la que más tarda, las anteriores ya están liberadas también
+      let acumulado = disponibleLibre;
+      lineasDisponibleFuturo = [...obligacionesFuturo].sort((a,b)=>a.meses-b.meses).map(o=>{
+        acumulado += o.cuota;
+        return `<div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Cuando termines de pagar ${o.label} (Hoja ${o.hoja}, ${mesesAAnios(o.meses)}): <strong style="color:var(--ink-soft);">${fmtMoney(acumulado)}</strong>/mes</div>`;
+      }).join('');
+    }else{
+      // no podemos ordenar con seguridad (falta algún dato de plazo) — mostramos cada una por separado, sin acumular
+      lineasDisponibleFuturo = obligacionesFuturo.map(o=>`<div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Cuando termines de pagar ${o.label} (Hoja ${o.hoja}${o.meses>0?', '+mesesAAnios(o.meses):''}): <strong style="color:var(--ink-soft);">${fmtMoney(disponibleLibre+o.cuota)}</strong>/mes</div>`).join('');
+    }
+  }
+
+  return `
+    <div class="sheet-header"><span class="sheet-num">HOJA 00</span>${tabIcon('resumen')}<span class="sheet-title">Resumen</span></div>
+    <p class="sheet-sub">Panel general calculado a partir de los datos que rellenes en el resto de secciones.</p>
+
+    <div class="highlight-row">
+      <div class="highlight-card">
+        <div class="highlight-card-head">
+          <div class="download-icon-wrap">
+            <div class="download-icon-ring"></div>
+            <svg class="download-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B4419" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/>
+            </svg>
+          </div>
+          <div class="download-banner-title">Descarga todos tus datos (copia de seguridad)</div>
+        </div>
+        <button class="btn" onclick="exportData()">↓ Descargar copia</button>
+      </div>
+      <div class="highlight-card">
+        <div class="highlight-card-head">
+          <div class="download-icon-wrap">
+            <div class="download-icon-ring"></div>
+            <svg class="download-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B4419" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="6" y="4" width="12" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 11h6M9 15h4"/>
+            </svg>
+          </div>
+          <div class="download-banner-title">Copia los datos de tu perfil, listo para enviar</div>
+        </div>
+        <button class="btn" onclick="copiarTexto('textoPerfil','confPerfilTop')">📋 Copiar mi perfil</button>
+        <span id="confPerfilTop" style="font-size:12px;color:var(--green);"></span>
+      </div>
+      <div class="highlight-card">
+        <div class="highlight-card-head">
+          <div class="download-icon-wrap">
+            <div class="download-icon-ring"></div>
+            <svg class="download-icon-svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5B4419" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="6" y="4" width="12" height="17" rx="2"/><rect x="9" y="2" width="6" height="4" rx="1"/><path d="M9 11h6M9 15h4"/>
+            </svg>
+          </div>
+          <div class="download-banner-title">Copia tu plan (hipoteca y gastos), listo para enviar</div>
+        </div>
+        <button class="btn" onclick="copiarTexto('textoPlan','confPlanTop')">📋 Copiar plan de hipoteca</button>
+        <span id="confPlanTop" style="font-size:12px;color:var(--green);"></span>
+      </div>
+    </div>
+
+    <div class="stat-row" style="grid-template-columns:repeat(3,1fr);">
+      <div class="stat"><div class="label">Ingresos netos / mes</div><div class="value">${fmtMoney(ingresos)}</div></div>
+      <div class="stat"><div class="label">Cuotas totales / mes</div><div class="value">${fmtMoney(totalCuotas)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">Deudas ${fmtMoney(deudasCuota)} · Hipoteca ${fmtMoney(cuotaHip)} · Personal ${fmtMoney(cuotaPer)}</div></div>
+      <div class="stat"><div class="label">Brokers activos</div><div class="value">${state.brokers.length}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">${Object.entries(estadosBrokers).map(([k,v])=>`${v} ${k.toLowerCase()}`).join(' · ') || 'sin brokers todavía'}</div></div>
+    </div>
+
+    <div class="grid3">
+      <div class="card">
+        <div class="stat"><div class="label">Ahorro total actual</div><div class="value small">${fmtMoney(ahorroTotal)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">de la Hoja 02 — Ahorros</div></div>
+        <div class="hr"></div>
+        <div class="stat"><div class="label">Ahorro que queda según escenarios elegidos</div><div class="value small">${fmtMoney(ahorroRestante)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">${provSelResumen ? `tras cubrir entrada + gastos de compra de "${provSelResumen.nombre||'la ubicación elegida'}"` : 'sin escenario de referencia elegido en la Hoja 07'}</div></div>
+      </div>
+      <div class="card">
+        <div class="stat"><div class="label">Otros gastos fijos / mes <span style="font-weight:400;text-transform:none;">(suministros, seguros…)</span></div><div class="value small">${fmtMoney(gastosFijosTotal)}</div></div>
+        <div class="hr"></div>
+        <div class="stat"><div class="label">Disponible libre al mes</div><div class="value small">${fmtMoney(disponibleLibre)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">ingresos − cuotas − gastos fijos · para gastos variables y ahorro</div>${lineasDisponibleFuturo}</div>
+      </div>
+      <div class="card">
+        <div class="stat"><div class="label">Total en intereses</div><div class="value">${fmtMoney(interesesHip+interesesPer)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">según los escenarios elegidos en las Hojas 05 y 07 — cuanto más ahorro uses, menos pagarás aquí</div></div>
+        <div class="hr"></div>
+        <div class="stat"><div class="label">Intereses — hipoteca</div><div class="value small">${fmtMoney(interesesHip)}</div>${hipSel?`<div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">"${hipSel.nombre}"</div>`:''}</div>
+        <div class="hr"></div>
+        <div class="stat"><div class="label">Intereses — préstamo personal</div><div class="value small">${fmtMoney(interesesPer)}</div>${perSel?`<div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">"${perSel.nombre}"</div>`:''}</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Endeudamiento total <small>cuotas / ingresos netos — referencia orientativa, no un límite oficial de ningún banco</small></h3>
+      <div class="gauge-wrap">
+        <div class="gauge-track"><div class="gauge-fill" style="width:${Math.min(ratio,100)}%;background:${gaugeColor};"></div></div>
+        <div class="gauge-labels"><span>0%</span><span>33%</span><span>35%</span><span>100%</span></div>
+      </div>
+      <div style="margin-top:12px;display:flex;align-items:center;gap:10px;">
+        <span class="badge ${badgeClass}">${fmtPct(ratio)} — ${badgeText}</span>
+        <span style="font-size:12.5px;color:var(--ink-soft);">Deudas ${fmtMoney(deudasCuota)} + hipoteca ${fmtMoney(cuotaHip)} + préstamo personal ${fmtMoney(cuotaPer)}</span>
+      </div>
+      ${hipSel ? `
+      <div style="margin-top:8px;font-size:12px;color:var(--ink-faint);font-family:var(--font-body);font-variant-numeric:tabular-nums;">
+        Escenario "${hipSel.nombre||'Hipoteca'}": ${fmtMoney(hipSel.importe)} de referencia · ${fmtPct(pctFinanciacionOf(hipSel),0)} de financiación · ${fmtMoney(importeAFinanciar(hipSel))} a financiar
+      </div>` : ''}
+      ${(state.hipoteca.escenarios.length>1 || state.personal.escenarios.length>1 || state.deudas.escenarios.length>1) ? `
+      <div class="hr"></div>
+      <div class="grid3">
+        <div class="field"><label>Escenario de deudas usado</label>
+          <select data-path="deudas.seleccionado" data-rerender="true">
+            ${state.deudas.escenarios.map(e=>`<option value="${e.id}" ${e.id===(deudaEscSel&&deudaEscSel.id)?'selected':''}>${e.nombre||'Escenario'} — Saldo: ${fmtMoney(saldoTotalEscenarioDeuda(e))} — Cuota: ${fmtMoney(cuotaTotalEscenarioDeuda(e))}/mes</option>`).join('')}
+          </select>
+        </div>
+        <div class="field"><label>Escenario de hipoteca usado en el cálculo</label>
+          <select data-path="hipoteca.seleccionado" data-rerender="true">
+            ${state.hipoteca.escenarios.map(e=>`<option value="${e.id}" ${e.id===(hipSel&&hipSel.id)?'selected':''}>${labelEscenarioHipoteca(e)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field"><label>Escenario de préstamo personal usado</label>
+          <select data-path="personal.seleccionado" data-rerender="true">
+            <option value="">— Sin préstamo personal —</option>
+            ${state.personal.escenarios.map(e=>`<option value="${e.id}" ${e.id===(perSel&&perSel.id)?'selected':''}>${labelEscenarioPersonal(e)}</option>`).join('')}
+          </select>
+        </div>
+      </div>` : ''}
+    </div>
+
+    <div class="grid2">
+      <div class="card">
+        <h3 class="card-title">Vivienda objetivo ${viviendaActiva()&&viviendaActiva().nombre?`<small>"${viviendaActiva().nombre}"</small>`:''}</h3>
+        <table><tbody>
+          <tr><td>Ubicaciones</td><td class="num">${(viviendaActiva()&&viviendaActiva().ubicaciones)||'—'}</td></tr>
+          <tr><td>Rango de precio</td><td class="num">${fmtMoney(viviendaActiva()&&viviendaActiva().precioMin)} – ${fmtMoney(viviendaActiva()&&viviendaActiva().precioMax)}</td></tr>
+          <tr><td>Tipo</td><td class="num">${(viviendaActiva()&&viviendaActiva().tipo)==='nueva'?'Nueva construcción':'Segunda mano'}</td></tr>
+        </tbody></table>
+      </div>
+      <div class="card">
+        <h3 class="card-title">Estado de brokers</h3>
+        ${state.brokers.length===0 ? '<div class="empty">Todavía no has añadido ningún broker.</div>' :
+          `<table><tbody>${Object.entries(estadosBrokers).map(([k,v])=>`<tr><td>${k}</td><td class="num">${v}</td></tr>`).join('')}</tbody></table>`}
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Mi perfil <small>para darle a un asesor/broker nuevo — lo que suele pedir en el primer contacto</small></h3>
+      <textarea id="textoPerfil" readonly style="min-height:200px;font-family:var(--font-mono);font-size:12.5px;background:#FBFAF7;">${generarTextoPerfil()}</textarea>
+      <div style="margin-top:10px;"><button class="btn secondary" onclick="copiarTexto('textoPerfil','confPerfil')">Copiar</button> <span id="confPerfil" style="font-size:12px;color:var(--green);margin-left:8px;"></span></div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Mi plan <small>los escenarios que tienes elegidos ahora mismo — para guardarlo o compartirlo</small></h3>
+      <textarea id="textoPlan" readonly style="min-height:200px;font-family:var(--font-mono);font-size:12.5px;background:#FBFAF7;">${generarTextoPlan()}</textarea>
+      <div style="margin-top:10px;"><button class="btn secondary" onclick="copiarTexto('textoPlan','confPlan')">Copiar</button> <span id="confPlan" style="font-size:12px;color:var(--green);margin-left:8px;"></span></div>
+    </div>
+  `;
+}
+function generarTextoPerfil(){
+  const L = [];
+  const add = (s) => L.push(s);
+  add(`${SITE_NAME} — ${SITE_TAGLINE}${SITE_URL?' · '+SITE_URL:''}`);
+  add('');
+  add('PERFIL — ' + new Date().toLocaleDateString('es-ES'));
+  add('');
+  ['p1','p2'].forEach((k,i)=>{
+    const p = state.perfil[k];
+    const nombre = state.titulares[k==='p1'?'t1':'t2'] || ('Titular '+(i+1));
+    if(p.tipoContrato || p.netoMensual || p.brutoAnual){
+      add(`TITULAR ${i+1}${nombre?' — '+nombre:''}`);
+      if(p.tipoContrato) add(`- Situación laboral: ${p.tipoContrato}${p.antiguedad?' ('+p.antiguedad+')':''}`);
+      if(p.brutoAnual) add(`- Bruto anual: ${fmtMoney(p.brutoAnual)}`);
+      if(p.netoMensual) add(`- Neto mensual: ${fmtMoney(p.netoMensual)} (${p.pagas||'12'} pagas)`);
+      if(p.avalPuede) add(`- Aval disponible: sí`);
+      if(p.historialLimpio==='si') add(`- Historial crediticio: sin incidencias`);
+      if(p.historialLimpio==='no') add(`- Historial crediticio: con alguna incidencia`);
+      add('');
+    }
+  });
+  const ahorroTotal = ahorroTotalCalc();
+  if(ahorroTotal>0 || num(state.ahorros.colchon)>0){
+    add('AHORROS');
+    add(`- Total: ${fmtMoney(ahorroTotal)}`);
+    if(num(state.ahorros.colchon)>0) add(`- Colchón a conservar: ${fmtMoney(state.ahorros.colchon)}`);
+    add(`- Disponible para la compra: ${fmtMoney(ahorroTotal - num(state.ahorros.colchon))}`);
+    add('');
+  }
+  const deudaEscTexto = deudaEscenarioSeleccionado();
+  if(deudaEscTexto && (deudaEscTexto.deudas||[]).length>0){
+    add(`DEUDAS ACTUALES (escenario: ${deudaEscTexto.nombre||'Deudas actuales'})`);
+    deudaEscTexto.deudas.forEach(d=>{ if(d.nombre||d.cuotaMensual){ add(`- ${d.nombre||'Deuda'}: ${fmtMoney(d.cuotaMensual)}/mes${d.saldoPendiente?', pendiente '+fmtMoney(d.saldoPendiente):''}`); } });
+    add(`- Total cuota mensual deudas: ${fmtMoney(cuotaTotalEscenarioDeuda(deudaEscTexto))}`);
+    add('');
+  }
+  const va = viviendaActiva();
+  if(va && (va.ubicaciones || va.precioMin || va.precioMax)){
+    add('LO QUE BUSCO');
+    if(va.ubicaciones) add(`- Provincia: ${va.ubicaciones}`);
+    if(va.tipoInmueble) add(`- Tipo de inmueble: ${va.tipoInmueble}`);
+    if(va.tipo) add(`- Estado: ${va.tipo==='nueva'?'Nueva construcción':'Segunda mano'}`);
+    if(va.precioMin || va.precioMax) add(`- Rango de precio: ${fmtMoney(va.precioMin)} – ${fmtMoney(va.precioMax)}`);
+  }
+  return L.join('\n').trim();
+}
+function generarTextoPlan(){
+  const L = [];
+  const add = (s) => L.push(s);
+  add(`${SITE_NAME} — ${SITE_TAGLINE}${SITE_URL?' · '+SITE_URL:''}`);
+  add('');
+  add('📋 MI PLAN — ' + new Date().toLocaleDateString('es-ES'));
+  add('');
+  const hipSel = state.hipoteca.escenarios.find(e=>e.id===state.hipoteca.seleccionado) || state.hipoteca.escenarios[0];
+  let importeFin = 0, cuota = 0;
+  if(hipSel && hipSel.importe){
+    importeFin = importeAFinanciar(hipSel);
+    const meses = num(hipSel.plazoAnios)*12;
+    cuota = cuotaFrancesa(importeFin, hipSel.tin, meses);
+    add(`🏠 HIPOTECA — "${hipSel.nombre||'Escenario'}"`);
+    add(`   Precio: ${fmtMoney(hipSel.importe)} · Financiación: ${fmtPct(pctFinanciacionOf(hipSel),0)} → ${fmtMoney(importeFin)} a financiar`);
+    if(hipSel.tin) add(`   TIN ${hipSel.tin}% a ${hipSel.plazoAnios} años → 💶 ${fmtMoney(cuota)}/mes`);
+    add('');
+  }
+  const provSel = state.gastos.provincias.find(p=>p.id===state.personal.provinciaSeleccionada) || state.gastos.provincias[0];
+  let gastoCompra = 0;
+  if(provSel){
+    gastoCompra = calcGastoCompra(provSel);
+    add(`🧾 GASTOS DE COMPRA — "${provSel.nombre||'Ubicación'}"`);
+    add(`   Estimados en ${fmtMoney(gastoCompra)}`);
+    add('');
+  }
+  const perSel = state.personal.escenarios.find(e=>e.id===state.personal.seleccionado) || state.personal.escenarios[0];
+  let cuotaPer = 0;
+  if(perSel && perSel.importe){
+    cuotaPer = cuotaFrancesa(perSel.importe, perSel.tin, perSel.plazoMeses);
+    add(`🏦 PRÉSTAMO PERSONAL — "${perSel.nombre||'Escenario'}"`);
+    add(`   ${fmtMoney(perSel.importe)}${perSel.tin?' al '+perSel.tin+'% TIN':''}${perSel.plazoMeses?', '+perSel.plazoMeses+' meses':''} → 💶 ${fmtMoney(cuotaPer)}/mes`);
+    if(totalGastosPostCompra(perSel)>0) add(`   Gastos previstos tras la compra (reforma, muebles, mudanza…): ${fmtMoney(totalGastosPostCompra(perSel))} — no incluido en el importe de arriba, es orientativo`);
+    add('');
+  }
+
+  // 💰 Ahorro que queda — misma fórmula que la Hoja 00
+  const ahorroTotal = ahorroTotalCalc();
+  const ahorroDisponible = ahorroTotal - num(state.ahorros.colchon);
+  const entrada = hipSel ? (num(hipSel.importe) - importeFin) : 0;
+  const necesario = Math.max(entrada,0) + gastoCompra;
+  const ahorroUsado = Math.min(Math.max(necesario,0), Math.max(ahorroDisponible,0));
+  const ahorroRestante = ahorroTotal - ahorroUsado;
+  if(ahorroTotal>0 || hipSel || provSel){
+    add(`💰 AHORRO QUE QUEDA: ${fmtMoney(ahorroRestante)}`);
+    add(`   ${fmtMoney(ahorroTotal)} de ahorro total − ${fmtMoney(ahorroUsado)} usados en entrada + gastos de compra`);
+    add('');
+  }
+
+  // 📈 Disponible libre al mes — misma fórmula y misma lógica ordenada que la Hoja 00
+  const ingresos = num(state.perfil.p1.netoMensual) + num(state.perfil.p2.netoMensual);
+  const deudaEscTexto = deudaEscenarioSeleccionado();
+  const deudasCuota = cuotaTotalEscenarioDeuda(deudaEscTexto);
+  const totalCuotas = deudasCuota + cuota + cuotaPer;
+  const gastosFijosTotal = totalGastosFijosMensual();
+  const disponibleLibre = ingresos - totalCuotas - gastosFijosTotal;
+  if(ingresos>0){
+    add(`📈 DISPONIBLE LIBRE AL MES: ${fmtMoney(disponibleLibre)}`);
+    add(`   ${fmtMoney(ingresos)} de ingresos − ${fmtMoney(totalCuotas)} de cuotas − ${fmtMoney(gastosFijosTotal)} de gastos fijos`);
+    const mesesRestantesMax = (deudaEscTexto && deudaEscTexto.deudas ? deudaEscTexto.deudas : []).reduce((max,d)=>Math.max(max, num(d.mesesRestantes)), 0);
+    const obligacionesFuturo = [];
+    if(deudasCuota>0) obligacionesFuturo.push({label:'tus deudas actuales', meses: mesesRestantesMax, cuota: deudasCuota});
+    if(cuotaPer>0 && perSel) obligacionesFuturo.push({label:'el préstamo personal', meses: num(perSel.plazoMeses), cuota: cuotaPer});
+    if(obligacionesFuturo.length>0 && obligacionesFuturo.every(o=>o.meses>0)){
+      let acumulado = disponibleLibre;
+      [...obligacionesFuturo].sort((a,b)=>a.meses-b.meses).forEach(o=>{
+        acumulado += o.cuota;
+        add(`   Cuando termines de pagar ${o.label} (${mesesAAnios(o.meses)}): ${fmtMoney(acumulado)}/mes`);
+      });
+    }
+    add('');
+  }
+
+  // 📊 Endeudamiento total — con los números reales de la fórmula, no solo el concepto
+  if(ingresos>0){
+    const ratio = totalCuotas/ingresos*100;
+    add(`📊 ENDEUDAMIENTO TOTAL: ${fmtPct(ratio)}${ratio>=35?' ⚠️':(ratio<28?' ✅':'')}`);
+    add(`   (${fmtMoney(deudasCuota)} deudas + ${fmtMoney(cuota)} hipoteca + ${fmtMoney(cuotaPer)} personal) / ${fmtMoney(ingresos)} ingresos = ${fmtPct(ratio)}`);
+  }
+  return L.join('\n').trim();
+}
+function trackEvent(name){
+  // No-op hasta que se publique con el script real de GoatCounter — entonces cuenta cada click como evento aparte.
+  if(typeof window.goatcounter !== 'undefined' && window.goatcounter && window.goatcounter.count){
+    window.goatcounter.count({path: name, title: name, event: true});
+  }
+}
+async function copiarTexto(elementId, confirmId){
+  trackEvent('copiar-' + elementId);
+  const ta = document.getElementById(elementId);
+  const conf = document.getElementById(confirmId);
+  try{
+    await navigator.clipboard.writeText(ta.value);
+    conf.textContent = '✓ Copiado';
+  }catch(e){
+    ta.select();
+    try{ document.execCommand('copy'); conf.textContent = '✓ Copiado'; }
+    catch(e2){ conf.textContent = 'No se pudo copiar — selecciónalo y copia a mano.'; }
+  }
+  setTimeout(()=>{ if(conf) conf.textContent=''; }, 3000);
+}
+
+/* ---------- 01 PERFIL ---------- */
+function renderPersonaForm(key, persona, titularNombre){
+  return `
+    <div class="card">
+      <h3 class="card-title">${titularNombre}</h3>
+      <div class="grid2">
+        <div class="field"><label>Nombre del titular</label><input type="text" data-path="titulares.${key==='p1'?'t1':'t2'}" value="${state.titulares[key==='p1'?'t1':'t2']}" data-rerender="true"></div>
+        <div class="field"><label>Neto mensual estimado (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="perfil.${key}.netoMensual" value="${persona.netoMensual}"></div>
+      </div>
+      <div class="grid3" style="grid-template-columns:0.85fr 1.15fr 0.85fr 1fr 1.4fr;gap:10px;">
+        <div class="field"><label>Tipo de contrato</label>
+          <select data-path="perfil.${key}.tipoContrato">
+            <option value="">Selecciona…</option>
+            <option value="indefinido" ${persona.tipoContrato==='indefinido'?'selected':''}>Indefinido</option>
+            <option value="temporal" ${persona.tipoContrato==='temporal'?'selected':''}>Temporal</option>
+            <option value="funcionario" ${persona.tipoContrato==='funcionario'?'selected':''}>Funcionario/a</option>
+            <option value="autonomo" ${persona.tipoContrato==='autonomo'?'selected':''}>Autónomo/a</option>
+            <option value="jubilado" ${persona.tipoContrato==='jubilado'?'selected':''}>Jubilado/a</option>
+            <option value="desempleado" ${persona.tipoContrato==='desempleado'?'selected':''}>Desempleado/a</option>
+          </select>
+        </div>
+        <div class="field"><label>Antigüedad en la empresa</label><input type="text" placeholder="p.ej. 1 año 6 m" data-path="perfil.${key}.antiguedad" value="${persona.antiguedad}"></div>
+        <div class="field"><label>Bruto anual (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="perfil.${key}.brutoAnual" value="${persona.brutoAnual}"></div>
+        <div class="field"><label>Pagas</label>
+          <select data-path="perfil.${key}.pagas">
+            <option value="12" ${persona.pagas==='12'?'selected':''}>12 pagas</option>
+            <option value="14" ${persona.pagas==='14'?'selected':''}>14 pagas</option>
+          </select>
+        </div>
+        <div class="field"><label>Historial crediticio</label>
+          <select data-path="perfil.${key}.historialLimpio">
+            <option value="" ${persona.historialLimpio===null||persona.historialLimpio===''?'selected':''}>— Sin indicar —</option>
+            <option value="si" ${persona.historialLimpio==='si'?'selected':''}>Sin incidencias (sin ASNEF, sin impagos)</option>
+            <option value="no" ${persona.historialLimpio==='no'?'selected':''}>Con alguna incidencia</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid2" style="align-items:end;">
+        <div class="field"><label style="display:flex;align-items:center;gap:8px;margin-bottom:0;"><input type="checkbox" style="width:16px;height:16px;" data-path="perfil.${key}.pruebaSuperada" ${persona.pruebaSuperada?'checked':''}> Periodo de prueba superado</label></div>
+        <div class="field"><label style="display:flex;align-items:center;gap:8px;margin-bottom:0;"><input type="checkbox" style="width:16px;height:16px;" data-path="perfil.${key}.avalPuede" ${persona.avalPuede?'checked':''}> ¿Puede aportar una propiedad como aval (propia o de un familiar)?</label></div>
+      </div>
+      <div class="field"><label>Notas (variable/bonus, situaciones especiales…)</label><textarea data-path="perfil.${key}.notas">${persona.notas}</textarea></div>
+    </div>
+  `;
+}
+function renderPerfil(){
+  return `
+    <div class="sheet-header"><span class="sheet-num">HOJA 01</span>${tabIcon('perfil')}<span class="sheet-title">Perfil financiero</span></div>
+    <p class="sheet-sub">Situación laboral e ingresos de cada titular. Es lo primero que pide cualquier bróker o banco.</p>
+    <div class="note-block">📎 Esta hoja es solo para datos y cifras — para adjuntar los documentos de verdad (nóminas, vida laboral, contrato, declaración de la renta…), ve a la <strong>Hoja 08 — Asesores/Brokers</strong>, sección "Tus documentos", y ponles como categoría el nombre del titular al que pertenecen. El checklist de cada bróker, en esa misma hoja, ya trae marcados estos mismos documentos para que sepas qué falta enviarle a cada uno.</div>
+    ${renderPersonaForm('p1', state.perfil.p1, state.titulares.t1)}
+    ${renderPersonaForm('p2', state.perfil.p2, state.titulares.t2)}
+  `;
+}
+
+/* ---------- 02 AHORROS ---------- */
+function renderAhorros(){
+  const a = state.ahorros;
+  const sumT1 = num(a.t1.efectivo)+num(a.t1.inversiones);
+  const sumT2 = num(a.t2.efectivo)+num(a.t2.inversiones);
+  const total = ahorroTotalCalc();
+  const disponible = total - num(a.colchon);
+  const bloque = (key, titulo, obj) => `
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;cursor:pointer;" onclick="toggleAhorroBlock('${key}')">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span class="chevron">${obj.expanded===false?'▸':'▾'}</span>
+          <h3 class="card-title" style="margin:0;">${titulo}</h3>
+        </div>
+        <span class="badge grey">${fmtMoney(num(obj.efectivo)+num(obj.inversiones))}</span>
+      </div>
+      ${obj.expanded===false ? '' : `
+      <div class="grid2" style="margin-top:12px;" onclick="event.stopPropagation()">
+        <div class="field"><label>En efectivo / cuenta corriente (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="ahorros.${key}.efectivo" value="${obj.efectivo}" data-rerender="true"></div>
+        <div class="field"><label>En inversiones (liquidables) (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="ahorros.${key}.inversiones" value="${obj.inversiones}" data-rerender="true"></div>
+      </div>`}
+    </div>`;
+  return `
+    <div class="sheet-header"><span class="sheet-num">HOJA 02</span>${tabIcon('ahorros')}<span class="sheet-title">Ahorros</span></div>
+    <p class="sheet-sub">El ahorro (y cuánto de él estáis dispuestos a usar) suele ser el verdadero cuello de botella de la operación, más que el salario. Rellenad por titular si queréis verlo separado, o solo el total si preferís no dividirlo — el que tenga algo relleno es el que se usa.</p>
+    <div class="stat-row" style="grid-template-columns:repeat(3,1fr);">
+      <div class="stat"><div class="label">Ahorro total</div><div class="value small">${fmtMoney(total)}</div></div>
+      <div class="stat"><div class="label">Ahorro ${state.titulares.t1||'Titular 1'}</div><div class="value small">${fmtMoney(sumT1)}</div></div>
+      <div class="stat"><div class="label">Ahorro ${state.titulares.t2||'Titular 2'}</div><div class="value small">${fmtMoney(sumT2)}</div></div>
+    </div>
+    ${bloque('t1', state.titulares.t1||'Titular 1', a.t1)}
+    ${bloque('t2', state.titulares.t2||'Titular 2', a.t2)}
+    ${bloque('total', 'Total (si no queréis dividirlo por titular)', a.total)}
+    <div class="card">
+      <div class="field"><label>Colchón que queréis conservar tras la compra (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="ahorros.colchon" value="${a.colchon}" data-rerender="true"></div>
+      <div class="hr"></div>
+      <div class="stat"><div class="label">Disponible para la compra</div><div class="value">${fmtMoney(disponible)}</div></div>
+      <div class="field" style="margin-top:16px;"><label>Notas</label><textarea data-path="ahorros.notas">${a.notas}</textarea></div>
+    </div>`;
+}
+
+/* ---------- 03 DEUDAS ---------- */
+function addEscenarioDeuda(){ state.deudas.escenarios.push({id:uid(), nombre:'Nuevo escenario', expanded:true, ahorroUsado:'', deudas:[]}); saveState(); render(); }
+function duplicarEscenarioDeuda(id){
+  const e = state.deudas.escenarios.find(x=>x.id===id);
+  if(!e) return;
+  const idx = state.deudas.escenarios.indexOf(e);
+  const copia = Object.assign({}, e, {
+    id:uid(), nombre:(e.nombre||'Escenario')+' (copia)',
+    deudas: (e.deudas||[]).map(d=>Object.assign({}, d, {id:uid()}))
+  });
+  state.deudas.escenarios.splice(idx+1, 0, copia);
+  saveState(); render();
+}
+function removeEscenarioDeuda(id){
+  state.deudas.escenarios = state.deudas.escenarios.filter(e=>e.id!==id);
+  if(state.deudas.seleccionado===id) state.deudas.seleccionado = null;
+  saveState(); render();
+}
+function addDeuda(escIdx){ state.deudas.escenarios[escIdx].deudas.push({id:uid(), nombre:'', saldoPendiente:'', cuotaMensual:'', mesesRestantes:'', comisionCancelacion:''}); saveState(); render(); }
+function removeDeuda(escIdx, deudaId){ state.deudas.escenarios[escIdx].deudas = state.deudas.escenarios[escIdx].deudas.filter(d=>d.id!==deudaId); saveState(); render(); }
+function cuotaTotalEscenarioDeuda(e){ return e ? (e.deudas||[]).reduce((s,d)=>s+num(d.cuotaMensual),0) : 0; }
+function saldoTotalEscenarioDeuda(e){ return e ? (e.deudas||[]).reduce((s,d)=>s+num(d.saldoPendiente),0) : 0; }
+function deudaEscenarioSeleccionado(){ return state.deudas.escenarios.find(e=>e.id===state.deudas.seleccionado) || state.deudas.escenarios[0]; }
+function renderDeudas(){
+  return `
+    <div class="sheet-header"><span class="sheet-num">HOJA 03</span>${tabIcon('deudas')}<span class="sheet-title">Deudas actuales</span></div>
+    <p class="sheet-sub">Coche, tarjetas, préstamos personales… cualquier financiación vigente, por pequeña que sea, cuenta para el banco. Crea varios escenarios si quieres comparar (p.ej. "Escenario 01" vs. "Coche cancelado con ahorro") — incluida una posible "Deuda 0" sin ninguna línea.</p>
+    ${state.deudas.escenarios.length>1 ? expandCollapseButtons('deudas.escenarios') : ''}
+    ${state.deudas.escenarios.map((e,ei)=>{
+      const cuotaTotal = cuotaTotalEscenarioDeuda(e);
+      return `
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer;" onclick="toggleExpand('deudas.escenarios', ${ei})">
+          <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
+            <span class="chevron">${e.expanded===false?'▸':'▾'}</span>
+            <input class="broker-name-input" style="font-size:16px;" type="text" data-path="deudas.escenarios.${ei}.nombre" value="${e.nombre}" onclick="event.stopPropagation()">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;" onclick="event.stopPropagation()">
+            ${e.expanded===false ? `<span class="badge grey">${fmtMoney(cuotaTotal)}/mes</span>` : ''}
+            <button class="btn secondary small" onclick="duplicarEscenarioDeuda('${e.id}')">⧉ Duplicar</button>
+            <button class="btn danger small" onclick="removeEscenarioDeuda('${e.id}')">Eliminar</button>
+          </div>
+        </div>
+        ${e.expanded===false ? '' : `
+        ${(e.deudas||[]).length===0 ? '<div class="empty" style="margin-top:10px;">Sin deudas en este escenario — por ejemplo, tu "Deuda 0".</div>' : e.deudas.map((d,di)=>`
+          <div class="grid3" style="margin-bottom:6px;margin-top:12px;align-items:end;">
+            <div class="field"><label>Concepto</label><input type="text" placeholder="p.ej. Préstamo coche" data-path="deudas.escenarios.${ei}.deudas.${di}.nombre" value="${d.nombre}"></div>
+            <div class="field"><label>Saldo pendiente (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="deudas.escenarios.${ei}.deudas.${di}.saldoPendiente" value="${d.saldoPendiente}"></div>
+            <div class="field"><label>Cuota mensual (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="deudas.escenarios.${ei}.deudas.${di}.cuotaMensual" value="${d.cuotaMensual}" data-rerender="true"></div>
+          </div>
+          <div class="grid3" style="margin-bottom:12px;align-items:end;">
+            <div class="field"><label>Meses restantes</label><input type="text" inputmode="decimal" data-numeric="true" data-path="deudas.escenarios.${ei}.deudas.${di}.mesesRestantes" value="${d.mesesRestantes}"></div>
+            <div class="field"><label>Comisión cancelación anticipada</label><input type="text" placeholder="p.ej. máx. 1%" data-path="deudas.escenarios.${ei}.deudas.${di}.comisionCancelacion" value="${d.comisionCancelacion}"></div>
+            <div><button class="btn danger small" onclick="removeDeuda(${ei}, '${d.id}')">Eliminar</button></div>
+          </div>
+          <div class="hr"></div>
+        `).join('')}
+        <button class="btn secondary small" onclick="addDeuda(${ei})">+ Añadir deuda</button>
+        <div class="hr"></div>
+        <div class="grid2">
+          <div class="stat"><div class="label">Cuota mensual total de este escenario</div><div class="value small">${fmtMoney(cuotaTotal)}</div></div>
+          <div class="field">
+            <label>Ahorro usado para esto (€) <span style="font-weight:400;">(opcional)</span></label>
+            <input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="deudas.escenarios.${ei}.ahorroUsado" value="${e.ahorroUsado}">
+            <div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Manual — si cancelas deuda con tu ahorro, réstalo tú mismo del disponible en la Hoja 02.</div>
+          </div>
+        </div>
+        `}
+      </div>`;
+    }).join('')}
+    <button class="btn secondary" onclick="addEscenarioDeuda()">+ Añadir escenario de deudas</button>
+    ${state.deudas.escenarios.length>1 ? renderComparativaDeudas() : ''}
+  `;
+}
+function renderComparativaDeudas(){
+  const filas = state.deudas.escenarios.map(e=>({nombre: e.nombre||'Escenario', cuota: cuotaTotalEscenarioDeuda(e)}));
+  const minCuota = Math.min(...filas.map(f=>f.cuota));
+  return `
+    <div class="card">
+      <h3 class="card-title">Comparativa de escenarios <small>cuál te deja más capacidad de deuda al mes</small></h3>
+      <table><thead><tr><th>Escenario</th><th class="num">Cuota mensual total</th><th class="num">Diferencia vs. el más bajo</th></tr></thead><tbody>
+        ${filas.map(f=>`
+          <tr class="${f.cuota===minCuota?'compare-best':''}">
+            <td>${f.nombre}${f.cuota===minCuota?'<span class="compare-tag">MENOS CUOTA</span>':''}</td>
+            <td class="num">${fmtMoney(f.cuota)}</td>
+            <td class="num">${f.cuota===minCuota?'—':'+'+fmtMoney(f.cuota-minCuota)}</td>
+          </tr>`).join('')}
+      </tbody></table>
+    </div>
+  `;
+}
+
+/* ---------- 04 VIVIENDA ---------- */
+function addVivienda(){ state.viviendas.push({id:uid(), nombre:'', activa: state.viviendas.length===0, ubicaciones:'', tipoInmueble:'', precioMin:'', precioMax:'', tipo:'segunda-mano', reparto:'', notas:''}); saveState(); render(); }
+function duplicarVivienda(id){
+  const v = state.viviendas.find(x=>x.id===id);
+  if(!v) return;
+  const idx = state.viviendas.indexOf(v);
+  const copia = Object.assign({}, v, {id:uid(), activa:false, nombre:(v.nombre||'Vivienda')+' (copia)'});
+  state.viviendas.splice(idx+1, 0, copia);
+  saveState(); render();
+}
+function removeVivienda(id){
+  state.viviendas = state.viviendas.filter(v=>v.id!==id);
+  if(state.viviendas.length && !state.viviendas.some(v=>v.activa)) state.viviendas[0].activa = true;
+  saveState(); render();
+}
+function setViviendaActiva(id){ state.viviendas.forEach(v=>{ v.activa = (v.id===id); }); saveState(); render(); }
+function viviendaActiva(){ return state.viviendas.find(v=>v.activa) || state.viviendas[0]; }
+function renderVivienda(){
+  return `
+    <div class="sheet-header"><span class="sheet-num">HOJA 04</span>${tabIcon('vivienda')}<span class="sheet-title">Vivienda objetivo</span></div>
+    <p class="sheet-sub">Qué estáis buscando, para poder cruzarlo luego con la hipoteca y los gastos de compra. Crea una tarjeta por cada opción que estéis valorando y marca cuál usar como referencia en la Hoja 05.</p>
+    ${state.viviendas.length>1 ? expandCollapseButtons('viviendas') : ''}
+    ${state.viviendas.map((v,i)=>`
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;cursor:pointer;" onclick="toggleExpand('viviendas', ${i})">
+          <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
+            <span class="chevron">${v.expanded===false?'▸':'▾'}</span>
+            <input class="broker-name-input" style="font-size:16px;" type="text" data-path="viviendas.${i}.nombre" value="${v.nombre}" placeholder="Nombre de esta opción (p.ej. Piso Madrid centro)" onclick="event.stopPropagation()">
+          </div>
+          <div style="display:flex;align-items:center;gap:14px;" onclick="event.stopPropagation()">
+            <label style="display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-soft);margin-bottom:0;cursor:pointer;">
+              <input type="checkbox" style="width:16px;height:16px;" ${v.activa?'checked':''} onchange="setViviendaActiva('${v.id}')"> Vivienda a utilizar en Hoja 05 — Hipoteca
+            </label>
+            <button class="btn secondary small" onclick="duplicarVivienda('${v.id}')">⧉ Duplicar</button>
+            <button class="btn danger small" onclick="removeVivienda('${v.id}')">Eliminar</button>
+          </div>
+        </div>
+        ${v.expanded===false ? '' : `
+        <div class="field" style="margin-top:10px;"><label>Provincia</label>
+          <select data-path="viviendas.${i}.ubicaciones">${opcionesProvincias(v.ubicaciones)}</select>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Precio mínimo estimado (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="viviendas.${i}.precioMin" value="${v.precioMin}"></div>
+          <div class="field"><label>Precio máximo estimado (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="viviendas.${i}.precioMax" value="${v.precioMax}"></div>
+        </div>
+        <div class="grid3">
+          <div class="field"><label>Estado</label>
+            <select data-path="viviendas.${i}.tipo">
+              <option value="segunda-mano" ${v.tipo==='segunda-mano'?'selected':''}>Segunda mano</option>
+              <option value="nueva" ${v.tipo==='nueva'?'selected':''}>Nueva construcción</option>
+            </select>
+          </div>
+          <div class="field"><label>Tipo de inmueble</label>
+            ${renderCombo('tipoInmueble-'+i, `viviendas.${i}.tipoInmueble`, v.tipoInmueble, TIPOS_INMUEBLE)}
+          </div>
+          <div class="field"><label>Reparto de la compra</label><input type="text" placeholder="p.ej. 50/50" data-path="viviendas.${i}.reparto" value="${v.reparto}"></div>
+        </div>
+        <div class="field"><label>Notas <span style="font-weight:400;color:var(--ink-faint);">(buen sitio para pegar el enlace de la publicación — idealista, fotocasa…)</span></label><textarea data-path="viviendas.${i}.notas" placeholder="p.ej. https://www.idealista.com/inmueble/...">${v.notas}</textarea></div>
+        `}
+      </div>
+    `).join('')}
+    ${state.viviendas.length===0 ? '<div class="card"><div class="empty">Sin opciones todavía.</div></div>' : ''}
+    <button class="btn secondary" onclick="addVivienda()">+ Añadir vivienda</button>
+  `;
+}
+
+/* ---------- 05 HIPOTECA ---------- */
+function addEscenarioHipoteca(){ state.hipoteca.escenarios.push({id:uid(), nombre:'Nuevo escenario', importe:'', pctFinanciacion:'100', tin:'', plazoAnios:'30', tipoInteres:'fijo', vinculaciones:[], notas:''}); saveState(); render(); }
+function duplicarEscenarioHipoteca(id){
+  const e = state.hipoteca.escenarios.find(x=>x.id===id);
+  if(!e) return;
+  const idx = state.hipoteca.escenarios.indexOf(e);
+  const copia = Object.assign({}, e, {
+    id:uid(), nombre: (e.nombre||'Escenario')+' (copia)',
+    vinculaciones: (e.vinculaciones||[]).map(v=>Object.assign({}, v, {id:uid()}))
+  });
+  state.hipoteca.escenarios.splice(idx+1, 0, copia);
+  saveState(); render();
+}
+function removeEscenarioHipoteca(id){ state.hipoteca.escenarios = state.hipoteca.escenarios.filter(e=>e.id!==id); saveState(); render(); }
+function pctFinanciacionOf(e){ return (e.pctFinanciacion===undefined || e.pctFinanciacion==='') ? 100 : num(e.pctFinanciacion); }
+function addVinculacion(escenarioIdx){
+  if(!Array.isArray(state.hipoteca.escenarios[escenarioIdx].vinculaciones)) state.hipoteca.escenarios[escenarioIdx].vinculaciones = [];
+  state.hipoteca.escenarios[escenarioIdx].vinculaciones.push({id:uid(), nombre:'', importe:'', periodicidad:'anual'});
+  saveState(); render();
+}
+function removeVinculacion(escenarioIdx, vincId){
+  state.hipoteca.escenarios[escenarioIdx].vinculaciones = state.hipoteca.escenarios[escenarioIdx].vinculaciones.filter(v=>v.id!==vincId);
+  saveState(); render();
+}
+function vinculacionAnual(v){ return v.periodicidad==='mensual' ? num(v.importe)*12 : num(v.importe); }
+function vinculacionesAnualTotal(e){ return (e.vinculaciones||[]).reduce((s,v)=>s+vinculacionAnual(v),0); }
+function vinculacionesCosteTotalPlazo(e){ return vinculacionesAnualTotal(e) * num(e.plazoAnios); }
+function importeAFinanciar(e){ return num(e.importe) * pctFinanciacionOf(e) / 100; }
+function labelEscenarioHipoteca(e){ return `${e.nombre||'Escenario'} — ${fmtMoney(importeAFinanciar(e))} · ${fmtPct(pctFinanciacionOf(e),0)}`; }
+function labelEscenarioPersonal(e){ const cuota = cuotaFrancesa(e.importe, e.tin, e.plazoMeses); return `${e.nombre||'Escenario'} — ${fmtMoney(e.importe)} — ${fmtMoney(cuota)}/mes`; }
+function renderHipoteca(){
+  const va = viviendaActiva();
+  const rangoMin = va ? num(va.precioMin) : 0, rangoMax = va ? num(va.precioMax) : 0;
+  const rangoTexto = (rangoMin||rangoMax) ? `Rango de la Hoja 04${va&&va.nombre?` — "${va.nombre}"`:''}: ${rangoMin?fmtMoney(rangoMin):'—'} – ${rangoMax?fmtMoney(rangoMax):'—'}` : '';
+  return `
+    <div class="sheet-header"><span class="sheet-num">HOJA 05</span>${tabIcon('hipoteca')}<span class="sheet-title">Hipoteca — simulador de escenarios</span></div>
+    <p class="sheet-sub">Crea tantos escenarios como quieras dentro del rango que definiste en la Hoja 04 (p.ej. distintos precios y % de financiación) y compáralos. La cuota se calcula con el sistema de amortización francés (el habitual en España).</p>
+    ${state.hipoteca.escenarios.length>1 ? expandCollapseButtons('hipoteca.escenarios') : ''}
+    ${state.hipoteca.escenarios.length===0 ? '<div class="card"><div class="empty">Sin escenarios todavía.</div></div>' : state.hipoteca.escenarios.map((e,i)=>{
+      const meses = num(e.plazoAnios)*12;
+      const importeFin = importeAFinanciar(e);
+      const cuota = cuotaFrancesa(importeFin, e.tin, meses);
+      const totalPagado = cuota*meses;
+      const intereses = totalPagado - importeFin;
+      const entrada = num(e.importe) - importeFin;
+      return `
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer;" onclick="toggleExpand('hipoteca.escenarios', ${i})">
+          <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
+            <span class="chevron">${e.expanded===false?'▸':'▾'}</span>
+            <input class="broker-name-input" style="font-size:16px;" type="text" data-path="hipoteca.escenarios.${i}.nombre" value="${e.nombre}" onclick="event.stopPropagation()">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;" onclick="event.stopPropagation()">
+            ${e.expanded===false ? `<span class="badge grey">${fmtMoney(cuota)}/mes · ${fmtPct(pctFinanciacionOf(e),0)}</span>` : ''}
+            <button class="btn secondary small" onclick="duplicarEscenarioHipoteca('${e.id}')">⧉ Duplicar</button>
+            <button class="btn danger small" onclick="removeEscenarioHipoteca('${e.id}')">Eliminar</button>
+          </div>
+        </div>
+        ${e.expanded===false ? '' : `
+        <div class="grid3" style="margin-top:12px;">
+          <div class="field">
+            <label>Precio de la vivienda / valor de referencia (€)</label>
+            <input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="hipoteca.escenarios.${i}.importe" value="${e.importe}" data-rerender="true">
+            ${rangoTexto ? `<div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">${rangoTexto}</div>` : ''}
+          </div>
+          <div class="field"><label>% de financiación</label><input type="text" inputmode="decimal" data-numeric="true" data-path="hipoteca.escenarios.${i}.pctFinanciacion" value="${e.pctFinanciacion}" data-rerender="true"></div>
+          <div class="field"><label>Importe a financiar (€) <small style="font-weight:400;color:var(--ink-faint);">se usa en el resto de cálculos</small></label>
+            <div style="font-family:var(--font-body);font-variant-numeric:tabular-nums;font-size:15px;font-weight:600;padding:9px 10px;background:var(--brass-soft);border-radius:7px;color:#5B4419;">${fmtMoney(importeFin)}</div>
+          </div>
+        </div>
+        ${entrada>0 ? `<div class="note-block" style="margin-top:0;">La hipoteca no cubre <strong>${fmtMoney(entrada)}</strong> del precio de la vivienda (la entrada). Eso hay que aportarlo con ahorro o completarlo con un préstamo personal — en la Hoja 07 se suma junto con los gastos de compra para saber cuánto pedir.</div>` : ''}
+        <div class="grid3">
+          <div class="field"><label>TIN estimado (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="hipoteca.escenarios.${i}.tin" value="${e.tin}" data-rerender="true"><div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">El TIN es el interés puro. El banco también te dará la TAE (TIN + comisiones y gastos) — esa es la cifra real para comparar ofertas.</div></div>
+          <div class="field"><label>Plazo (años)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="hipoteca.escenarios.${i}.plazoAnios" value="${e.plazoAnios}" data-rerender="true"></div>
+          <div class="field"><label>Tipo de interés</label>
+            <select data-path="hipoteca.escenarios.${i}.tipoInteres">
+              <option value="fijo" ${e.tipoInteres==='fijo'?'selected':''}>Fijo</option>
+              <option value="mixto" ${e.tipoInteres==='mixto'?'selected':''}>Mixto</option>
+              <option value="variable" ${e.tipoInteres==='variable'?'selected':''}>Variable</option>
+            </select>
+          </div>
+        </div>
+        <div class="hr"></div>
+        <div class="section-flag"><strong style="font-size:13.5px;">Productos vinculados</strong> <span style="font-size:11px;color:var(--ink-faint);">(seguros, nómina, tarjetas… lo que el banco exige para bonificar el TIN — un TIN más bajo con vinculaciones caras puede no salir más barato)</span></div>
+        ${(e.vinculaciones||[]).length===0 ? '<div class="empty">Sin productos vinculados en este escenario.</div>' : (e.vinculaciones||[]).map((v,vi)=>`
+          <div class="grid3" style="margin-bottom:8px;align-items:end;">
+            <div class="field"><label>Nombre</label><input type="text" placeholder="p.ej. Seguro de vida" data-path="hipoteca.escenarios.${i}.vinculaciones.${vi}.nombre" value="${v.nombre}"></div>
+            <div class="field"><label>Importe (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="hipoteca.escenarios.${i}.vinculaciones.${vi}.importe" value="${v.importe}" data-rerender="true"></div>
+            <div class="field"><label>Periodicidad</label>
+              <select data-path="hipoteca.escenarios.${i}.vinculaciones.${vi}.periodicidad" data-rerender="true">
+                <option value="mensual" ${v.periodicidad==='mensual'?'selected':''}>Mensual</option>
+                <option value="anual" ${v.periodicidad==='anual'?'selected':''}>Anual</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin-bottom:10px;"><button class="btn danger small" onclick="removeVinculacion(${i}, '${v.id}')">Eliminar</button></div>
+        `).join('')}
+        <button class="btn secondary small" onclick="addVinculacion(${i})">+ Añadir producto vinculado</button>
+        <div class="hr"></div>
+        <div class="stat-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:8px;">
+          <div class="stat"><div class="label">Cuota mensual</div><div class="value">${fmtMoney(cuota)}</div></div>
+          <div class="stat"><div class="label">Intereses totales</div><div class="value small">${fmtMoney(intereses)}</div></div>
+          <div class="stat"><div class="label">Total pagado</div><div class="value small">${fmtMoney(totalPagado)}</div></div>
+        </div>
+        ${(e.vinculaciones||[]).length>0 ? `
+        <div class="stat-row" style="grid-template-columns:repeat(2,1fr);margin-bottom:8px;">
+          <div class="stat"><div class="label">Vinculaciones / año</div><div class="value small">${fmtMoney(vinculacionesAnualTotal(e))}</div></div>
+          <div class="stat"><div class="label">Coste total (intereses + vinculaciones)</div><div class="value small">${fmtMoney(intereses + vinculacionesCosteTotalPlazo(e))}</div></div>
+        </div>` : ''}
+        <div class="field" style="margin-top:10px;"><label>Notas</label><textarea data-path="hipoteca.escenarios.${i}.notas">${e.notas}</textarea></div>
+        `}
+      </div>`;
+    }).join('')}
+    <button class="btn secondary" onclick="addEscenarioHipoteca()">+ Añadir escenario de hipoteca</button>
+    ${state.hipoteca.escenarios.length>1 ? renderComparativaHipoteca() : ''}
+  `;
+}
+function renderComparativaHipoteca(){
+  const filas = state.hipoteca.escenarios.map(e=>{
+    const importeFin = importeAFinanciar(e);
+    const meses = num(e.plazoAnios)*12;
+    const cuota = cuotaFrancesa(importeFin, e.tin, meses);
+    const intereses = cuota*meses - importeFin;
+    const vincAnual = vinculacionesAnualTotal(e);
+    const vincTotal = vinculacionesCosteTotalPlazo(e);
+    const costeTotalReal = intereses + vincTotal;
+    return {nombre: e.nombre||'Escenario', importeFin, cuota, intereses, vincAnual, vincTotal, costeTotalReal, tieneVinc: (e.vinculaciones||[]).length>0};
+  });
+  const minCoste = Math.min(...filas.map(f=>f.costeTotalReal));
+  return `
+    <div class="card">
+      <h3 class="card-title">Comparativa de escenarios <small>coste total real — intereses + productos vinculados, a lo largo del préstamo</small></h3>
+      <table><thead><tr><th>Escenario</th><th class="num">Cuota mensual</th><th class="num">Intereses totales</th><th class="num">Vinculación</th><th class="num">Coste total real</th><th class="num">Diferencia vs. el más barato</th></tr></thead><tbody>
+        ${filas.map(f=>`
+          <tr class="${f.costeTotalReal===minCoste?'compare-best':''}">
+            <td>${f.nombre}${f.costeTotalReal===minCoste?'<span class="compare-tag">MENOS COSTE TOTAL</span>':''}</td>
+            <td class="num">${fmtMoney(f.cuota)}</td>
+            <td class="num">${fmtMoney(f.intereses)}</td>
+            <td class="num">${f.tieneVinc?`Con vinculación<br><span style="font-size:11px;color:var(--ink-faint);">${fmtMoney(f.vincAnual)}/año</span>`:'Sin vinculación'}</td>
+            <td class="num">${fmtMoney(f.costeTotalReal)}</td>
+            <td class="num">${f.costeTotalReal===minCoste?'—':'+'+fmtMoney(f.costeTotalReal-minCoste)}</td>
+          </tr>`).join('')}
+      </tbody></table>
+    </div>
+  `;
+}
+
+/* ---------- 07 PRESTAMO PERSONAL ---------- */
+function addEscenarioPersonal(){
+  state.personal.escenarios.push({
+    id:uid(), nombre:'Nuevo préstamo', importe:'', tin:'', comisionApertura:'', plazoMeses:'60', proposito:'', notas:'',
+    gastosPostCompra: [
+      {id:uid(), valor:'', concepto:'Reforma'},
+      {id:uid(), valor:'', concepto:'Muebles y electrodomésticos'},
+      {id:uid(), valor:'', concepto:'Mudanza'}
+    ]
+  });
+  saveState(); render();
+}
+function removeEscenarioPersonal(id){ state.personal.escenarios = state.personal.escenarios.filter(e=>e.id!==id); saveState(); render(); }
+function addGastoPostCompra(escIdx){ state.personal.escenarios[escIdx].gastosPostCompra.push({id:uid(), valor:'', concepto:''}); saveState(); render(); }
+function removeGastoPostCompra(escIdx, gastoId){ state.personal.escenarios[escIdx].gastosPostCompra = state.personal.escenarios[escIdx].gastosPostCompra.filter(g=>g.id!==gastoId); saveState(); render(); }
+function totalGastosPostCompra(e){ return (e.gastosPostCompra||[]).reduce((s,g)=>s+num(g.valor),0); }
+function crearPersonalDesdeResumen(importe){
+  state.personal.escenarios.push({id:uid(), nombre:'Entrada + gastos de compra', importe: String(Math.round(importe)), tin:'', comisionApertura:'', plazoMeses:'60', proposito:'Cubrir la entrada no financiada por la hipoteca y los gastos de compra no cubiertos por el ahorro', notas:''});
+  saveState(); render();
+}
+function renderPersonal(){
+  const ahorroDisponible = ahorroTotalCalc() - num(state.ahorros.colchon);
+  const hipSel = state.hipoteca.escenarios.find(e=>e.id===state.hipoteca.seleccionado) || state.hipoteca.escenarios[0];
+  const provSel = state.gastos.provincias.find(p=>p.id===state.personal.provinciaSeleccionada) || state.gastos.provincias[0];
+  let resumenHtml = '';
+  if(!hipSel && !provSel){
+    resumenHtml = `<div class="note-block">Crea un escenario en la <strong>Hoja 05 — Hipoteca</strong> y una ubicación en la <strong>Hoja 06 — Gastos de compra</strong> para ver aquí cuánto necesitaríais pedir.</div>`;
+  }else{
+    const entrada = hipSel ? (num(hipSel.importe) - importeAFinanciar(hipSel)) : 0;
+    const gastoCompra = provSel ? calcGastoCompra(provSel) : 0;
+    const faltaGastos = gastoCompra - ahorroDisponible;
+    const totalNecesario = faltaGastos + entrada;
+    resumenHtml = `
+    <div class="card">
+      <h3 class="card-title">Cuánto pedir <small>entrada pendiente (Hoja 05) + gastos de compra (Hoja 06) − ahorro (Hoja 02)</small></h3>
+      <div class="grid2">
+        ${state.hipoteca.escenarios.length>1 ? `
+        <div class="field"><label>Escenario de hipoteca</label>
+          <select data-path="hipoteca.seleccionado" data-rerender="true">
+            ${state.hipoteca.escenarios.map(e=>`<option value="${e.id}" ${e.id===(hipSel&&hipSel.id)?'selected':''}>${labelEscenarioHipoteca(e)}</option>`).join('')}
+          </select>
+          <div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Mismo escenario que se usa en la Hoja 00 — Resumen.</div>
+        </div>` : ''}
+        ${state.gastos.provincias.length>1 ? `
+        <div class="field"><label>¿Qué tarjeta de gastos de compra usar aquí?</label>
+          <select data-path="personal.provinciaSeleccionada" data-rerender="true">
+            ${state.gastos.provincias.map(p=>{
+              const totalP = Math.max(0, entrada + calcGastoCompra(p) - ahorroDisponible);
+              return `<option value="${p.id}" ${p.id===(provSel&&provSel.id)?'selected':''}>${p.nombre||'Sin nombre'} — ${fmtMoney(totalP)} a pedir</option>`;
+            }).join('')}
+          </select>
+          <div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Solo aporta los gastos de compra — la entrada ya se toma del escenario de hipoteca de arriba.</div>
+        </div>` : ''}
+      </div>
+      ${!hipSel ? `<div style="font-size:12px;color:var(--ink-faint);margin-bottom:10px;">Sin escenario de hipoteca (Hoja 05), la entrada pendiente se cuenta como 0 €.</div>` : ''}
+      ${!provSel ? `<div style="font-size:12px;color:var(--ink-faint);margin-bottom:10px;">Sin ubicación de gastos de compra (Hoja 06), ese importe se cuenta como 0 €.</div>` : ''}
+      <div class="grid3">
+        <div class="stat"><div class="label">${totalNecesario>0?'Total a pedir':'Os sobra'}</div><div class="value" style="color:${totalNecesario>0?'var(--red)':'var(--green)'};">${fmtMoney(Math.abs(totalNecesario))}</div></div>
+        <div class="stat"><div class="label">Entrada no cubierta por la hipoteca</div><div class="value small">${fmtMoney(entrada)}</div>${hipSel?`<div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">Escenario "${hipSel.nombre}"</div>`:''}</div>
+        <div class="stat"><div class="label">Gastos de compra − ahorro</div><div class="value small">${fmtMoney(faltaGastos)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">gastos ${fmtMoney(gastoCompra)} − ahorro ${fmtMoney(ahorroDisponible)}</div></div>
+      </div>
+      ${totalNecesario>0 ? `<div style="margin-top:12px;"><button class="btn secondary small" onclick="crearPersonalDesdeResumen(${totalNecesario})">+ Crear escenario de préstamo por ${fmtMoney(totalNecesario)}</button></div>` : ''}
+    </div>`;
+  }
+  return `
+    <div class="sheet-header"><span class="sheet-num">HOJA 07</span>${tabIcon('personal')}<span class="sheet-title">Préstamo personal (opcional)</span></div>
+    <p class="sheet-sub">Para cubrir la entrada no financiada por la hipoteca y los gastos de compra cuando el ahorro no llega. El plazo afecta casi tanto como el tipo a la cuota mensual.</p>
+    ${resumenHtml}
+    <div class="hr"></div>
+    ${state.personal.escenarios.length>1 ? expandCollapseButtons('personal.escenarios') : ''}
+    ${state.personal.escenarios.length===0 ? '<div class="card"><div class="empty">Sin escenarios todavía.</div></div>' : state.personal.escenarios.map((e,i)=>{
+      const cuota = cuotaFrancesa(e.importe, e.tin, e.plazoMeses);
+      const totalPagado = cuota*num(e.plazoMeses);
+      const intereses = totalPagado - num(e.importe);
+      const apertura = num(e.importe)*num(e.comisionApertura)/100;
+      return `
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer;" onclick="toggleExpand('personal.escenarios', ${i})">
+          <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
+            <span class="chevron">${e.expanded===false?'▸':'▾'}</span>
+            <input class="broker-name-input" style="font-size:16px;" type="text" data-path="personal.escenarios.${i}.nombre" value="${e.nombre}" onclick="event.stopPropagation()">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;" onclick="event.stopPropagation()">
+            ${e.expanded===false ? `<span class="badge grey">${fmtMoney(cuota)}/mes</span>` : ''}
+            <button class="btn danger small" onclick="removeEscenarioPersonal('${e.id}')">Eliminar</button>
+          </div>
+        </div>
+        ${e.expanded===false ? '' : `
+        <div class="grid3" style="grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px;">
+          <div class="field"><label>Importe (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="personal.escenarios.${i}.importe" value="${e.importe}" data-rerender="true"></div>
+          <div class="field"><label>TIN estimado (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="personal.escenarios.${i}.tin" value="${e.tin}" data-rerender="true"><div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">No es la TAE (incluye comisiones).</div></div>
+          <div class="field"><label>Plazo (meses)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="personal.escenarios.${i}.plazoMeses" value="${e.plazoMeses}" data-rerender="true">${e.plazoMeses?`<div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">${mesesAAnios(e.plazoMeses)}</div>`:''}</div>
+          <div class="field"><label>Comisión apertura (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="personal.escenarios.${i}.comisionApertura" value="${e.comisionApertura}" data-rerender="true"></div>
+        </div>
+        <div class="field"><label>Finalidad</label><input type="text" placeholder="p.ej. impuestos y gastos de compra" data-path="personal.escenarios.${i}.proposito" value="${e.proposito}"></div>
+        <div class="hr"></div>
+        <div class="stat-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:8px;">
+          <div class="stat"><div class="label">Cuota mensual</div><div class="value">${fmtMoney(cuota)}</div></div>
+          <div class="stat"><div class="label">Comisión apertura</div><div class="value small">${fmtMoney(apertura)}</div></div>
+          <div class="stat"><div class="label">Coste total (intereses + apertura)</div><div class="value small">${fmtMoney(intereses+apertura)}</div></div>
+        </div>
+        <div class="hr"></div>
+        <div class="section-flag"><strong style="font-size:13.5px;">Gastos post-compra</strong> <span style="font-size:11px;color:var(--ink-faint);">(reforma, muebles, mudanza… lo que este préstamo va a cubrir aparte de la entrada y los gastos de compra)</span></div>
+        <div style="font-size:11px;color:var(--ink-faint);margin-top:4px;margin-bottom:8px;">Esto no se suma solo al Importe de arriba — es solo un recordatorio para que decidas tú cuánto meter en el Importe.</div>
+        ${(e.gastosPostCompra||[]).length===0 ? '<div class="empty" style="margin-top:8px;">Sin gastos post-compra en este escenario.</div>' : (e.gastosPostCompra||[]).map((g,gi)=>`
+          <div style="display:flex;gap:8px;align-items:center;margin-top:6px;">
+            <input type="text" inputmode="decimal" data-numeric="true" data-format="miles" placeholder="€" style="width:110px;flex-shrink:0;" data-path="personal.escenarios.${i}.gastosPostCompra.${gi}.valor" value="${g.valor}" data-rerender="true">
+            <input type="text" placeholder="Concepto" style="flex:1;" data-path="personal.escenarios.${i}.gastosPostCompra.${gi}.concepto" value="${g.concepto}">
+            <button class="btn danger small" onclick="removeGastoPostCompra(${i}, '${g.id}')" style="flex-shrink:0;">✕</button>
+          </div>
+        `).join('')}
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-top:10px;">
+          <button class="btn secondary small" onclick="addGastoPostCompra(${i})">+ Añadir gasto</button>
+          <div class="stat" style="padding:0;"><div class="label" style="margin-bottom:0;">Total post-compra</div><div class="value small">${fmtMoney(totalGastosPostCompra(e))}</div></div>
+        </div>
+        <div class="hr"></div>
+        <div class="field" style="margin-top:10px;"><label>Notas</label><textarea data-path="personal.escenarios.${i}.notas">${e.notas}</textarea></div>
+        `}
+      </div>`;
+    }).join('')}
+    <button class="btn secondary" onclick="addEscenarioPersonal()">+ Añadir escenario de préstamo personal</button>
+    ${state.personal.escenarios.length>1 ? renderComparativaPersonal() : ''}
+  `;
+}
+function renderComparativaPersonal(){
+  const filas = state.personal.escenarios.map(e=>{
+    const cuota = cuotaFrancesa(e.importe, e.tin, e.plazoMeses);
+    const intereses = cuota*num(e.plazoMeses) - num(e.importe);
+    const apertura = num(e.importe)*num(e.comisionApertura)/100;
+    return {nombre: e.nombre||'Escenario', importe: num(e.importe), cuota, costeTotal: intereses+apertura};
+  });
+  const minCoste = Math.min(...filas.map(f=>f.costeTotal));
+  return `
+    <div class="card">
+      <h3 class="card-title">Comparativa de escenarios <small>cuál te cuesta menos entre intereses y comisión de apertura</small></h3>
+      <table><thead><tr><th>Escenario</th><th class="num">Importe</th><th class="num">Cuota mensual</th><th class="num">Coste total</th><th class="num">Diferencia vs. el más barato</th></tr></thead><tbody>
+        ${filas.map(f=>`
+          <tr class="${f.costeTotal===minCoste?'compare-best':''}">
+            <td>${f.nombre}${f.costeTotal===minCoste?'<span class="compare-tag">MENOS COSTE</span>':''}</td>
+            <td class="num">${fmtMoney(f.importe)}</td>
+            <td class="num">${fmtMoney(f.cuota)}</td>
+            <td class="num">${fmtMoney(f.costeTotal)}</td>
+            <td class="num">${f.costeTotal===minCoste?'—':'+'+fmtMoney(f.costeTotal-minCoste)}</td>
+          </tr>`).join('')}
+      </tbody></table>
+    </div>
+  `;
+}
+
+/* ---------- 06 GASTOS DE COMPRA ---------- */
+function addProvincia(){ state.gastos.provincias.push({id:uid(), nombre:'', provincia:'', hipotecaEscenarioId:'', itpPct:'', notaria:'', registro:'', gestoria:'', tasacion:''}); saveState(); render(); }
+function setProvinciaCompra(i, value){
+  const p = state.gastos.provincias[i];
+  p.provincia = value;
+  if(p.itpPct===undefined || p.itpPct===''){
+    const com = comunidadDeProvincia(value);
+    const tasa = com && TASAS_ITP_VERIFICADAS[com];
+    if(tasa) p.itpPct = String(tasa.itp);
+  }
+  saveState(); render();
+}
+function removeProvincia(id){ state.gastos.provincias = state.gastos.provincias.filter(p=>p.id!==id); saveState(); render(); }
+function precioRefVivienda(){ const v=viviendaActiva(); return v ? (num(v.precioMax) || num(v.precioMin)) : 0; }
+function hipotecaVinculada(p){ return p.hipotecaEscenarioId ? state.hipoteca.escenarios.find(e=>e.id===p.hipotecaEscenarioId) : null; }
+function precioRefParaProvincia(p){
+  const e = hipotecaVinculada(p);
+  return e ? num(e.importe) : precioRefVivienda();
+}
+function calcGastoCompra(p){
+  const precioRef = precioRefParaProvincia(p);
+  const itp = precioRef * num(p.itpPct)/100;
+  return itp + num(p.notaria) + num(p.registro) + num(p.gestoria) + num(p.tasacion);
+}
+function opcionesEscenariosHipoteca(selectedId){
+  return state.hipoteca.escenarios.map(e=>`<option value="${e.id}" ${e.id===selectedId?'selected':''}>${e.nombre||'Escenario'} — ${fmtPct(pctFinanciacionOf(e),0)} · ${fmtMoney(e.importe)}</option>`).join('');
+}
+function renderGastos(){
+  const ahorroTotal = ahorroTotalCalc();
+  const ahorroDisponible = ahorroTotal - num(state.ahorros.colchon);
+  return `
+    <div class="sheet-header"><span class="sheet-num">HOJA 06</span>${tabIcon('gastos')}<span class="sheet-title">Gastos de compra por ubicación</span></div>
+    <p class="sheet-sub">ITP/IVA, notaría, registro, gestoría y tasación varían según la comunidad autónoma. Rellena tú los porcentajes vigentes — cámbian con frecuencia, así que conviene verificarlos antes de tomar una decisión. Vincula cada tarjeta a un escenario de la Hoja 05 para que use su mismo precio de referencia.</p>
+    <div class="note-block">⚠ Antes de firmar el contrato de arras: si no incluye una <strong>cláusula de condición suspensiva de financiación</strong> (que diga explícitamente que recuperas el dinero si el banco deniega la hipoteca), por defecto pierdes las arras si al final no te la conceden — suele ser ~10% del precio. Nunca firmes "arras penales" (no te dejan echarte atrás sin más). Pide también un plazo claro para conseguir la financiación.</div>
+    ${state.gastos.provincias.length>1 ? expandCollapseButtons('gastos.provincias') : ''}
+    ${state.gastos.provincias.map((p,i)=>{
+      const total = calcGastoCompra(p);
+      const diferencia = total - ahorroDisponible;
+      const escVinc = hipotecaVinculada(p);
+      const precioUsado = precioRefParaProvincia(p);
+      return `
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer;" onclick="toggleExpand('gastos.provincias', ${i})">
+          <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
+            <span class="chevron">${p.expanded===false?'▸':'▾'}</span>
+            <input class="broker-name-input" style="font-size:16px;" type="text" data-path="gastos.provincias.${i}.nombre" value="${p.nombre}" placeholder="Nombre de esta tarjeta (opcional)" onclick="event.stopPropagation()">
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;" onclick="event.stopPropagation()">
+            ${p.expanded===false ? `<span class="badge grey">${fmtMoney(total)} gasto</span>` : ''}
+            <button class="btn danger small" onclick="removeProvincia('${p.id}')">Eliminar</button>
+          </div>
+        </div>
+        ${p.expanded===false ? '' : `
+        <div class="field" style="margin-top:10px;">
+          <label>Provincia</label>
+          <select onchange="setProvinciaCompra(${i}, this.value)">${opcionesProvincias(p.provincia)}</select>
+          ${(() => {
+            const com = comunidadDeProvincia(p.provincia);
+            const tasa = com && TASAS_ITP_VERIFICADAS[com];
+            if(!p.provincia) return '';
+            if(tasa) return `<div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Tipo general orientativo en ${com}: ${tasa.itp}% ITP (verificado ago. 2026) — puede haber tipos reducidos por edad, familia numerosa, etc. que esto no valida.</div>`;
+            return `<div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">No tengo un tipo verificado para ${com||'esta comunidad'} — indica tú el % vigente.</div>`;
+          })()}
+        </div>
+        <div class="field">
+          <label>Escenario de hipoteca vinculado (Hoja 05)</label>
+          <select data-path="gastos.provincias.${i}.hipotecaEscenarioId" data-rerender="true">
+            <option value="">— Sin vincular (usar precio de la Hoja 04) —</option>
+            ${opcionesEscenariosHipoteca(p.hipotecaEscenarioId)}
+          </select>
+          <div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Precio de referencia usado aquí: <strong>${precioUsado?fmtMoney(precioUsado):'— define un precio en la Hoja 04 o vincula un escenario —'}</strong>${escVinc?` (del escenario "${escVinc.nombre}")`:' (Hoja 04 — Vivienda objetivo)'}</div>
+        </div>
+        <div class="grid3" style="margin-top:12px;">
+          <div class="field"><label>ITP / IVA+AJD estimado (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="gastos.provincias.${i}.itpPct" value="${p.itpPct}" data-rerender="true"></div>
+          <div class="field"><label>Notaría (€ aprox.)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="gastos.provincias.${i}.notaria" value="${p.notaria}" data-rerender="true"></div>
+          <div class="field"><label>Registro (€ aprox.)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="gastos.provincias.${i}.registro" value="${p.registro}" data-rerender="true"></div>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Gestoría (€ aprox.)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="gastos.provincias.${i}.gestoria" value="${p.gestoria}" data-rerender="true"></div>
+          <div class="field"><label>Tasación (€ aprox.)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="gastos.provincias.${i}.tasacion" value="${p.tasacion}" data-rerender="true"></div>
+        </div>
+        <div class="hr"></div>
+        <div class="grid3">
+          <div class="stat"><div class="label">Gasto estimado total (fuera de hipoteca)</div><div class="value small">${fmtMoney(total)}</div></div>
+          <div class="stat"><div class="label">Disponible para la compra</div><div class="value small">${fmtMoney(ahorroDisponible)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">de la Hoja 02 — Ahorros</div></div>
+          <div class="stat"><div class="label">${diferencia>0?'Falta financiar':'Sobra'}</div><div class="value small" style="color:${diferencia>0?'var(--red)':'var(--green)'};">${fmtMoney(Math.abs(diferencia))}</div></div>
+        </div>
+        <div style="font-size:11.5px;color:var(--ink-faint);margin-top:10px;">El importe recomendado de préstamo personal (sumando esto y la entrada pendiente de la hipoteca) se calcula en la <strong>Hoja 07 — Préstamo personal</strong>.</div>
+        `}
+      </div>`;
+    }).join('')}
+    ${state.gastos.provincias.length===0 ? '<div class="card"><div class="empty">Sin escenarios de gastos de compra todavía.</div></div>' : ''}
+    <button class="btn secondary" onclick="addProvincia()">+ Añadir escenario de gastos de compra</button>
+    ${state.gastos.provincias.length>1 ? renderComparativaGastos() : ''}
+  `;
+}
+function renderComparativaGastos(){
+  const ahorroDisponible = ahorroTotalCalc() - num(state.ahorros.colchon);
+  const filas = state.gastos.provincias.map(p=>{
+    const precio = precioRefParaProvincia(p);
+    const total = calcGastoCompra(p);
+    return {nombre: p.nombre||'Ubicación', precio, total, diferencia: total-ahorroDisponible};
+  });
+  const minTotal = Math.min(...filas.map(f=>f.total));
+  return `
+    <div class="card">
+      <h3 class="card-title">Comparativa de ubicaciones <small>cuál os sale más barata en gastos de compra</small></h3>
+      <table><thead><tr><th>Ubicación</th><th class="num">Precio usado</th><th class="num">Gasto de compra</th><th class="num">Falta / Sobra</th><th class="num">Diferencia vs. la más barata</th></tr></thead><tbody>
+        ${filas.map(f=>`
+          <tr class="${f.total===minTotal?'compare-best':''}">
+            <td>${f.nombre}${f.total===minTotal?'<span class="compare-tag">MENOS GASTO</span>':''}</td>
+            <td class="num">${fmtMoney(f.precio)}</td>
+            <td class="num">${fmtMoney(f.total)}</td>
+            <td class="num" style="color:${f.diferencia>0?'var(--red)':'var(--green)'};">${f.diferencia>0?'-':'+'}${fmtMoney(Math.abs(f.diferencia))}</td>
+            <td class="num">${f.total===minTotal?'—':'+'+fmtMoney(f.total-minTotal)}</td>
+          </tr>`).join('')}
+      </tbody></table>
+    </div>
+  `;
+}
+
+/* ---------- 08 BROKERS ---------- */
+const ESTADOS_BROKER = ['Por contactar','Contactado','Esperando respuesta','Documentación en revisión','Propuesta recibida','Nota de encargo pendiente','Nota de encargo firmada','Descartado','Cerrado — hipoteca firmada'];
+
+function addBroker(){
+  state.brokers.push({
+    id: uid(), nombre:'Nuevo asesor', expanded:true,
+    contactoNombre:'', contactoEmail:'', contactoTelefono:'',
+    estado:'Por contactar', motivoDescarte:'',
+    pctFinanciacion:'', bancos:'', honorarios:'', honorariosCuando:'',
+    notaEncargo:{firmada:false, condiciones:''},
+    ultimoContacto:'',
+    checklist: {
+      [state.titulares.t1]: makeChecklist(CHECKLIST_T1),
+      [state.titulares.t2]: makeChecklist(CHECKLIST_T2),
+      'Vivienda y otros': makeChecklist(CHECKLIST_OTROS)
+    },
+    adjuntos: [],
+    log: []
+  });
+  saveState(); render();
+}
+function removeBroker(id){ if(!confirm('¿Eliminar este broker y todo su seguimiento?')) return; state.brokers = state.brokers.filter(b=>b.id!==id); saveState(); render(); }
+function toggleBroker(id){ const b = state.brokers.find(x=>x.id===id); b.expanded = !b.expanded; render(); }
+function toggleCheckItem(bi, listName, itemId){
+  const b = state.brokers[bi];
+  const item = b.checklist[listName].find(it=>it.id===itemId);
+  item.done = !item.done; saveState(); render();
+}
+function removeCheckItem(bi, listName, itemId){
+  const b = state.brokers[bi];
+  b.checklist[listName] = b.checklist[listName].filter(it=>it.id!==itemId);
+  saveState(); render();
+}
+function addCheckItem(bi, listName){
+  const input = document.getElementById(`newcheck-${bi}-${listName.replace(/\s+/g,'_')}`);
+  const label = input.value.trim();
+  if(!label) return;
+  state.brokers[bi].checklist[listName].push({id:uid(), label, done:false});
+  saveState(); render();
+}
+function addLog(bi){
+  const dateInput = document.getElementById(`logdate-${bi}`);
+  const textInput = document.getElementById(`logtext-${bi}`);
+  const text = textInput.value.trim();
+  if(!text) return;
+  state.brokers[bi].log.unshift({id:uid(), fecha: dateInput.value || new Date().toISOString().slice(0,10), texto:text, done:false});
+  saveState(); render();
+}
+function removeLog(bi, id){ state.brokers[bi].log = state.brokers[bi].log.filter(l=>l.id!==id); saveState(); render(); }
+function toggleLogDone(bi, id){ const l = state.brokers[bi].log.find(x=>x.id===id); l.done = !l.done; saveState(); render(); }
+function daysAgo(dateStr){
+  if(!dateStr) return null;
+  const diff = Math.floor((new Date() - new Date(dateStr+'T00:00:00')) / 86400000);
+  return diff;
+}
+
+function estadoBadgeClass(estado){
+  if(estado==='Descartado') return 'red';
+  if(estado==='Cerrado — hipoteca firmada' || estado==='Nota de encargo firmada') return 'green';
+  if(estado==='Por contactar') return 'grey';
+  return 'yellow';
+}
+
+function renderChecklistCol(bi, listName, items){
+  const total = items.length, done = items.filter(i=>i.done).length;
+  const safeId = listName.replace(/\s+/g,'_');
+  return `
+    <div>
+      <div class="doc-col-title">${listName} <span style="color:var(--ink-faint);font-weight:400;">(${done}/${total})</span></div>
+      <ul class="checklist">
+        ${items.map(it=>`
+          <li class="${it.done?'done':''}">
+            <input type="checkbox" ${it.done?'checked':''} onclick="toggleCheckItem(${bi},'${listName}','${it.id}')">
+            <span class="clabel">${it.label}</span>
+            <button class="rm" onclick="removeCheckItem(${bi},'${listName}','${it.id}')" title="Eliminar">×</button>
+          </li>`).join('')}
+      </ul>
+      <div class="add-check-row">
+        <input type="text" id="newcheck-${bi}-${safeId}" placeholder="Añadir documento…" onkeydown="if(event.key==='Enter'){event.preventDefault();addCheckItem(${bi},'${listName}');}">
+        <button class="btn small secondary" onclick="addCheckItem(${bi},'${listName}')">+</button>
+      </div>
+    </div>
+  `;
+}
+
+function renderBrokers(){
+  return `
+    <div class="sheet-header"><span class="sheet-num">HOJA 08</span>${tabIcon('brokers')}<span class="sheet-title">Asesores financieros / Brokers</span></div>
+    <p class="sheet-sub">Izquierda: un recuadro por asesor/broker con su checklist de documentación ya predefinido. Derecha: los archivos reales, en un único sitio, para subirlos una vez y descargarlos cuando los necesites — sin repetirlos por cada uno.</p>
+    <div class="brokers-layout">
+      <div class="brokers-col">
+        ${state.brokers.length>1 ? expandCollapseButtons('brokers') : ''}
+        ${state.brokers.length===0 ? '<div class="card"><div class="empty">Todavía no has añadido ningún broker.</div></div>' : ''}
+        ${state.brokers.map((b,i)=>{
+      const listNames = Object.keys(b.checklist);
+      return `
+      <div class="broker-card">
+        <div class="broker-head" onclick="toggleBroker('${b.id}')">
+          <div class="broker-head-left">
+            <span class="chevron">${b.expanded?'▾':'▸'}</span>
+            <input class="broker-name-input" type="text" data-path="brokers.${i}.nombre" value="${b.nombre}" onclick="event.stopPropagation()">
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;" onclick="event.stopPropagation()">
+            <span class="badge ${estadoBadgeClass(b.estado)}">${b.estado}</span>
+            ${b.ultimoContacto ? `<span style="font-size:11px;color:var(--ink-faint);">hace ${daysAgo(b.ultimoContacto)} d.</span>` : ''}
+            <button class="btn danger small" onclick="removeBroker('${b.id}')">Eliminar</button>
+          </div>
+        </div>
+        ${b.expanded ? `
+        <div class="broker-body">
+          <div class="grid3">
+            <div class="field"><label>Persona de contacto</label><input type="text" data-path="brokers.${i}.contactoNombre" value="${b.contactoNombre}"></div>
+            <div class="field"><label>Email</label><input type="text" data-path="brokers.${i}.contactoEmail" value="${b.contactoEmail}"></div>
+            <div class="field"><label>Teléfono</label><input type="text" data-path="brokers.${i}.contactoTelefono" value="${b.contactoTelefono}"></div>
+          </div>
+          <div class="grid3">
+            <div class="field"><label>Estado</label>
+              <select data-path="brokers.${i}.estado" data-rerender="true">
+                ${ESTADOS_BROKER.map(es=>`<option value="${es}" ${b.estado===es?'selected':''}>${es}</option>`).join('')}
+              </select>
+            </div>
+            <div class="field"><label>% financiación ofrecida</label><input type="text" placeholder="p.ej. hasta 95%" data-path="brokers.${i}.pctFinanciacion" value="${b.pctFinanciacion}"></div>
+            <div class="field"><label>Último contacto</label><input type="date" data-path="brokers.${i}.ultimoContacto" value="${b.ultimoContacto}"></div>
+          </div>
+          <div class="grid2">
+            <div class="field"><label>Bancos con los que trabaja</label><input type="text" data-path="brokers.${i}.bancos" value="${b.bancos}"></div>
+            <div class="field"><label>Honorarios y cuándo se cobran</label><input type="text" data-path="brokers.${i}.honorarios" value="${b.honorarios}"></div>
+          </div>
+          ${b.estado==='Descartado' ? `<div class="field"><label>Motivo del descarte</label><input type="text" data-path="brokers.${i}.motivoDescarte" value="${b.motivoDescarte}"></div>` : ''}
+
+          <div class="hr"></div>
+          <div class="section-flag"><strong style="font-size:13.5px;">Nota de encargo</strong></div>
+          <div class="grid2">
+            <div class="field"><label style="display:flex;align-items:center;gap:8px;margin-bottom:0;"><input type="checkbox" style="width:16px;height:16px;" data-path="brokers.${i}.notaEncargo.firmada" ${b.notaEncargo.firmada?'checked':''}> Firmada</label></div>
+            <div class="field"><label>Condiciones (exclusividad, duración, penalización…)</label><input type="text" placeholder="p.ej. exclusividad 14 meses" data-path="brokers.${i}.notaEncargo.condiciones" value="${b.notaEncargo.condiciones}"></div>
+          </div>
+
+          <div class="hr"></div>
+          <div class="section-flag"><strong style="font-size:13.5px;">Documentación</strong></div>
+          <div class="doc-cols">
+            ${listNames.map(ln => renderChecklistCol(i, ln, b.checklist[ln])).join('')}
+          </div>
+
+          <div class="hr"></div>
+          <div class="section-flag"><strong style="font-size:13.5px;">Lo que te envía este asesor/broker</strong> <span style="font-size:11px;color:var(--ink-faint);">(propuestas, simulaciones, ofertas… lo que ELLOS te mandan a ti, no lo que tú les mandas)</span></div>
+          <input type="file" id="brokerUploadInput-${i}" multiple style="display:none" onchange="handleBrokerFiles(${i}, this.files); this.value='';">
+          <button class="btn secondary small" onclick="triggerBrokerUpload(${i})">+ Adjuntar archivo(s)</button>
+          ${b.adjuntos.length===0 ? '<div class="empty">Sin adjuntos todavía.</div>' : b.adjuntos.map(d=>`
+            <div class="doc-item">
+              <div class="doc-item-row" style="grid-template-columns:1fr;">
+                <input type="text" data-path="brokers.${i}.adjuntos.${b.adjuntos.indexOf(d)}.titulo" value="${d.titulo}" placeholder="Título del adjunto">
+              </div>
+              <div class="doc-item-meta"><span>${d.fileName}</span><span>·</span><span>${fmtSize(d.fileSize)}</span><span>·</span><span>${d.fecha}</span></div>
+              <div class="doc-item-actions">
+                <button class="btn small secondary" onclick="downloadBrokerDoc(${i},'${d.id}')">↓ Descargar</button>
+                <button class="btn small danger" onclick="removeBrokerDoc(${i},'${d.id}')">Eliminar</button>
+              </div>
+            </div>
+          `).join('')}
+
+          <div class="hr"></div>
+          <div class="section-flag"><strong style="font-size:13.5px;">Registro de conversaciones</strong></div>
+          <div class="item-row">
+            <input type="date" id="logdate-${i}" style="max-width:150px;">
+            <textarea id="logtext-${i}" placeholder="Qué os han dicho / qué pediste… (una línea por punto)" onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();addLog(${i});}"></textarea>
+            <button class="btn small" onclick="addLog(${i})">Añadir</button>
+          </div>
+          ${b.log.length===0 ? '<div class="empty">Sin entradas todavía.</div>' : b.log.map(l=>`
+            <div class="log-entry ${l.done?'done':''}">
+              <div class="log-date">${l.fecha}</div>
+              <div class="log-text">${l.texto}</div>
+              <div class="log-actions">
+                <button class="rm" onclick="toggleLogDone(${i},'${l.id}')" title="${l.done?'Destachar':'Tachar (conservar)'}">${l.done?'↺':'✓'}</button>
+                <button class="rm" onclick="removeLog(${i},'${l.id}')" title="Eliminar definitivamente">×</button>
+              </div>
+            </div>
+          `).join('')}
+        </div>` : ''}
+      </div>`;
+        }).join('')}
+        <button class="btn" onclick="addBroker()">+ Añadir asesor / broker</button>
+      </div>
+      <div class="docs-col">
+        ${renderDocumentos()}
+      </div>
+    </div>
+  `;
+}
+
+/* ---------- Biblioteca de documentos adjuntos (Hoja 08, columna derecha) ---------- */
+let docFiltro = 'todas';
+function docCategorias(){ return [state.titulares.t1, state.titulares.t2, 'Vivienda y otros']; }
+function fmtSize(bytes){
+  if(!bytes && bytes!==0) return '—';
+  if(bytes<1024) return bytes+' B';
+  if(bytes<1024*1024) return (bytes/1024).toFixed(0)+' KB';
+  return (bytes/1024/1024).toFixed(1)+' MB';
+}
+function fileToBase64(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=> resolve(String(reader.result).split(',')[1] || '');
+    reader.onerror = ()=> reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+}
+function triggerDocUpload(){ document.getElementById('docUploadInput').click(); }
+function triggerBrokerUpload(i){ document.getElementById('brokerUploadInput-'+i).click(); }
+async function saveDocToStorage(key, base64, attempt){
+  attempt = attempt || 1;
+  try{
+    const ok = await storageAdapter.set(key, base64, false);
+    if(!ok) throw new Error('storage.set devolvió vacío');
+    return true;
+  }catch(e){
+    if(attempt < 2){ await new Promise(r=>setTimeout(r,300)); return saveDocToStorage(key, base64, attempt+1); }
+    throw e;
+  }
+}
+async function handleDocFiles(fileList){
+  const MAX_BYTES = 3400000; // ~3.4MB en crudo -> ~4.5MB en base64
+  for(const file of Array.from(fileList)){
+    if(file.size > MAX_BYTES){
+      alert(`"${file.name}" pesa ${(file.size/1024/1024).toFixed(1)} MB — supera el límite práctico de almacenamiento (unos 3 MB por archivo). Prueba a comprimirlo o escanearlo en menor calidad.`);
+      continue;
+    }
+    try{
+      const base64 = await fileToBase64(file);
+      const id = uid();
+      await saveDocToStorage('doc-file-'+id, base64);
+      state.documentos.push({
+        id, nombre: file.name.replace(/\.[^/.]+$/,''), categoria:'', fecha: new Date().toISOString().slice(0,10),
+        fileName: file.name, fileType: file.type || 'application/octet-stream', fileSize: file.size
+      });
+    }catch(e){
+      console.error('Fallo al subir documento:', e);
+      alert(`No se pudo guardar "${file.name}". Detalle: ${(e && e.message) ? e.message : e}`);
+    }
+  }
+  saveState(); render();
+}
+async function downloadDoc(id){
+  const doc = state.documentos.find(d=>d.id===id);
+  if(!doc) return;
+  try{
+    const r = await storageAdapter.get('doc-file-'+id, false);
+    if(!r || !r.value){ alert('No se encontró el archivo guardado (puede que se haya perdido).'); return; }
+    const byteChars = atob(r.value);
+    const bytes = new Uint8Array(byteChars.length);
+    for(let i=0;i<byteChars.length;i++) bytes[i] = byteChars.charCodeAt(i);
+    const blob = new Blob([bytes], {type: doc.fileType || 'application/octet-stream'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = doc.fileName || doc.nombre || 'documento';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }catch(e){ console.error(e); alert('Error al descargar el archivo.'); }
+}
+async function removeDoc(id){
+  if(!confirm('¿Eliminar este documento? Se borrará también el archivo guardado.')) return;
+  state.documentos = state.documentos.filter(d=>d.id!==id);
+  saveState(); render();
+  try{ await storageAdapter.delete('doc-file-'+id, false); }catch(e){ /* puede que ya no existiera */ }
+}
+
+/* ---------- Adjuntos propios de cada broker (distintos de la biblioteca general) ---------- */
+async function handleBrokerFiles(brokerIndex, fileList){
+  const MAX_BYTES = 3400000;
+  for(const file of Array.from(fileList)){
+    if(file.size > MAX_BYTES){
+      alert(`"${file.name}" pesa ${(file.size/1024/1024).toFixed(1)} MB — supera el límite práctico de almacenamiento (unos 3 MB por archivo).`);
+      continue;
+    }
+    try{
+      const base64 = await fileToBase64(file);
+      const id = uid();
+      await saveDocToStorage('broker-doc-'+id, base64);
+      state.brokers[brokerIndex].adjuntos.push({
+        id, titulo: file.name.replace(/\.[^/.]+$/,''), fecha: new Date().toISOString().slice(0,10),
+        fileName: file.name, fileType: file.type || 'application/octet-stream', fileSize: file.size
+      });
+    }catch(e){
+      console.error('Fallo al subir adjunto de broker:', e);
+      alert(`No se pudo guardar "${file.name}". Detalle: ${(e && e.message) ? e.message : e}`);
+    }
+  }
+  saveState(); render();
+}
+async function downloadBrokerDoc(brokerIndex, id){
+  const doc = state.brokers[brokerIndex].adjuntos.find(d=>d.id===id);
+  if(!doc) return;
+  try{
+    const r = await storageAdapter.get('broker-doc-'+id, false);
+    if(!r || !r.value){ alert('No se encontró el archivo guardado (puede que se haya perdido).'); return; }
+    const byteChars = atob(r.value);
+    const bytes = new Uint8Array(byteChars.length);
+    for(let i=0;i<byteChars.length;i++) bytes[i] = byteChars.charCodeAt(i);
+    const blob = new Blob([bytes], {type: doc.fileType || 'application/octet-stream'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = doc.fileName || doc.titulo || 'documento';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }catch(e){ console.error(e); alert('Error al descargar el archivo.'); }
+}
+async function removeBrokerDoc(brokerIndex, id){
+  if(!confirm('¿Eliminar este adjunto?')) return;
+  state.brokers[brokerIndex].adjuntos = state.brokers[brokerIndex].adjuntos.filter(d=>d.id!==id);
+  saveState(); render();
+  try{ await storageAdapter.delete('broker-doc-'+id, false); }catch(e){}
+}
+
+function setDocFiltro(f){ docFiltro = f; render(); }
+function firstWord(s){ s=(s||'').trim(); const w=s.split(/\s+/)[0]; return w || s; }
+function renderDocumentos(){
+  const cats = docCategorias();
+  const visibles = state.documentos.filter(d => docFiltro==='todas' ? true : (docFiltro==='sin' ? !d.categoria : d.categoria===docFiltro));
+  return `
+    <div class="card">
+      <h3 class="card-title">Tus documentos <small>los que TÚ envías a los brokers: DNI, nóminas, contratos…</small></h3>
+      <input type="file" id="docUploadInput" multiple style="display:none" onchange="handleDocFiles(this.files); this.value='';">
+      <button class="btn" onclick="triggerDocUpload()">+ Subir documento(s)</button>
+      <div style="font-size:11.5px;color:var(--ink-faint);margin-top:8px;">Límite práctico: unos 3 MB por archivo. Si algo pesa más, comprímelo o reescanéalo en menor calidad antes de subirlo.</div>
+      <div class="hr"></div>
+      <div class="pill-select" style="flex-wrap:wrap;margin-bottom:14px;">
+        <button class="${docFiltro==='todas'?'active':''}" onclick="setDocFiltro('todas')">Todas</button>
+        ${cats.map(c=>`<button class="${docFiltro===c?'active':''}" onclick="setDocFiltro('${c}')" title="${c}">${firstWord(c)}</button>`).join('')}
+        <button class="${docFiltro==='sin'?'active':''}" onclick="setDocFiltro('sin')">Sin categoría</button>
+      </div>
+      ${visibles.length===0 ? '<div class="empty">No hay documentos en esta vista todavía.</div>' : visibles.map(d=>{
+        const idx = state.documentos.indexOf(d);
+        return `
+        <div class="doc-item">
+          <div class="doc-item-row">
+            <input type="text" data-path="documentos.${idx}.nombre" value="${d.nombre}" placeholder="Nombre del documento">
+            <select data-path="documentos.${idx}.categoria" data-rerender="true">
+              <option value="" ${!d.categoria?'selected':''}>Sin categoría</option>
+              ${cats.map(c=>`<option value="${c}" ${d.categoria===c?'selected':''} title="${c}">${firstWord(c)}</option>`).join('')}
+            </select>
+          </div>
+          <div class="doc-item-meta">
+            <span>${d.fileName}</span><span>·</span><span>${fmtSize(d.fileSize)}</span><span>·</span><span>${d.fecha}</span>
+          </div>
+          <div class="doc-item-actions">
+            <button class="btn small secondary" onclick="downloadDoc('${d.id}')">↓ Descargar</button>
+            <button class="btn small danger" onclick="removeDoc('${d.id}')">Eliminar</button>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+/* ---------- 09 OTROS GASTOS FIJOS ---------- */
+function addGastoFijo(tipo){ state.gastosFijos[tipo].push({id:uid(), nombre:'', importe:''}); saveState(); render(); }
+function removeGastoFijo(tipo, id){ state.gastosFijos[tipo] = state.gastosFijos[tipo].filter(g=>g.id!==id); saveState(); render(); }
+function totalGastosFijosMensual(){
+  const mensual = state.gastosFijos.mensuales.reduce((s,g)=>s+num(g.importe),0);
+  const anual = state.gastosFijos.anuales.reduce((s,g)=>s+num(g.importe),0);
+  return mensual + anual/12;
+}
+function renderGastosFijos(){
+  const totalMensual = state.gastosFijos.mensuales.reduce((s,g)=>s+num(g.importe),0);
+  const totalAnual = state.gastosFijos.anuales.reduce((s,g)=>s+num(g.importe),0);
+  const totalGeneral = totalMensual + totalAnual/12;
+  return `
+    <div class="sheet-header"><span class="sheet-num">HOJA 09</span>${tabIcon('gastosfijos')}<span class="sheet-title">Otros gastos fijos</span></div>
+    <p class="sheet-sub">Suministros, seguros, teléfono… lo que gastáis con regularidad ahora mismo, de alquiler, aunque no sea una deuda. Sepáralos según cómo los pagáis: los anuales se convierten solos a su equivalente mensual. Ya puse algunos ejemplos habituales — bórralos si no aplican, o añade los tuyos.</p>
+
+    <div class="stat-row" style="grid-template-columns:repeat(3,1fr);">
+      <div class="stat"><div class="label">Total gastos fijos / mes</div><div class="value small">${fmtMoney(totalGeneral)}</div></div>
+      <div class="stat"><div class="label">Subtotal mensual</div><div class="value small">${fmtMoney(totalMensual)}</div></div>
+      <div class="stat"><div class="label">Subtotal anual</div><div class="value small">${fmtMoney(totalAnual)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">equivale a ${fmtMoney(totalAnual/12)}/mes</div></div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Mensual <small>el Importe es directamente el gasto mensual</small></h3>
+      ${state.gastosFijos.mensuales.length===0 ? '<div class="empty">Sin gastos mensuales registrados todavía.</div>' : state.gastosFijos.mensuales.map((g,i)=>`
+        <div class="grid3" style="margin-bottom:16px;align-items:end;">
+          <div class="field"><label>Concepto</label><input type="text" placeholder="p.ej. Electricidad" data-path="gastosFijos.mensuales.${i}.nombre" value="${g.nombre}"></div>
+          <div class="field"><label>Importe (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="gastosFijos.mensuales.${i}.importe" value="${g.importe}" data-rerender="true"></div>
+          <div><button class="btn danger small" onclick="removeGastoFijo('mensuales','${g.id}')">Eliminar</button></div>
+        </div>
+      `).join('')}
+      <button class="btn secondary" onclick="addGastoFijo('mensuales')">+ Añadir gasto mensual</button>
+      <div class="hr"></div>
+      <div class="stat"><div class="label">Subtotal mensual</div><div class="value small">${fmtMoney(totalMensual)}</div></div>
+    </div>
+
+    <div class="card">
+      <h3 class="card-title">Anual <small>el Importe es el gasto del año; se divide entre 12 automáticamente</small></h3>
+      ${state.gastosFijos.anuales.length===0 ? '<div class="empty">Sin gastos anuales registrados todavía.</div>' : state.gastosFijos.anuales.map((g,i)=>{
+        const mensual = num(g.importe)/12;
+        return `
+        <div class="grid3" style="margin-bottom:6px;align-items:end;">
+          <div class="field"><label>Concepto</label><input type="text" placeholder="p.ej. Seguro de hogar" data-path="gastosFijos.anuales.${i}.nombre" value="${g.nombre}"></div>
+          <div class="field"><label>Importe (€/año)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="gastosFijos.anuales.${i}.importe" value="${g.importe}" data-rerender="true"></div>
+          <div><button class="btn danger small" onclick="removeGastoFijo('anuales','${g.id}')">Eliminar</button></div>
+        </div>
+        <div style="margin-bottom:16px;font-size:12px;color:var(--ink-faint);">Valor mensual: ${fmtMoney(mensual)}</div>
+        `;
+      }).join('')}
+      <button class="btn secondary" onclick="addGastoFijo('anuales')">+ Añadir gasto anual</button>
+      <div class="hr"></div>
+      <div class="stat"><div class="label">Subtotal anual</div><div class="value small">${fmtMoney(totalAnual)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">equivalente a ${fmtMoney(totalAnual/12)}/mes</div></div>
+    </div>
+
+    <div class="stat"><div class="label">Total gastos fijos / mes</div><div class="value">${fmtMoney(totalGeneral)}</div></div>
+  `;
+}
+
+/* ---------- 10 NOTAS ---------- */
+function addNota(){
+  const dateInput = document.getElementById('notadate');
+  const textInput = document.getElementById('notatext');
+  const text = textInput.value.trim();
+  if(!text) return;
+  state.notas.unshift({id:uid(), fecha: dateInput.value || new Date().toISOString().slice(0,10), texto:text, done:false});
+  saveState(); render();
+}
+function removeNota(id){ state.notas = state.notas.filter(n=>n.id!==id); saveState(); render(); }
+function toggleNotaDone(id){ const n = state.notas.find(x=>x.id===id); n.done = !n.done; saveState(); render(); }
+function renderNotas(){
+  return `
+    <div class="sheet-header"><span class="sheet-num">HOJA 10</span>${tabIcon('notas')}<span class="sheet-title">Notas y próximos pasos</span></div>
+    <p class="sheet-sub">Diario libre para decisiones, ideas o cosas pendientes que no encajan en ninguna otra hoja.</p>
+    <div class="card">
+      <div class="item-row">
+        <input type="date" id="notadate" style="max-width:150px;">
+        <textarea id="notatext" placeholder="Escribe una nota… (una línea por punto)" onkeydown="if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();addNota();}"></textarea>
+        <button class="btn" onclick="addNota()">Añadir</button>
+      </div>
+      ${state.notas.length===0 ? '<div class="empty">Sin notas todavía.</div>' : state.notas.map(n=>`
+        <div class="log-entry ${n.done?'done':''}">
+          <div class="log-date">${n.fecha}</div>
+          <div class="log-text">${n.texto}</div>
+          <div class="log-actions">
+            <button class="rm" onclick="toggleNotaDone('${n.id}')" title="${n.done?'Destachar':'Tachar (conservar)'}">${n.done?'↺':'✓'}</button>
+            <button class="rm" onclick="removeNota('${n.id}')" title="Eliminar definitivamente">×</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+/* ---------- Import / Export / Reset ---------- */
+function exportData(){
+  const blob = new Blob([JSON.stringify(state,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'dosier-vivienda-'+new Date().toISOString().slice(0,10)+'.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+document.getElementById('importFile').addEventListener('change', e=>{
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ev=>{
+    try{
+      const parsed = JSON.parse(ev.target.result);
+      state = Object.assign(defaultState(), parsed);
+      saveState(); render();
+    }catch(err){ alert('El archivo no es un JSON válido de este dosier.'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+});
+function resetAll(){
+  if(!confirm('Esto borrará todos los datos guardados en este dosier. ¿Continuar?')) return;
+  state = defaultState(); saveState(); render();
+}
+
+/* ---------- Consentimiento de cookies ---------- */
+// Código del sitio en GoatCounter — vacío hasta que la web esté publicada de verdad.
+// Mientras esté vacío, no se carga ningún script externo, pase lo que pase con el consentimiento.
+const GOATCOUNTER_CODE = '';
+
+function getCookieConsent(){
+  try{ const v = localStorage.getItem('cookie-consent'); return v ? JSON.parse(v) : null; }catch(e){ return null; }
+}
+function setCookieConsent(analytics){
+  try{ localStorage.setItem('cookie-consent', JSON.stringify({analytics, fecha: new Date().toISOString()})); }catch(e){}
+}
+function cargarAnalitica(){
+  if(!GOATCOUNTER_CODE) return;
+  if(document.getElementById('goatcounter-script')) return;
+  const s = document.createElement('script');
+  s.id = 'goatcounter-script';
+  s.async = true;
+  s.setAttribute('data-goatcounter', `https://${GOATCOUNTER_CODE}.goatcounter.com/count`);
+  s.src = 'https://gc.zgo.at/count.js';
+  document.head.appendChild(s);
+}
+function renderCookieLayer1(){
+  return `
+    <div class="cookie-bar-inner">
+      <button onclick="ocultarCookieBar()" aria-label="Cerrar" style="float:right;background:none;border:none;color:#C9CFC5;font-size:18px;cursor:pointer;line-height:1;">✕</button>
+      <div class="cookie-title">Antes de seguir</div>
+      <p class="cookie-lead">Usamos un contador de visitas para saber si esta herramienta le sirve a alguien más aparte de ti. Nada que te identifique, no se vende ni se comparte con nadie.</p>
+      <p>En concreto, usamos GoatCounter, un servicio de analítica alojado en la Unión Europea. No coloca cookies en tu dispositivo ni guarda tu dirección IP — se convierte en un código irreversible que se descarta a las pocas horas. Solo recoge datos agregados y anónimos: qué páginas visitas, desde dónde llegas y qué navegador usas. No se usa con fines publicitarios, no se cede a ningún otro tercero, y no permite identificarte entre visitas. Puedes cambiar de opinión cuando quieras desde "Preferencias de cookies", al pie de la página. Más información en la <a href="#" onclick="event.preventDefault();abrirPoliticaCookies();" style="color:#EDEAE0;">Política de Cookies</a>.</p>
+      <div class="cookie-btns">
+        <button class="cookie-btn primary" onclick="aceptarTodasCookies()">Aceptar todas</button>
+        <button class="cookie-btn secondary" onclick="mostrarCookieLayer2()">Configurar</button>
+        <button class="cookie-btn secondary" onclick="rechazarTodasCookies()">Rechazar todas</button>
+      </div>
+    </div>
+  `;
+}
+function renderCookieLayer2(){
+  const consentActual = getCookieConsent();
+  const analyticsChecked = consentActual ? !!consentActual.analytics : false;
+  return `
+    <div class="cookie-bar-inner">
+      <button onclick="ocultarCookieBar()" aria-label="Cerrar" style="float:right;background:none;border:none;color:#C9CFC5;font-size:18px;cursor:pointer;line-height:1;">✕</button>
+      <div class="cookie-title">Preferencias de cookies</div>
+      <div class="cookie-cat">
+        <div>
+          <div class="cookie-cat-name">Cookies técnicas</div>
+          <div class="cookie-cat-desc">Necesarias para que la app guarde tus propios datos en tu navegador mientras la usas. No requieren tu permiso porque son imprescindibles para que la herramienta funcione, y no salen de tu dispositivo.</div>
+        </div>
+        <div class="cookie-cat-status">Activas siempre</div>
+      </div>
+      <div class="cookie-cat">
+        <div>
+          <div class="cookie-cat-name">Estadísticas de uso</div>
+          <div class="cookie-cat-desc">Visitas, de dónde vienen, y qué botones se usan más. Nos ayuda a decidir en qué merece la pena seguir trabajando.</div>
+        </div>
+        <label class="cookie-toggle"><input type="checkbox" id="cookieToggleAnalytics" ${analyticsChecked?'checked':''}><span class="slider"></span></label>
+      </div>
+      <div class="cookie-btns">
+        <button class="cookie-btn primary" onclick="aceptarTodasCookies()">Aceptar todas</button>
+        <button class="cookie-btn secondary" onclick="guardarPreferenciasCookies()">Guardar mis preferencias</button>
+        <button class="cookie-btn secondary" onclick="rechazarTodasCookies()">Rechazarlas todas</button>
+      </div>
+      <p style="margin-top:12px;"><a href="#" onclick="event.preventDefault();mostrarCookieLayer1();" style="color:#C9CFC5;font-size:12px;">← Volver</a> &nbsp;·&nbsp; <a href="#" onclick="event.preventDefault();abrirPoliticaCookies();" style="color:#C9CFC5;font-size:12px;">Ver la política de cookies completa</a></p>
+    </div>
+  `;
+}
+function mostrarCookieBar(){ document.getElementById('cookieBar').style.display = 'block'; document.getElementById('cookieBarContent').innerHTML = renderCookieLayer1(); }
+function mostrarCookieLayer1(){ document.getElementById('cookieBarContent').innerHTML = renderCookieLayer1(); }
+function mostrarCookieLayer2(){ document.getElementById('cookieBarContent').innerHTML = renderCookieLayer2(); }
+function ocultarCookieBar(){ document.getElementById('cookieBar').style.display = 'none'; }
+function aceptarTodasCookies(){ setCookieConsent(true); ocultarCookieBar(); cargarAnalitica(); }
+function rechazarTodasCookies(){ setCookieConsent(false); ocultarCookieBar(); }
+function guardarPreferenciasCookies(){
+  const chk = document.getElementById('cookieToggleAnalytics');
+  const analytics = chk ? chk.checked : false;
+  setCookieConsent(analytics);
+  ocultarCookieBar();
+  if(analytics) cargarAnalitica();
+}
+function abrirPreferenciasCookies(){ document.getElementById('cookieBar').style.display = 'block'; mostrarCookieLayer2(); }
+function abrirPoliticaCookies(){
+  document.getElementById('fechaPoliticaCookies').textContent = new Date().toLocaleDateString('es-ES');
+  document.getElementById('legalContent').innerHTML = document.getElementById('staticPoliticaCookies').innerHTML;
+  document.getElementById('legalOverlay').style.display = 'block';
+}
+function abrirPoliticaPrivacidad(){
+  document.getElementById('fechaPoliticaPrivacidad').textContent = new Date().toLocaleDateString('es-ES');
+  document.getElementById('legalContent').innerHTML = document.getElementById('staticPoliticaPrivacidad').innerHTML;
+  document.getElementById('legalOverlay').style.display = 'block';
+}
+function abrirComoFunciona(){
+  document.getElementById('legalContent').innerHTML = document.getElementById('staticComoFunciona').innerHTML;
+  document.getElementById('legalOverlay').style.display = 'block';
+}
+function cerrarLegal(){ document.getElementById('legalOverlay').style.display = 'none'; }
+function initCookieConsent(){
+  const consentimiento = getCookieConsent();
+  if(!consentimiento){ mostrarCookieBar(); }
+  else if(consentimiento.analytics){ cargarAnalitica(); }
+}
+initCookieConsent();
+
+/* ---------- Arranque ---------- */
+loadState();
+</script>
+</body>
+</html>
