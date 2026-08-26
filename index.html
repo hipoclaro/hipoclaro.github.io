@@ -162,30 +162,6 @@ tr:last-child td{border-bottom:none;}
 .highlight-card .btn{width:100%;text-align:center;}
 @media (max-width:760px){ .highlight-row{grid-template-columns:1fr;} }
 
-.cookie-bar{position:fixed;left:0;right:0;bottom:0;z-index:500;background:var(--navy-deep);color:#EDEAE0;box-shadow:0 -2px 16px rgba(0,0,0,0.25);max-height:80vh;overflow-y:auto;}
-.cookie-bar-inner{max-width:900px;margin:0 auto;padding:16px 20px;}
-.cookie-bar p{margin:0 0 8px 0;font-size:13px;line-height:1.5;color:#C9CFC5;}
-.cookie-bar p.cookie-lead{color:#EDEAE0;font-size:14px;font-weight:500;}
-.cookie-bar .cookie-title{font-family:var(--font-display);font-size:17px;font-weight:600;color:#EDEAE0;margin-bottom:8px;}
-.cookie-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;}
-.cookie-btn{font-family:var(--font-body);font-size:13px;font-weight:600;padding:10px 18px;border-radius:7px;cursor:pointer;border:1.5px solid transparent;}
-.cookie-btn.primary{background:var(--brass);color:#1C2E38;border-color:var(--brass);}
-.cookie-btn.secondary{background:transparent;color:#EDEAE0;border-color:#5B665F;}
-.cookie-btn.link{background:transparent;color:#C9CFC5;text-decoration:underline;padding:10px 4px;}
-.cookie-cat{border-top:1px solid rgba(255,255,255,0.12);padding:12px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;}
-.cookie-cat:last-of-type{border-bottom:1px solid rgba(255,255,255,0.12);margin-bottom:12px;}
-.cookie-cat-name{font-weight:600;color:#EDEAE0;font-size:13.5px;margin-bottom:3px;}
-.cookie-cat-desc{color:#C9CFC5;font-size:12.5px;line-height:1.4;}
-.cookie-cat-status{font-size:12px;color:var(--brass-soft);white-space:nowrap;flex-shrink:0;padding-top:2px;}
-.cookie-toggle{position:relative;width:40px;height:22px;flex-shrink:0;}
-.cookie-toggle input{opacity:0;width:0;height:0;}
-.cookie-toggle .slider{position:absolute;inset:0;background:#4A5560;border-radius:22px;cursor:pointer;transition:background .15s;}
-.cookie-toggle .slider:before{content:'';position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:transform .15s;}
-.cookie-toggle input:checked + .slider{background:var(--green);}
-.cookie-toggle input:checked + .slider:before{transform:translateX(18px);}
-#cookiePrefsLink{cursor:pointer;text-decoration:underline;}
-@media (max-width:640px){ .cookie-btns{flex-direction:column;} .cookie-btn{width:100%;text-align:center;} }
-
 .stat-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
 @media (max-width:900px){.stat-row{grid-template-columns:repeat(2,1fr);}}
 .stat{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;}
@@ -413,11 +389,6 @@ tr.compare-best td{background:var(--green-soft);}
 <body>
 <div id="app"></div>
 
-<div id="cookieBar" class="cookie-bar" style="display:none;">
-  <div id="cookieBarContent"></div>
-</div>
-<button id="cookiePrefsPill" onclick="abrirPreferenciasCookies()" style="position:fixed;left:14px;bottom:14px;z-index:400;background:var(--navy-deep);color:#C9CFC5;border:none;border-radius:20px;padding:7px 14px;font-size:11.5px;font-family:var(--font-body);cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.2);">🍪 Cookies</button>
-
 <div id="legalOverlay" style="display:none;position:fixed;inset:0;background:rgba(28,46,56,0.55);z-index:600;padding:24px;overflow-y:auto;">
   <div style="max-width:760px;margin:0 auto;background:var(--surface);border-radius:12px;padding:28px 32px;position:relative;">
     <button onclick="cerrarLegal()" aria-label="Cerrar" style="position:absolute;top:16px;right:18px;background:none;border:none;font-size:20px;cursor:pointer;color:var(--ink-faint);">✕</button>
@@ -456,25 +427,19 @@ tr.compare-best td{background:var(--green-soft);}
     <p><strong>6. Propiedad y uso</strong><br>
     Salvo los nombres, marcas o contenidos de terceros que puedan mencionarse, la estructura y contenidos propios de Hipoclaro se ofrecen para el uso normal de la herramienta. Las marcas de bancos, inmobiliarias, proveedores o servicios mencionados pertenecen a sus respectivos titulares.</p>
     <p><strong>7. Privacidad y cookies</strong><br>
-    El tratamiento técnico de datos y el uso de almacenamiento local, GitHub Pages, Google Fonts y GoatCounter se describen en la <button type="button" class="link-btn" onclick="abrirPoliticaPrivacidad();">Política de Privacidad</button> y en la <button type="button" class="link-btn" onclick="abrirPoliticaCookies();">Política de Cookies</button>.</p>
+    El tratamiento técnico de datos y el uso de almacenamiento local, GitHub Pages y Google Fonts se describen en la <button type="button" class="link-btn" onclick="abrirPoliticaPrivacidad();">Política de Privacidad</button> y en la <button type="button" class="link-btn" onclick="abrirPoliticaCookies();">Política de Cookies</button>.</p>
   </div>
   <div id="staticPoliticaCookies">
     <h2 style="font-family:var(--font-display);margin-top:0;">Política de Cookies y almacenamiento local</h2>
-    <p style="color:var(--ink-faint);font-size:12px;">Última actualización: 25/08/2026</p>
-    <p>Hipoclaro utiliza almacenamiento local del navegador para que la herramienta funcione y, solo si lo autorizas, carga GoatCounter para obtener estadísticas de uso. El almacenamiento local e IndexedDB no son cookies en sentido estricto, pero se explican aquí porque guardan información en tu navegador.</p>
+    <p style="color:var(--ink-faint);font-size:12px;">Última actualización: 26/08/2026</p>
+    <p><strong>Hipoclaro no usa cookies ni ningún servicio de analítica o seguimiento.</strong> Solo utiliza almacenamiento local del navegador (localStorage e IndexedDB) para que la herramienta funcione y recuerde tus datos entre visitas. No son cookies en sentido estricto, pero se explican aquí porque guardan información en tu navegador.</p>
     <table style="width:100%;border-collapse:collapse;font-size:13px;margin:16px 0;">
-      <thead><tr style="text-align:left;border-bottom:2px solid var(--border-strong);"><th style="padding:6px 8px;">Tecnología</th><th style="padding:6px 8px;">Finalidad</th><th style="padding:6px 8px;">Dónde</th><th style="padding:6px 8px;">Duración</th><th style="padding:6px 8px;">Elección</th></tr></thead>
+      <thead><tr style="text-align:left;border-bottom:2px solid var(--border-strong);"><th style="padding:6px 8px;">Tecnología</th><th style="padding:6px 8px;">Finalidad</th><th style="padding:6px 8px;">Dónde</th><th style="padding:6px 8px;">Duración</th></tr></thead>
       <tbody>
-        <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 8px;">localStorage</td><td style="padding:6px 8px;">Guardar el estado de Hipoclaro: datos introducidos, escenarios y preferencias necesarias para recuperar tu trabajo.</td><td style="padding:6px 8px;">Tu navegador</td><td style="padding:6px 8px;">Hasta que restablezcas Hipoclaro, borres los datos del sitio o el navegador los elimine.</td><td style="padding:6px 8px;">Necesario para la función de guardado local.</td></tr>
-        <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 8px;">IndexedDB</td><td style="padding:6px 8px;">Guardar localmente los documentos que adjuntas a la herramienta.</td><td style="padding:6px 8px;">Tu navegador</td><td style="padding:6px 8px;">Hasta que los elimines, restablezcas la herramienta o el navegador los borre.</td><td style="padding:6px 8px;">Solo se usa cuando adjuntas archivos.</td></tr>
-        <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 8px;">cookie-consent</td><td style="padding:6px 8px;">Recordar si has aceptado o rechazado la analítica.</td><td style="padding:6px 8px;">Tu navegador</td><td style="padding:6px 8px;">Hasta que cambies de elección o borres los datos del sitio.</td><td style="padding:6px 8px;">Necesario para recordar tu decisión.</td></tr>
-        <tr><td style="padding:6px 8px;">GoatCounter</td><td style="padding:6px 8px;">Estadísticas agregadas de uso: visitas, páginas, referencias y datos técnicos agregados.</td><td style="padding:6px 8px;">Servicio GoatCounter</td><td style="padding:6px 8px;">No coloca cookies ni usa localStorage para identificar visitantes. Para distinguir sesiones combina temporalmente sitio, IP y User-Agent en memoria durante un máximo aproximado de 8 horas; la IP no se guarda en su base de datos.</td><td style="padding:6px 8px;">En Hipoclaro solo se carga si das tu consentimiento.</td></tr>
+        <tr style="border-bottom:1px solid var(--border);"><td style="padding:6px 8px;">localStorage</td><td style="padding:6px 8px;">Guardar el estado de Hipoclaro: datos introducidos, escenarios y preferencias necesarias para recuperar tu trabajo.</td><td style="padding:6px 8px;">Tu navegador</td><td style="padding:6px 8px;">Hasta que restablezcas Hipoclaro, borres los datos del sitio o el navegador los elimine.</td></tr>
+        <tr><td style="padding:6px 8px;">IndexedDB</td><td style="padding:6px 8px;">Guardar localmente los documentos que adjuntas a la herramienta.</td><td style="padding:6px 8px;">Tu navegador</td><td style="padding:6px 8px;">Hasta que los elimines, restablezcas la herramienta o el navegador los borre.</td></tr>
       </tbody>
     </table>
-    <p><strong>Aceptar y rechazar</strong><br>
-    La primera capa ofrece “Aceptar todas” y “Rechazar todas” con la misma relevancia visual. También puedes configurar la analítica. Si cierras el aviso con la ✕, Hipoclaro lo interpreta como rechazo de la analítica.</p>
-    <p><strong>Cambiar de opinión</strong><br>
-    Puedes modificar tu elección en cualquier momento desde el botón “🍪 Cookies”, visible en la interfaz. Rechazar la analítica no impide utilizar las funciones principales de Hipoclaro.</p>
     <p><strong>Servicios técnicos</strong><br>
     GitHub Pages aloja la web y Google Fonts sirve las tipografías. Estos servicios pueden recibir datos técnicos de red necesarios para atender la solicitud del navegador; se explican con más detalle en la <button type="button" class="link-btn" onclick="abrirPoliticaPrivacidad();">Política de Privacidad</button>.</p>
   </div>
@@ -490,24 +455,22 @@ tr.compare-best td{background:var(--green-soft);}
     Aunque los datos que escribes en la calculadora se mantengan localmente, visitar una web implica comunicaciones técnicas con los proveedores que sirven sus recursos:<br>
     — <strong>GitHub Pages</strong> aloja Hipoclaro. GitHub indica que registra y almacena la dirección IP de quienes visitan sitios de GitHub Pages con fines de seguridad.<br>
     — <strong>Google Fonts</strong> sirve las tipografías utilizadas por la interfaz. Al solicitar esos recursos, el navegador establece conexiones técnicas con la infraestructura de Google, que puede recibir información necesaria para entregar el recurso, como la dirección IP y datos de la solicitud.<br>
-    — <strong>GoatCounter</strong> solo se carga si aceptas la analítica. Está diseñado para estadísticas agregadas y para minimizar la identificación: no almacena direcciones IP en su base de datos ni coloca cookies o identificadores persistentes en el navegador; para distinguir sesiones usa temporalmente en memoria la combinación de sitio, IP y User-Agent durante un máximo aproximado de 8 horas.</p>
+    — Hipoclaro <strong>no usa ningún servicio de analítica ni de estadísticas de uso</strong>. No se registra qué páginas visitas, desde dónde llegas ni qué navegador usas.</p>
     <p><strong>4. Finalidades</strong><br>
     — El almacenamiento local se utiliza para prestar las funciones que solicitas y mantener tus escenarios disponibles en tu navegador.<br>
-    — GitHub Pages y Google Fonts se utilizan para mantener disponible, segura y visualmente consistente la web gratuita.<br>
-    — GoatCounter se utiliza únicamente para conocer de forma agregada el uso de Hipoclaro y <strong>solo se activa tras tu consentimiento</strong>, que puedes retirar en cualquier momento desde “🍪 Cookies”.</p>
+    — GitHub Pages y Google Fonts se utilizan para mantener disponible, segura y visualmente consistente la web gratuita.</p>
     <p><strong>5. Conservación</strong><br>
-    Los datos guardados en localStorage e IndexedDB permanecen hasta que los eliminas, restableces Hipoclaro o el navegador los borra. Para los datos técnicos tratados por GitHub, Google y GoatCounter se aplican los periodos y políticas de cada proveedor. GoatCounter indica que la combinación de IP y User-Agent usada para distinguir sesiones se mantiene solo en memoria durante un máximo aproximado de 8 horas y que la IP no se almacena en su base de datos.</p>
+    Los datos guardados en localStorage e IndexedDB permanecen hasta que los eliminas, restableces Hipoclaro o el navegador los borra. Para los datos técnicos tratados por GitHub y Google se aplican los periodos y políticas de cada proveedor.</p>
     <p><strong>6. Proveedores y localización</strong><br>
-    Hipoclaro utiliza servicios técnicos de terceros. GoatCounter informa de que su servicio se aloja en servidores de Hetzner en Finlandia y Alemania y que está operado desde Irlanda. GitHub y Google son proveedores globales y sus tratamientos pueden implicar infraestructuras o transferencias internacionales conforme a sus propias políticas y mecanismos legales. Por ello Hipoclaro no afirma que “todo permanece dentro de la Unión Europea”.</p>
+    Hipoclaro utiliza servicios técnicos de terceros. GitHub y Google son proveedores globales y sus tratamientos pueden implicar infraestructuras o transferencias internacionales conforme a sus propias políticas y mecanismos legales. Por ello Hipoclaro no afirma que “todo permanece dentro de la Unión Europea”.</p>
     <p><strong>7. Derechos y control de tus datos</strong><br>
     Sobre los datos guardados únicamente en tu navegador tienes control directo: puedes modificarlos, exportarlos o eliminarlos desde la propia herramienta o borrando los datos del sitio en el navegador. Para cualquier cuestión relacionada con Hipoclaro puedes escribir a <a href="mailto:hipoclaro.contacto@proton.me">hipoclaro.contacto@proton.me</a>. Cuando corresponda, también puedes ejercer tus derechos ante el proveedor que trate los datos técnicos y presentar una reclamación ante la Agencia Española de Protección de Datos.</p>
     <p><strong>8. Servicios de terceros</strong><br>
-    Los servicios externos se rigen además por sus propias políticas de privacidad. Hipoclaro no controla cómo evolucionan dichas políticas, por lo que conviene revisarlas directamente en GitHub, Google y GoatCounter.</p>
+    Los servicios externos se rigen además por sus propias políticas de privacidad. Hipoclaro no controla cómo evolucionan dichas políticas, por lo que conviene revisarlas directamente en GitHub y Google.</p>
     <p><strong>9. Cambios</strong><br>
     Si cambia la arquitectura de Hipoclaro, se incorporan nuevos proveedores o el proyecto deja de ser gratuito, esta información deberá revisarse y actualizarse.</p>
   </div>
   </div>
-</div>
 <input type="file" id="importFile" accept="application/json" style="display:none">
 
 <script>
@@ -1318,7 +1281,7 @@ function hipotecaCalc(e){
   if(e.tipoInteres==='variable'){
     const faltan = [];
     if(!datoHipotecaInformado(e.diferencialVariable)) faltan.push('diferencial sobre Euríbor');
-    if(!datoHipotecaInformado(e.euriborActual)) faltan.push('Euríbor actual');
+    if(!datoHipotecaInformado(e.euriborActual)) faltan.push('Euríbor usado para la simulación');
 
     if(faltan.length>0){
       return {
@@ -1331,10 +1294,12 @@ function hipotecaCalc(e){
     const tinActual = num(e.euriborActual) + num(e.diferencialVariable);
     const cuotaInicial = cuotaFrancesa(importeFin, tinActual, mesesTotal);
     const interesesTotal = cuotaInicial*mesesTotal - importeFin;
-    const escenariosSubida = [-1,0,1,2].map(delta=>({
-      delta, tin:Math.max(0, tinActual+delta),
-      cuota:cuotaFrancesa(importeFin, Math.max(0, tinActual+delta), mesesTotal)
-    }));
+    // Sin suelo del 0% impuesto en silencio: el Euríbor puede ser negativo de verdad (lo fue durante años).
+    // El diferencial no debería serlo en un escenario normal, así que sigue avisado aparte.
+    const escenariosSubida = [-1,0,1,2].map(delta=>{
+      const tin = tinActual+delta;
+      return { delta, tin, cuota:cuotaFrancesa(importeFin, tin, mesesTotal) };
+    });
     return {
       tipo:'variable', completa:true, importeFin, mesesTotal, tinActual,
       cuotaInicial, interesesTotal, totalPagado:importeFin+interesesTotal,
@@ -1342,10 +1307,43 @@ function hipotecaCalc(e){
     };
   }
 
-  // Fija: mantiene su comportamiento actual. Este cambio elimina solo el fallback de mixta/variable.
+  // Fija: misma protección que mixta/variable — un TIN vacío no debe interpretarse como 0%.
+  if(!datoHipotecaInformado(e.tin)){
+    return {
+      tipo:'fijo', completa:false, importeFin, mesesTotal,
+      cuotaInicial:NaN, interesesTotal:NaN, totalPagado:NaN,
+      motivo:'Falta completar: TIN.'
+    };
+  }
   const cuotaInicial = cuotaFrancesa(importeFin, e.tin, mesesTotal);
   const interesesTotal = cuotaInicial*mesesTotal - importeFin;
   return { tipo:'fijo', completa:true, importeFin, mesesTotal, cuotaInicial, interesesTotal, totalPagado:importeFin+interesesTotal };
+}
+// Fuente única para el préstamo personal — igual que hipotecaCalc, un TIN vacío no debe interpretarse
+// como 0%. taeEstimadaPersonal/taePersonalValor ya existían y se reutilizan tal cual, sin tocarlas.
+function personalCalc(e){
+  if(!e) return { completa:false, importeEfectivo:0, meses:0, cuota:NaN, interesesTotal:NaN, totalPagado:NaN, apertura:NaN, tae:NaN, usaTaeInformada:false, costeCalculado:NaN, motivo:'' };
+  const importeEfectivo = importeEfectivoPersonal(e);
+  const meses = Math.round(num(e.plazoMeses));
+
+  if(!datoHipotecaInformado(e.tin)){
+    const usaTaeInformada = e.tae!==undefined && e.tae!=='';
+    return {
+      completa:false, importeEfectivo, meses,
+      cuota:NaN, interesesTotal:NaN, totalPagado:NaN, apertura:NaN,
+      tae: usaTaeInformada ? num(e.tae) : NaN, usaTaeInformada, costeCalculado:NaN,
+      motivo:'Falta completar: TIN.'
+    };
+  }
+
+  const cuota = cuotaFrancesa(importeEfectivo, e.tin, meses);
+  const totalPagado = cuota*meses;
+  const interesesTotal = totalPagado - importeEfectivo;
+  const usaTaeInformada = e.tae!==undefined && e.tae!=='';
+  const apertura = usaTaeInformada ? NaN : importeEfectivo*num(e.comisionApertura)/100;
+  const tae = taePersonalValor(e);
+  const costeCalculado = usaTaeInformada ? interesesTotal : interesesTotal + (isNaN(apertura)?0:apertura);
+  return { completa:true, importeEfectivo, meses, cuota, interesesTotal, totalPagado, apertura, tae, usaTaeInformada, costeCalculado };
 }
 
 /* ---------- Navegación ---------- */
@@ -1678,7 +1676,7 @@ function crearEscenarioExpress(){
   const hipId = uid();
   state.hipoteca.escenarios.push({
     id: hipId, nombre:'Escenario express', viviendaId, importe: ex.precio, pctFinanciacion: ex.pctFinanciacion,
-    tin:'', plazoAnios: ex.plazoAnios, tipoInteres:'fijo', vinculaciones:'',
+    tin:'', plazoAnios: ex.plazoAnios, tipoInteres:'fijo', vinculaciones:[],
     notas:'Creado desde Simulación express — rellena aquí el TIN real que te ofrezcan.', expanded:true
   });
   const gastoId = uid();
@@ -1717,9 +1715,11 @@ function renderResumen(){
   const vincMensualHip = hipSel ? vinculacionesAnualTotal(hipSel)/12 : 0;
   const cuotaHip = hipCalc ? (hipotecaCompleta ? hipCalc.cuotaInicial + vincMensualHip : NaN) : 0;
   const interesesHip = hipCalc ? (hipotecaCompleta ? hipCalc.interesesTotal : NaN) : 0;
-  const cuotaPer = perSel ? cuotaFrancesa(importeEfectivoPersonal(perSel), perSel.tin, perSel.plazoMeses) : 0;
-  const interesesPer = perSel ? (cuotaPer*num(perSel.plazoMeses) - importeEfectivoPersonal(perSel)) : 0;
-  const totalCuotas = hipotecaCompleta ? deudasCuota + cuotaHip + cuotaPer : NaN;
+  const perCalc = perSel ? personalCalc(perSel) : null;
+  const personalCompleta = !perCalc || perCalc.completa!==false;
+  const cuotaPer = perCalc ? (personalCompleta ? perCalc.cuota : NaN) : 0;
+  const interesesPer = perCalc ? (personalCompleta ? perCalc.interesesTotal : NaN) : 0;
+  const totalCuotas = (hipotecaCompleta && personalCompleta) ? deudasCuota + cuotaHip + cuotaPer : NaN;
   const ratio = ingresos>0 && !isNaN(totalCuotas) ? (totalCuotas/ingresos*100) : NaN;
   const ahorroTotal = ahorroTotalCalc();
   const ahorroDisponible = ahorroDisponibleCalc(); // Hoja 02: después del colchón
@@ -1876,7 +1876,7 @@ function renderResumen(){
         <div class="field"><label>03 Deudas actuales — Escenario de deudas usado</label>
           <select data-path="deudas.seleccionado" data-rerender="true">
             <option value="" ${state.deudas.seleccionado===''?'selected':''}>Sin deuda — Saldo: 0 € — Cuota: 0 €/mes</option>
-            ${state.deudas.escenarios.map(e=>`<option value="${e.id}" ${e.id===(deudaEscSel&&deudaEscSel.id)?'selected':''}>${e.nombre||'Escenario'} — Saldo: ${fmtMoney(saldoTotalEscenarioDeuda(e))} — Cuota: ${fmtMoney(cuotaTotalEscenarioDeuda(e))}/mes</option>`).join('')}
+            ${state.deudas.escenarios.map(e=>`<option value="${e.id}" ${e.id===(deudaEscSel&&deudaEscSel.id)?'selected':''}>${esc(e.nombre||'Escenario')} — Saldo: ${fmtMoney(saldoTotalEscenarioDeuda(e))} — Cuota: ${fmtMoney(cuotaTotalEscenarioDeuda(e))}/mes</option>`).join('')}
           </select>
           ${deudaEscSel && num(deudaEscSel.ahorroUsado)>0 ? `<div style="font-size:11px;color:var(--yellow);margin-top:4px;font-weight:600;">⚠ Este escenario de deuda utiliza ${fmtMoney(deudaEscSel.ahorroUsado)} de tus ahorros. Hipoclaro ya lo descuenta automáticamente del ahorro disponible para la compra.</div>` : ''}
         </div>
@@ -1902,7 +1902,9 @@ function renderResumen(){
             <option value="">— Sin préstamo personal —</option>
             ${personalesVinculadosAHipoteca(hipSel.id).map(e=>{
               const hipVinc = state.hipoteca.escenarios.find(h=>h.id===e.hipotecaEscenarioId);
-              return `<option value="${e.id}" ${e.id===(perSel&&perSel.id)?'selected':''}>${esc(e.nombre||'Escenario')} → 05 ${esc(hipVinc&&hipVinc.nombre ? hipVinc.nombre : 'Hipoteca sin nombre')} — ${fmtMoney(importeEfectivoPersonal(e))} — ${fmtMoney(cuotaFrancesa(importeEfectivoPersonal(e), e.tin, e.plazoMeses))}/mes</option>`;
+              const c = personalCalc(e);
+              const etiquetaCuota = c.completa===false ? 'pendiente de completar' : `${fmtMoney(c.cuota)}/mes`;
+              return `<option value="${e.id}" ${e.id===(perSel&&perSel.id)?'selected':''}>${esc(e.nombre||'Escenario')} → 05 ${esc(hipVinc&&hipVinc.nombre ? hipVinc.nombre : 'Hipoteca sin nombre')} — ${fmtMoney(c.importeEfectivo)} — ${etiquetaCuota}</option>`;
             }).join('')}
           </select>` : `<div class="empty">Selecciona primero un escenario de hipoteca.</div>`}
         </div>
@@ -1948,9 +1950,10 @@ function renderResumen(){
         <span style="font-size:12.5px;color:var(--ink-soft);">Deudas ${fmtMoney(deudasCuota)} + hipoteca ${fmtMoney(cuotaHip)} + préstamo personal ${fmtMoney(cuotaPer)}</span>
       </div>
       ${hipCalc && hipCalc.completa===false ? `<div class="note-block" style="background:var(--yellow-soft);color:var(--yellow);margin-top:10px;margin-bottom:0;"><strong>⚠ No se calcula el endeudamiento.</strong> El escenario de hipoteca seleccionado en la Hoja 05 está pendiente de completar: ${esc(hipCalc.motivo||'faltan datos del tipo de interés')}.</div>` : ''}
+      ${perCalc && perCalc.completa===false ? `<div class="note-block" style="background:var(--yellow-soft);color:var(--yellow);margin-top:10px;margin-bottom:0;"><strong>⚠ No se calcula el endeudamiento.</strong> El escenario de préstamo personal seleccionado en la Hoja 07 está pendiente de completar: ${esc(perCalc.motivo||'faltan datos del TIN')}.</div>` : ''}
       ${hipSel ? `
       <div style="margin-top:8px;font-size:12px;color:var(--ink-faint);font-family:var(--font-body);font-variant-numeric:tabular-nums;">
-        Escenario "${hipSel.nombre||'Hipoteca'}": precio ${fmtMoney(hipSel.importe)} · ${fmtPct(pctFinanciacionOf(hipSel),0)} de financiación · ${fmtMoney(importeAFinanciar(hipSel))} a financiar
+        Escenario "${esc(hipSel.nombre||'Hipoteca')}": precio ${fmtMoney(hipSel.importe)} · ${fmtPct(pctFinanciacionOf(hipSel),0)} de financiación · ${fmtMoney(importeAFinanciar(hipSel))} a financiar
       </div>` : ''}
     </div>
 
@@ -2075,12 +2078,17 @@ function generarTextoPlan(){
   const perSel = hipSel ? personalEscenarioSeleccionado(hipSel.id) : null;
   let cuotaPer = 0;
   if(perSel && perSel.importe){
-    const importeEfectivoPer = importeEfectivoPersonal(perSel);
-    cuotaPer = cuotaFrancesa(importeEfectivoPer, perSel.tin, perSel.plazoMeses);
+    const perCalcPlan = personalCalc(perSel);
+    const importeEfectivoPer = perCalcPlan.importeEfectivo;
+    cuotaPer = perCalcPlan.completa===false ? NaN : perCalcPlan.cuota;
     add(`🏦 PRÉSTAMO PERSONAL — "${perSel.nombre||'Escenario'}"`);
-    add(`   ${fmtMoney(importeEfectivoPer)}${perSel.tin?' al '+perSel.tin+'% TIN':''}${perSel.plazoMeses?', '+perSel.plazoMeses+' meses':''} → 💶 ${fmtMoney(cuotaPer)}/mes`);
-    const taePer = taePersonalValor(perSel);
-    if(!isNaN(taePer)) add(`   TAE: ${fmtPct(taePer,2)} (${perSel.tae!==undefined&&perSel.tae!==''?'informada por el banco':'estimada por Hipoclaro con la comisión indicada'})`);
+    if(perCalcPlan.completa===false){
+      add(`   ⚠ Pendiente de completar en Hoja 07: ${perCalcPlan.motivo||'faltan datos del TIN'}`);
+    } else {
+      add(`   ${fmtMoney(importeEfectivoPer)}${perSel.tin?' al '+perSel.tin+'% TIN':''}${perSel.plazoMeses?', '+perSel.plazoMeses+' meses':''} → 💶 ${fmtMoney(cuotaPer)}/mes`);
+      const taePer = taePersonalValor(perSel);
+      if(!isNaN(taePer)) add(`   TAE: ${fmtPct(taePer,2)} (${perSel.tae!==undefined&&perSel.tae!==''?'informada por el banco':'estimada por Hipoclaro con la comisión indicada'})`);
+    }
     if(totalGastosPostCompra(perSel)>0){
       add(perSel.incluirPostCompra
         ? `   Incluye gastos post-compra (reforma, muebles, mudanza…): ${fmtMoney(totalGastosPostCompra(perSel))}`
@@ -2146,10 +2154,7 @@ function generarTextoPlan(){
   return L.join('\n').trim();
 }
 function trackEvent(name){
-  // No-op hasta que se publique con el script real de GoatCounter — entonces cuenta cada click como evento aparte.
-  if(typeof window.goatcounter !== 'undefined' && window.goatcounter && window.goatcounter.count){
-    window.goatcounter.count({path: name, title: name, event: true});
-  }
+  // Hipoclaro no usa analítica: no-op inofensivo por si algún botón todavía llama a esto.
 }
 async function copiarTexto(elementId, confirmId){
   trackEvent('copiar-' + elementId);
@@ -2538,9 +2543,9 @@ function vinculacionesCosteTotalPlazo(e){ return vinculacionesAnualTotal(e) * nu
 function importeAFinanciar(e){ return num(e.importe) * pctFinanciacionOf(e) / 100; }
 function labelEscenarioHipoteca(e){
   const v = viviendaVinculadaHipoteca(e);
-  return `${e.nombre||'Escenario'}${v?` — ${v.nombre||'Vivienda'}`:''} — ${fmtMoney(importeAFinanciar(e))} · ${fmtPct(pctFinanciacionOf(e),0)}`;
+  return `${esc(e.nombre||'Escenario')}${v?` — ${esc(v.nombre||'Vivienda')}`:''} — ${fmtMoney(importeAFinanciar(e))} · ${fmtPct(pctFinanciacionOf(e),0)}`;
 }
-function labelEscenarioPersonal(e){ const importeEf = importeEfectivoPersonal(e); const cuota = cuotaFrancesa(importeEf, e.tin, e.plazoMeses); return `${e.nombre||'Escenario'} — ${fmtMoney(importeEf)} — ${fmtMoney(cuota)}/mes`; }
+function labelEscenarioPersonal(e){ const c = personalCalc(e); return `${esc(e.nombre||'Escenario')} — ${fmtMoney(c.importeEfectivo)} — ${c.completa===false?'pendiente de completar':fmtMoney(c.cuota)+'/mes'}`; }
 function renderHipoteca(){
   return `
     <div class="sheet-header"><span class="sheet-num">HOJA 05</span>${tabIcon('hipoteca')}<span class="sheet-title">Hipoteca — simulador de escenarios</span></div>
@@ -2643,9 +2648,9 @@ function renderHipoteca(){
         ${e.tipoInteres==='variable' ? `
         <div class="grid2">
           <div class="field"><label>Diferencial sobre Euríbor (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="hipoteca.escenarios.${i}.diferencialVariable" value="${e.diferencialVariable}" data-rerender="true">${avisoTinNegativo(e.diferencialVariable)}</div>
-          <div class="field"><label>Euríbor actual (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="hipoteca.escenarios.${i}.euriborActual" value="${e.euriborActual}" placeholder="p.ej. 2,94 (media agosto 2026)" data-rerender="true">${avisoTinNegativo(e.euriborActual)}</div>
+          <div class="field"><label>Euríbor usado para la simulación (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="hipoteca.escenarios.${i}.euriborActual" value="${e.euriborActual}" placeholder="p.ej. 2,94 (media agosto 2026)" data-rerender="true"></div>
         </div>
-        ${calc.completa!==false && calc.tipo==='variable' ? `<div class="stat" style="margin-bottom:12px;"><div class="label">TIN actual (Euríbor + diferencial)</div><div class="value small">${fmtPct(calc.tinActual)}</div></div>` : ''}
+        ${calc.completa!==false && calc.tipo==='variable' ? `<div class="stat" style="margin-bottom:12px;"><div class="label">TIN usado en la simulación (Euríbor + diferencial)</div><div class="value small">${fmtPct(calc.tinActual)}</div>${calc.tinActual<0?'<div style="font-size:10.5px;color:var(--yellow);margin-top:2px;">Resultado teórico: el Euríbor asumido es más negativo que el diferencial. En la práctica, muchos contratos incluyen su propia cláusula que Hipoclaro no conoce.</div>':''}</div>` : ''}
         ` : ''}
         ${calculoPendiente ? `<div class="note-block" style="background:var(--yellow-soft);color:var(--yellow);margin-top:0;"><strong>⚠ Escenario pendiente de completar.</strong> ${esc(calc.motivo||'Completa los datos del tipo de interés para calcular cuota e intereses.')}</div>` : ''}
         <div class="hr"></div>
@@ -2675,19 +2680,20 @@ function renderHipoteca(){
         ` : ''}
         ${calc.tipo==='variable' && calc.escenariosSubida ? `
         <div class="section-flag" style="margin-top:0;"><strong style="font-size:13.5px;">Si el Euríbor se mueve</strong> <span style="font-size:11px;color:var(--ink-faint);">misma hipoteca, mismo diferencial — solo cambia el Euríbor</span></div>
-        <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:12px;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;margin-bottom:${calc.escenariosSubida.some(s=>s.tin<0)?4:12}px;">
           <thead><tr style="text-align:left;border-bottom:1px solid var(--border-strong);"><th style="padding:4px 6px;">Escenario</th><th class="num" style="padding:4px 6px;">TIN</th><th class="num" style="padding:4px 6px;">Cuota hipoteca</th></tr></thead>
           <tbody>
-            ${calc.escenariosSubida.map(s=>`<tr style="${s.delta===0?'font-weight:700;':''}border-bottom:1px solid var(--border);"><td style="padding:4px 6px;">${s.delta===0?'Euríbor actual':(s.delta>0?`Euríbor +${s.delta}`:`Euríbor ${s.delta}`)}</td><td class="num" style="padding:4px 6px;">${fmtPct(s.tin)}</td><td class="num" style="padding:4px 6px;">${fmtMoney(s.cuota)}/mes</td></tr>`).join('')}
+            ${calc.escenariosSubida.map(s=>`<tr style="${s.delta===0?'font-weight:700;':''}border-bottom:1px solid var(--border);"><td style="padding:4px 6px;">${s.delta===0?'Euríbor base':(s.delta>0?`Euríbor +${s.delta}`:`Euríbor ${s.delta}`)}${s.tin<0?' *':''}</td><td class="num" style="padding:4px 6px;">${fmtPct(s.tin)}</td><td class="num" style="padding:4px 6px;">${fmtMoney(s.cuota)}/mes</td></tr>`).join('')}
           </tbody>
         </table>
+        ${calc.escenariosSubida.some(s=>s.tin<0) ? `<div style="font-size:10.5px;color:var(--ink-faint);margin-bottom:12px;">* TIN negativo: resultado teórico de la fórmula, sin suelo del 0% impuesto. En la práctica, muchos contratos incluyen su propia cláusula que Hipoclaro no conoce.</div>` : ''}
         ` : ''}
         ${(e.vinculaciones||[]).length>0 ? `
         <div class="stat-row stat-row-2" style="margin-bottom:8px;">
           <div class="stat"><div class="label">Vinculaciones / año</div><div class="value small">${fmtMoney(vinculacionesAnualTotal(e))}</div></div>
           <div class="stat"><div class="label">Coste financiero estimado <span style="font-weight:400;">(intereses + vinculaciones)</span></div><div class="value small">${fmtMoney(intereses + vinculacionesCosteTotalPlazo(e))}</div></div>
         </div>` : ''}
-        <div class="field" style="margin-top:10px;"><label>Notas</label><textarea data-path="hipoteca.escenarios.${i}.notas">${e.notas}</textarea></div>
+        <div class="field" style="margin-top:10px;"><label>Notas</label><textarea data-path="hipoteca.escenarios.${i}.notas">${esc(e.notas)}</textarea></div>
         `}
       </div>`;
     }).join('')}
@@ -2834,7 +2840,7 @@ function renderPersonal(){
           <select onchange="setGastoEscenarioSeleccionado(this.value)">
             ${gastosCompatibles.map(p=>{
               const totalP = Math.max(0, entrada + calcGastoCompra(p) - ahorroDisponible);
-              return `<option value="${p.id}" ${p.id===(provSel&&provSel.id)?'selected':''}>${p.nombre||'Escenario'} — ${fmtMoney(totalP)} a pedir</option>`;
+              return `<option value="${p.id}" ${p.id===(provSel&&provSel.id)?'selected':''}>${esc(p.nombre||'Escenario')} — ${fmtMoney(totalP)} a pedir</option>`;
             }).join('')}
           </select>
           <div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Solo aparecen escenarios de Hoja 06 vinculados a la hipoteca elegida.</div>
@@ -2857,13 +2863,14 @@ function renderPersonal(){
     <div class="hr"></div>
     ${state.personal.escenarios.length>1 ? expandCollapseButtons('personal.escenarios') : ''}
     ${state.personal.escenarios.length===0 ? '<div class="card"><div class="empty">Sin escenarios todavía.</div></div>' : state.personal.escenarios.map((e,i)=>{
-      const importeEf = importeEfectivoPersonal(e);
-      const cuota = cuotaFrancesa(importeEf, e.tin, e.plazoMeses);
-      const totalPagado = cuota*num(e.plazoMeses);
-      const intereses = totalPagado - importeEf;
-      const usaTaeInformada = e.tae!==undefined && e.tae!=='';
-      const apertura = usaTaeInformada ? 0 : importeEf*num(e.comisionApertura)/100;
-      const taeMostrada = taePersonalValor(e);
+      const c = personalCalc(e);
+      const importeEf = c.importeEfectivo;
+      const cuota = c.cuota;
+      const usaTaeInformada = c.usaTaeInformada;
+      const apertura = c.apertura;
+      const taeMostrada = c.tae;
+      const costeCalculadoPer = c.costeCalculado;
+      const calculoPendientePer = c.completa===false;
       return `
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer;" onclick="toggleExpand('personal.escenarios', ${i})">
@@ -2872,7 +2879,7 @@ function renderPersonal(){
             <input class="broker-name-input" style="font-size:16px;" type="text" data-path="personal.escenarios.${i}.nombre" value="${esc(e.nombre)}" onclick="event.stopPropagation()">
           </div>
           <div style="display:flex;align-items:center;gap:8px;" onclick="event.stopPropagation()">
-            ${e.expanded===false ? `<span class="badge grey">${fmtMoney(cuota)}/mes</span>` : ''}
+            ${e.expanded===false ? `<span class="badge grey">${calculoPendientePer?'Pendiente de completar':fmtMoney(cuota)+'/mes'}</span>` : ''}
             <button class="btn danger small" onclick="removeEscenarioPersonal('${e.id}')">Eliminar</button>
           </div>
         </div>
@@ -2891,19 +2898,20 @@ function renderPersonal(){
         <div class="grid5" style="margin-top:12px;">
           <div class="field"><label>Importe (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="personal.escenarios.${i}.importe" value="${e.importe}" data-rerender="true">${avisoImporteNegativo(e.importe,'El importe')}</div>
           <div class="field"><label>TIN (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="personal.escenarios.${i}.tin" value="${e.tin}" data-rerender="true">${avisoTinNegativo(e.tin)}</div>
-          <div class="field"><label>Comisión apertura (%)</label><input id="comision-personal-${i}" type="text" inputmode="decimal" value="${e.comisionApertura}" ${e.tae!==undefined&&e.tae!==''?'disabled':''} oninput="setComisionPersonal(${i}, this.value)" style="${e.tae!==undefined&&e.tae!==''?'background:#F2F0EA;color:var(--ink-faint);':''}"></div>
-          <div class="field"><label>TAE (%)</label>${e.comisionApertura!==undefined&&e.comisionApertura!=='' ? `<input id="tae-personal-${i}" type="text" value="${isNaN(taeEstimadaPersonal(e))?'':taeEstimadaPersonal(e).toFixed(2).replace('.',',')}" readonly style="background:#F2F0EA;color:var(--ink-soft);"><div style="font-size:10.5px;color:var(--ink-faint);margin-top:4px;">Estimada por Hipoclaro</div>` : `<input id="tae-personal-${i}" type="text" inputmode="decimal" value="${e.tae||''}" oninput="setTaePersonal(${i}, this.value)"><div style="font-size:10.5px;color:var(--ink-faint);margin-top:4px;">Si la informa el banco</div>`}</div>
+          <div class="field"><label>Comisión apertura (%)</label><input id="comision-personal-${i}" type="text" inputmode="decimal" value="${esc(e.comisionApertura)}" ${e.tae!==undefined&&e.tae!==''?'disabled':''} oninput="setComisionPersonal(${i}, this.value)" style="${e.tae!==undefined&&e.tae!==''?'background:#F2F0EA;color:var(--ink-faint);':''}"></div>
+          <div class="field"><label>TAE (%)</label>${e.comisionApertura!==undefined&&e.comisionApertura!=='' ? `<input id="tae-personal-${i}" type="text" value="${isNaN(taeEstimadaPersonal(e))?'':taeEstimadaPersonal(e).toFixed(2).replace('.',',')}" readonly style="background:#F2F0EA;color:var(--ink-soft);"><div style="font-size:10.5px;color:var(--ink-faint);margin-top:4px;">Estimada por Hipoclaro</div>` : `<input id="tae-personal-${i}" type="text" inputmode="decimal" value="${esc(e.tae||'')}" oninput="setTaePersonal(${i}, this.value)"><div style="font-size:10.5px;color:var(--ink-faint);margin-top:4px;">Si la informa el banco</div>`}</div>
           <div class="field"><label>Plazo (meses)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="personal.escenarios.${i}.plazoMeses" value="${e.plazoMeses}" data-rerender="true">${e.plazoMeses?`<div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">${mesesAAnios(e.plazoMeses)}</div>`:''}${avisoPlazoMeses(e.plazoMeses)}</div>
         </div>
         <div style="font-size:10.5px;color:var(--ink-faint);margin-top:-4px;margin-bottom:10px;">Rellena <strong>comisión</strong> o <strong>TAE</strong>. Si indicas comisión, Hipoclaro estima la TAE; si escribes la TAE del banco, no intenta deducir la comisión.</div>
         <div class="field"><label>Finalidad</label><input type="text" placeholder="p.ej. impuestos y gastos de compra" data-path="personal.escenarios.${i}.proposito" value="${esc(e.proposito)}"></div>
         ${e.incluirPostCompra && totalGastosPostCompra(e)>0 ? `<div class="note-block" style="margin-top:0;">Importe efectivo usado en el cálculo: <strong>${fmtMoney(importeEf)}</strong> (${fmtMoney(e.importe)} solicitado + ${fmtMoney(totalGastosPostCompra(e))} de gastos post-compra incluidos).</div>` : ''}
+        ${calculoPendientePer ? `<div class="note-block" style="background:var(--yellow-soft);color:var(--yellow);margin-top:0;"><strong>⚠ Escenario pendiente de completar.</strong> ${esc(c.motivo||'Completa el TIN para calcular cuota e intereses.')}</div>` : ''}
         <div class="hr"></div>
         <div class="stat-row" style="margin-bottom:8px;">
           <div class="stat"><div class="label">Cuota mensual</div><div class="value">${fmtMoney(cuota)}</div></div>
           <div class="stat"><div class="label">Comisión apertura</div><div class="value small">${usaTaeInformada?'—':fmtMoney(apertura)}</div></div>
           <div class="stat"><div class="label">TAE ${usaTaeInformada?'informada':'estimada'}</div><div class="value small">${isNaN(taeMostrada)?'—':fmtPct(taeMostrada,2)}</div></div>
-          <div class="stat"><div class="label">${usaTaeInformada?'Coste calculado con TIN':'Coste calculado (intereses + apertura)'}</div><div class="value small">${fmtMoney(intereses+apertura)}</div>${usaTaeInformada?'<div style="font-size:10.5px;color:var(--ink-faint);margin-top:2px;">La TAE puede incluir costes que Hipoclaro no reconstruye.</div>':''}</div>
+          <div class="stat"><div class="label">${usaTaeInformada?'Coste calculado con TIN':'Coste calculado (intereses + apertura)'}</div><div class="value small">${fmtMoney(costeCalculadoPer)}</div>${usaTaeInformada?'<div style="font-size:10.5px;color:var(--ink-faint);margin-top:2px;">La TAE puede incluir costes que Hipoclaro no reconstruye.</div>':''}</div>
         </div>
         <div class="hr"></div>
         <div class="section-flag"><strong style="font-size:13.5px;">Gastos post-compra</strong> <span style="font-size:11px;color:var(--ink-faint);">(reforma, muebles, mudanza… lo que este préstamo va a cubrir aparte de la entrada y los gastos de compra)</span></div>
@@ -2920,7 +2928,7 @@ function renderPersonal(){
         </div>
         <label style="display:flex;align-items:center;gap:8px;margin-top:12px;cursor:pointer;font-weight:400;"><input type="checkbox" style="width:16px;height:16px;" data-path="personal.escenarios.${i}.incluirPostCompra" ${e.incluirPostCompra?'checked':''} data-rerender="true"> Incluir estos gastos en el importe solicitado</label>
         <div class="hr"></div>
-        <div class="field" style="margin-top:10px;"><label>Notas</label><textarea data-path="personal.escenarios.${i}.notas">${e.notas}</textarea></div>
+        <div class="field" style="margin-top:10px;"><label>Notas</label><textarea data-path="personal.escenarios.${i}.notas">${esc(e.notas)}</textarea></div>
         `}
       </div>`;
     }).join('')}
@@ -2930,31 +2938,30 @@ function renderPersonal(){
 }
 function renderComparativaPersonal(){
   const filas = state.personal.escenarios.map(e=>{
-    const importeEf = importeEfectivoPersonal(e);
-    const cuota = cuotaFrancesa(importeEf, e.tin, e.plazoMeses);
-    const intereses = cuota*num(e.plazoMeses) - importeEf;
-    const taeInformada = e.tae!==undefined && e.tae!=='';
-    const apertura = taeInformada ? 0 : importeEf*num(e.comisionApertura)/100;
-    const tae = taePersonalValor(e);
+    const c = personalCalc(e);
     const h=state.hipoteca.escenarios.find(x=>x.id===e.hipotecaEscenarioId);
-    return {nombre:e.nombre||'Escenario', hipoteca:h?(h.nombre||'Escenario'):'—', importe:importeEf, tin:num(e.tin), tae, taeInformada, cuota, costeTotal:intereses+apertura};
+    return {nombre:e.nombre||'Escenario', hipoteca:h?(h.nombre||'Escenario'):'—', importe:c.importeEfectivo, tin:num(e.tin), tae:c.tae, taeInformada:c.usaTaeInformada, cuota:c.cuota, costeTotal:c.costeCalculado, completa:c.completa!==false, motivo:c.motivo};
   });
-  const minCoste = Math.min(...filas.map(f=>f.costeTotal));
+  const filasCompletas = filas.filter(f=>f.completa && !isNaN(f.costeTotal));
+  const minCoste = filasCompletas.length>0 ? Math.min(...filasCompletas.map(f=>f.costeTotal)) : NaN;
   return `
     <div class="card">
       <h3 class="card-title">Comparativa de escenarios <small>TAE para comparar ofertas; coste calculado con los datos que Hipoclaro conoce</small></h3>
       <table><thead><tr><th>Escenario</th><th>Hipoteca vinculada</th><th class="num">Importe</th><th class="num">TIN</th><th class="num">TAE</th><th class="num">Cuota mensual</th><th class="num">Coste calculado</th><th class="num">Diferencia vs. el menor coste calculado</th></tr></thead><tbody>
-        ${filas.map(f=>`
-          <tr class="${f.costeTotal===minCoste?'compare-best':''}">
-            <td>${esc(f.nombre)}${f.costeTotal===minCoste?'<span class="compare-tag">MENOS COSTE CALCULADO</span>':''}</td>
+        ${filas.map(f=>{
+          const esMejor = f.completa && !isNaN(minCoste) && f.costeTotal===minCoste;
+          return `
+          <tr class="${esMejor?'compare-best':''}">
+            <td>${esc(f.nombre)}${esMejor?'<span class="compare-tag">MENOS COSTE CALCULADO</span>':''}${!f.completa?`<div style="font-size:10.5px;color:var(--yellow);margin-top:3px;">Pendiente de completar${f.motivo?` · ${esc(f.motivo)}`:''}</div>`:''}</td>
             <td>${esc(f.hipoteca)}</td>
             <td class="num">${fmtMoney(f.importe)}</td>
             <td class="num">${fmtPct(f.tin,2)}</td>
             <td class="num">${isNaN(f.tae)?'—':`${fmtPct(f.tae,2)}<br><span style="font-size:10.5px;color:var(--ink-faint);">${f.taeInformada?'informada':'estimada'}</span>`}</td>
             <td class="num">${fmtMoney(f.cuota)}</td>
             <td class="num">${fmtMoney(f.costeTotal)}${f.taeInformada?'<br><span style="font-size:10.5px;color:var(--ink-faint);">solo TIN; otros costes pueden estar en la TAE</span>':''}</td>
-            <td class="num">${f.costeTotal===minCoste?'—':'+'+fmtMoney(f.costeTotal-minCoste)}</td>
-          </tr>`).join('')}
+            <td class="num">${!f.completa || isNaN(minCoste) || esMejor?'—':'+'+fmtMoney(f.costeTotal-minCoste)}</td>
+          </tr>`;
+        }).join('')}
       </tbody></table>
       <div style="font-size:10.5px;color:var(--ink-faint);margin-top:8px;">La TAE estimada usa el TIN, el plazo, el importe y únicamente la comisión de apertura indicada. Si introduces la TAE del banco, Hipoclaro la muestra como dato informativo y no intenta deducir qué comisiones o gastos contiene.</div>
     </div>
@@ -3036,7 +3043,7 @@ function calcGastoCompra(p){
 function opcionesEscenariosHipoteca(selectedId){
   return state.hipoteca.escenarios.map(e=>{
     const v=viviendaVinculadaHipoteca(e);
-    return `<option value="${e.id}" ${e.id===selectedId?'selected':''}>${e.nombre||'Escenario'}${v?` — ${esc(v.nombre||'Vivienda')}`:''} — ${fmtPct(pctFinanciacionOf(e),0)} · ${fmtMoney(e.importe)}</option>`;
+    return `<option value="${e.id}" ${e.id===selectedId?'selected':''}>${esc(e.nombre||'Escenario')}${v?` — ${esc(v.nombre||'Vivienda')}`:''} — ${fmtPct(pctFinanciacionOf(e),0)} · ${fmtMoney(e.importe)}</option>`;
   }).join('');
 }
 function renderGastos(){
@@ -3914,86 +3921,9 @@ async function resetAll(){
   state = defaultState(); saveState(); render();
 }
 
-/* ---------- Consentimiento de cookies ---------- */
-// Código del sitio en GoatCounter — vacío hasta que la web esté publicada de verdad.
-// Mientras esté vacío, no se carga ningún script externo, pase lo que pase con el consentimiento.
-const GOATCOUNTER_CODE = 'hipoclaro';
-
-function getCookieConsent(){
-  try{ const v = localStorage.getItem('cookie-consent'); return v ? JSON.parse(v) : null; }catch(e){ return null; }
-}
-function setCookieConsent(analytics){
-  try{ localStorage.setItem('cookie-consent', JSON.stringify({analytics, fecha: new Date().toISOString()})); }catch(e){}
-}
-function cargarAnalitica(){
-  if(!GOATCOUNTER_CODE) return;
-  if(document.getElementById('goatcounter-script')) return;
-  const s = document.createElement('script');
-  s.id = 'goatcounter-script';
-  s.async = true;
-  s.setAttribute('data-goatcounter', `https://${GOATCOUNTER_CODE}.goatcounter.com/count`);
-  s.src = 'https://gc.zgo.at/count.js';
-  document.head.appendChild(s);
-}
-function renderCookieLayer1(){
-  return `
-    <div class="cookie-bar-inner">
-      <button onclick="rechazarTodasCookies()" aria-label="Cerrar y rechazar analítica" title="Cerrar y rechazar analítica" style="float:right;background:none;border:none;color:#C9CFC5;font-size:18px;cursor:pointer;line-height:1;">✕</button>
-      <div class="cookie-title">Antes de seguir</div>
-      <p class="cookie-lead">La herramienta guarda tus escenarios en tu navegador. La analítica de uso es opcional.</p>
-      <p>Si la aceptas, cargamos GoatCounter para obtener estadísticas agregadas de visitas y uso. GoatCounter no coloca cookies ni identificadores persistentes en tu navegador y no almacena la dirección IP en su base de datos; para distinguir sesiones usa temporalmente en memoria la combinación de sitio, IP y User-Agent durante un máximo aproximado de 8 horas. No usamos esta analítica para publicidad. Puedes cambiar de opinión cuando quieras desde "🍪 Cookies". Más información en la <button type="button" class="link-btn" onclick="abrirPoliticaCookies();" style="color:#EDEAE0;">Política de Cookies</button>.</p>
-      <div class="cookie-btns">
-        <button class="cookie-btn primary" onclick="aceptarTodasCookies()">Aceptar todas</button>
-        <button class="cookie-btn primary" onclick="rechazarTodasCookies()">Rechazar todas</button>
-        <button class="cookie-btn secondary" onclick="mostrarCookieLayer2()">Configurar</button>
-      </div>
-    </div>
-  `;
-}
-function renderCookieLayer2(){
-  const consentActual = getCookieConsent();
-  const analyticsChecked = consentActual ? !!consentActual.analytics : false;
-  return `
-    <div class="cookie-bar-inner">
-      <button onclick="rechazarTodasCookies()" aria-label="Cerrar y rechazar analítica" title="Cerrar y rechazar analítica" style="float:right;background:none;border:none;color:#C9CFC5;font-size:18px;cursor:pointer;line-height:1;">✕</button>
-      <div class="cookie-title">Preferencias de cookies</div>
-      <div class="cookie-cat">
-        <div>
-          <div class="cookie-cat-name">Cookies técnicas</div>
-          <div class="cookie-cat-desc">Necesarias para guardar tus escenarios y preferencias en este navegador. Los datos de la calculadora se almacenan localmente; la carga técnica de la web y sus recursos externos se explica en la Política de Privacidad.</div>
-        </div>
-        <div class="cookie-cat-status">Activas siempre</div>
-      </div>
-      <div class="cookie-cat">
-        <div>
-          <div class="cookie-cat-name">Estadísticas de uso</div>
-          <div class="cookie-cat-desc">Visitas, de dónde vienen, y qué botones se usan más. Nos ayuda a decidir en qué merece la pena seguir trabajando.</div>
-        </div>
-        <label class="cookie-toggle"><input type="checkbox" id="cookieToggleAnalytics" ${analyticsChecked?'checked':''}><span class="slider"></span></label>
-      </div>
-      <div class="cookie-btns">
-        <button class="cookie-btn primary" onclick="aceptarTodasCookies()">Aceptar todas</button>
-        <button class="cookie-btn primary" onclick="rechazarTodasCookies()">Rechazarlas todas</button>
-        <button class="cookie-btn secondary" onclick="guardarPreferenciasCookies()">Guardar mis preferencias</button>
-      </div>
-      <p style="margin-top:12px;"><button type="button" class="link-btn" onclick="mostrarCookieLayer1();" style="color:#C9CFC5;font-size:12px;">← Volver</button> &nbsp;·&nbsp; <button type="button" class="link-btn" onclick="abrirPoliticaCookies();" style="color:#C9CFC5;font-size:12px;">Ver la política de cookies completa</button></p>
-    </div>
-  `;
-}
-function mostrarCookieBar(){ document.getElementById('cookieBar').style.display = 'block'; document.getElementById('cookieBarContent').innerHTML = renderCookieLayer1(); }
-function mostrarCookieLayer1(){ document.getElementById('cookieBarContent').innerHTML = renderCookieLayer1(); }
-function mostrarCookieLayer2(){ document.getElementById('cookieBarContent').innerHTML = renderCookieLayer2(); }
-function ocultarCookieBar(){ document.getElementById('cookieBar').style.display = 'none'; }
-function aceptarTodasCookies(){ setCookieConsent(true); ocultarCookieBar(); cargarAnalitica(); }
-function rechazarTodasCookies(){ setCookieConsent(false); ocultarCookieBar(); }
-function guardarPreferenciasCookies(){
-  const chk = document.getElementById('cookieToggleAnalytics');
-  const analytics = chk ? chk.checked : false;
-  setCookieConsent(analytics);
-  ocultarCookieBar();
-  if(analytics) cargarAnalitica();
-}
-function abrirPreferenciasCookies(){ document.getElementById('cookieBar').style.display = 'block'; mostrarCookieLayer2(); }
+/* ---------- Analítica ---------- */
+// Hipoclaro no usa GoatCounter ni ningún otro servicio de analítica: no hay nada que cargar
+// ni consentir. trackEvent() se deja como no-op inofensivo por si algún botón la sigue llamando.
 function abrirAvisoLegal(){
   document.getElementById('legalContent').innerHTML = document.getElementById('staticAvisoLegal').innerHTML;
   document.getElementById('legalOverlay').style.display = 'block';
@@ -4011,12 +3941,6 @@ function abrirComoFunciona(){
   document.getElementById('legalOverlay').style.display = 'block';
 }
 function cerrarLegal(){ document.getElementById('legalOverlay').style.display = 'none'; }
-function initCookieConsent(){
-  const consentimiento = getCookieConsent();
-  if(!consentimiento){ mostrarCookieBar(); }
-  else if(consentimiento.analytics){ cargarAnalitica(); }
-}
-initCookieConsent();
 
 /* ---------- Arranque ---------- */
 loadState();
