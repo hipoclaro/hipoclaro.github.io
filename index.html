@@ -66,6 +66,10 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body)
 .brand-title{font-family:var(--font-display);font-size:22px;font-weight:600;margin-top:4px;}
 .navlist{list-style:none;margin:0;padding:0;}
 .navitem{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 20px;cursor:pointer;font-size:14.5px;color:#C9CFC5;border-left:3px solid transparent;}
+button.navitem{width:100%;border-top:none;border-right:none;border-bottom:none;background:none;font-family:inherit;text-align:left;}
+button.navitem:focus-visible{outline:2px solid var(--brass); outline-offset:-2px;}
+.link-btn{background:none;border:none;padding:0;margin:0;font:inherit;color:inherit;cursor:pointer;text-decoration:underline;}
+.link-btn:focus-visible{outline:2px solid var(--brass);outline-offset:2px;}
 .navitem .nav-left{display:flex;align-items:baseline;gap:10px;min-width:0;}
 .navitem .num{font-family:var(--font-mono);font-size:11px;color:var(--ink-faint);}
 .navitem:hover{background:rgba(255,255,255,0.05);color:#fff;}
@@ -89,11 +93,27 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-body)
 .card-title small{font-family:var(--font-body);font-size:12px;font-weight:400;color:var(--ink-faint);margin-left:8px;}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
 .grid5{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;}
 .gastos-costes-row{display:grid;grid-template-columns:minmax(165px,1.3fr) repeat(5,minmax(105px,1fr));gap:10px;align-items:start;margin-top:12px;}
 @media (max-width:1180px){.gastos-costes-row{grid-template-columns:repeat(3,minmax(0,1fr));}}
 @media (max-width:1100px){.grid5{grid-template-columns:repeat(3,minmax(0,1fr));}}
-@media (max-width:760px){.grid2,.grid3,.grid5,.gastos-costes-row{grid-template-columns:1fr;}}
+@media (max-width:760px){.grid2,.grid3,.grid4,.grid5,.gastos-costes-row{grid-template-columns:1fr;}}
+
+/* Filas con proporciones de columna propias (antes definidas con style="grid-template-columns" en línea,
+   lo que ganaba por especificidad a la regla de colapso móvil de arriba y rompía el responsive).
+   Envueltas en min-width para que nunca puedan hacerlo de nuevo. */
+@media (min-width:761px){
+  .hoja01-perfil-fila{grid-template-columns:1.2fr 0.5fr 1.05fr 1.15fr;}
+  .hoja01-contrato-fila{grid-template-columns:0.85fr 1.15fr 0.85fr 1fr 1.4fr;}
+  .hoja06-hipoteca-fila{grid-template-columns:1.55fr 1fr;}
+  .deuda-fila{grid-template-columns:1.15fr 1fr 1fr 0.8fr 1.3fr;}
+  .vivienda-precio-fila{grid-template-columns:1.4fr 1fr 1fr;}
+}
+.doc-item-row-single{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:8px;}
+.stat-row-2{grid-template-columns:repeat(2,1fr);}
+.stat-row-3{grid-template-columns:repeat(3,1fr);}
+@media (max-width:640px){.stat-row-2,.stat-row-3{grid-template-columns:1fr;}}
 
 label{display:block;font-size:12px;color:var(--ink-soft);margin-bottom:5px;font-weight:500;}
 input[type=text],input[type=number],input[type=date],select,textarea{
@@ -215,8 +235,8 @@ tr:last-child td{border-bottom:none;}
   display:flex;
   align-items:flex-end;
   gap:8px;
-  flex:0 0 270px;
-  min-width:230px;
+  flex:0 0 330px;
+  min-width:280px;
   margin-bottom:10px;
   cursor:pointer;
 }
@@ -244,7 +264,7 @@ tr:last-child td{border-bottom:none;}
 }
 .hipoteca-compact-field{margin-bottom:0;}
 /* Anchos suficientes para que cada etiqueta quepa en una sola línea; crecen entre los tres para ocupar el resto del espacio */
-.hipoteca-compact-price{flex:1.3 1 300px;flex-shrink:0;min-width:300px;}
+.hipoteca-compact-price{flex:.7 1 190px;flex-shrink:0;min-width:190px;}
 .hipoteca-compact-pct{flex:.5 1 140px;flex-shrink:0;min-width:140px;}
 .hipoteca-compact-amount{flex:1.2 1 340px;flex-shrink:0;min-width:340px;}
 .hipoteca-compact-field input{
@@ -436,7 +456,7 @@ tr.compare-best td{background:var(--green-soft);}
     <p><strong>6. Propiedad y uso</strong><br>
     Salvo los nombres, marcas o contenidos de terceros que puedan mencionarse, la estructura y contenidos propios de Hipoclaro se ofrecen para el uso normal de la herramienta. Las marcas de bancos, inmobiliarias, proveedores o servicios mencionados pertenecen a sus respectivos titulares.</p>
     <p><strong>7. Privacidad y cookies</strong><br>
-    El tratamiento técnico de datos y el uso de almacenamiento local, GitHub Pages, Google Fonts y GoatCounter se describen en la <a href="#" onclick="event.preventDefault();abrirPoliticaPrivacidad();">Política de Privacidad</a> y en la <a href="#" onclick="event.preventDefault();abrirPoliticaCookies();">Política de Cookies</a>.</p>
+    El tratamiento técnico de datos y el uso de almacenamiento local, GitHub Pages, Google Fonts y GoatCounter se describen en la <button type="button" class="link-btn" onclick="abrirPoliticaPrivacidad();">Política de Privacidad</button> y en la <button type="button" class="link-btn" onclick="abrirPoliticaCookies();">Política de Cookies</button>.</p>
   </div>
   <div id="staticPoliticaCookies">
     <h2 style="font-family:var(--font-display);margin-top:0;">Política de Cookies y almacenamiento local</h2>
@@ -456,7 +476,7 @@ tr.compare-best td{background:var(--green-soft);}
     <p><strong>Cambiar de opinión</strong><br>
     Puedes modificar tu elección en cualquier momento desde el botón “🍪 Cookies”, visible en la interfaz. Rechazar la analítica no impide utilizar las funciones principales de Hipoclaro.</p>
     <p><strong>Servicios técnicos</strong><br>
-    GitHub Pages aloja la web y Google Fonts sirve las tipografías. Estos servicios pueden recibir datos técnicos de red necesarios para atender la solicitud del navegador; se explican con más detalle en la <a href="#" onclick="event.preventDefault();abrirPoliticaPrivacidad();">Política de Privacidad</a>.</p>
+    GitHub Pages aloja la web y Google Fonts sirve las tipografías. Estos servicios pueden recibir datos técnicos de red necesarios para atender la solicitud del navegador; se explican con más detalle en la <button type="button" class="link-btn" onclick="abrirPoliticaPrivacidad();">Política de Privacidad</button>.</p>
   </div>
   <div id="staticPoliticaPrivacidad">
     <h2 style="font-family:var(--font-display);margin-top:0;">Política de Privacidad</h2>
@@ -848,7 +868,7 @@ function defaultState(){
         {id:uid(), nombre:'Seguro de hogar', importeAntes:'', importeDespues:''}
       ] },
     notas: [],
-    express: { ingresos:'', ahorroDisponible:'', deudasCuota:'', gastosFijos:'', precio:'', pctFinanciacion:'100', plazoAnios:'30', personalPlazoMeses:'60', extra:'' }
+    express: { ingresos:'', ahorroDisponible:'', deudasCuota:'', gastosFijos:'', precio:'', pctFinanciacion:'100', plazoAnios:'30', tipo:'segunda-mano', personalPlazoMeses:'60', extra:'' }
   };
 }
 
@@ -963,7 +983,7 @@ function normalizeState(){
   }
   if(state.personal.provinciaSeleccionada!==undefined) delete state.personal.provinciaSeleccionada;
 
-  backfillDefaults(state.express, {ingresos:'',ahorroDisponible:'',deudasCuota:'',gastosFijos:'',precio:'',pctFinanciacion:'100',plazoAnios:'30',personalPlazoMeses:'60',extra:''});
+  backfillDefaults(state.express, {ingresos:'',ahorroDisponible:'',deudasCuota:'',gastosFijos:'',precio:'',pctFinanciacion:'100',plazoAnios:'30',tipo:'segunda-mano',personalPlazoMeses:'60',extra:''});
   backfillDefaults(state.ahorros.t1, {efectivo:'',inversiones:'',expanded:true});
   backfillDefaults(state.ahorros.t2, {efectivo:'',inversiones:'',expanded:true});
   backfillDefaults(state.ahorros.total, {efectivo:'',inversiones:'',expanded:true});
@@ -1412,7 +1432,7 @@ function render(){
         </a>
       </div>
       <ul class="navlist">
-        ${TABS.map(t=>`<li class="navitem ${t.id===activeTab?'active':''}" onclick="setTab('${t.id}')"><span class="nav-left"><span class="num">${t.num}</span><span>${t.label}</span></span>${(t.id!=='resumen'&&t.id!=='express')?`<span class="nav-dot ${tabHasData(t.id)?'filled':''}" title="${tabHasData(t.id)?'Ya tiene datos rellenados':'Todavía vacía'}"></span>`:''}</li>`).join('')}
+        ${TABS.map(t=>`<li><button type="button" class="navitem ${t.id===activeTab?'active':''}" onclick="setTab('${t.id}')" aria-current="${t.id===activeTab?'page':'false'}"><span class="nav-left"><span class="num">${t.num}</span><span>${t.label}</span></span>${(t.id!=='resumen'&&t.id!=='express')?`<span class="nav-dot ${tabHasData(t.id)?'filled':''}" title="${tabHasData(t.id)?'Ya tiene datos rellenados':'Todavía vacía'}"></span>`:''}</button></li>`).join('')}
       </ul>
       <div class="sidebar-foot" style="padding-bottom:56px;">
         <button onclick="exportData()">↓ Descargar copia</button>
@@ -1521,11 +1541,11 @@ function renderExpress(){
 
   return `
     <div class="sheet-header"><span class="sheet-num">★</span>${tabIcon('express')}<span class="sheet-title">Simulación express</span></div>
-    <p class="sheet-sub">Solo lo importante — el resto (TIN, gastos de compra) usamos una media nacional, que ves explicada abajo. Cuando te convenza, "Aplicar" traslada SOLO lo que tú rellenaste a Hipoteca, Gastos de compra y Préstamo personal — las medias asumidas no se copian, las rellenas allí de verdad si quieres afinar. <a href="#" onclick="event.preventDefault();abrirComoFunciona();" style="color:var(--brass-text);">🧭 Si quieres entender cómo funciona todo esto antes de meterte, aquí tienes la explicación completa.</a></p>
+    <p class="sheet-sub">Solo lo importante — el resto (TIN, gastos de compra) usamos una media nacional, que ves explicada abajo. Cuando te convenza, "Aplicar" traslada SOLO lo que tú rellenaste a Hipoteca, Gastos de compra y Préstamo personal — las medias asumidas no se copian, las rellenas allí de verdad si quieres afinar. <button type="button" class="link-btn" onclick="abrirComoFunciona();" style="color:var(--brass-text);">🧭 Si quieres entender cómo funciona todo esto antes de meterte, aquí tienes la explicación completa.</button></p>
 
     <div class="card">
       <h3 class="card-title">Tus números base</h3>
-      <div class="grid3">
+      <div class="grid4">
         <div class="field">
           <label>Ingresos netos / mes (€)</label>
           <input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="express.ingresos" value="${ex.ingresos}" placeholder="p.ej. 2.800" data-rerender="true">
@@ -1541,18 +1561,25 @@ function renderExpress(){
           <input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="express.deudasCuota" value="${ex.deudasCuota}" placeholder="p.ej. 150" data-rerender="true">
           <div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Manual — rellénalo también en Hoja 03.</div>
         </div>
-      </div>
-      <div class="field" style="margin-top:0;">
-        <label>Otros gastos fijos / mes (€) <span style="font-weight:400;">(suministros, seguros…)</span></label>
-        <input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="express.gastosFijos" value="${ex.gastosFijos}" placeholder="p.ej. 200" data-rerender="true">
-        <div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Manual — rellénalo también en Hoja 09.</div>
+        <div class="field">
+          <label>Otros gastos fijos / mes (€) <span style="font-weight:400;">(suministros, seguros…)</span></label>
+          <input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="express.gastosFijos" value="${ex.gastosFijos}" placeholder="p.ej. 200" data-rerender="true">
+          <div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Manual — rellénalo también en Hoja 09.</div>
+        </div>
       </div>
     </div>
 
     <div class="card">
       <h3 class="card-title">Hipoteca y gastos de compra</h3>
-      <div class="grid3">
+      <div class="grid4">
         <div class="field"><label>Precio de la vivienda (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="express.precio" value="${ex.precio}" placeholder="p.ej. 250.000" data-rerender="true"></div>
+        <div class="field"><label>Tipo de vivienda</label>
+          <select data-path="express.tipo" data-rerender="true">
+            <option value="segunda-mano" ${ex.tipo!=='nueva'?'selected':''}>Segunda mano</option>
+            <option value="nueva" ${ex.tipo==='nueva'?'selected':''}>Nueva construcción</option>
+          </select>
+          <div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Afecta al impuesto real (ITP o IVA+AJD) cuando lo afines en la Hoja 06.</div>
+        </div>
         <div class="field"><label>% de financiación</label><input type="text" inputmode="decimal" data-numeric="true" data-path="express.pctFinanciacion" value="${ex.pctFinanciacion}" placeholder="p.ej. 80" data-rerender="true"></div>
         <div class="field"><label>Plazo (años)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="express.plazoAnios" value="${ex.plazoAnios}" placeholder="p.ej. 30" data-rerender="true"></div>
       </div>
@@ -1565,12 +1592,12 @@ function renderExpress(){
 
     <div class="card">
       <h3 class="card-title">Préstamo personal <small>solo si hace falta</small></h3>
-      <div class="field" style="max-width:260px;">
-        <label>Plazo (meses)</label>
-        <input type="text" inputmode="decimal" data-numeric="true" data-path="express.personalPlazoMeses" value="${ex.personalPlazoMeses}" placeholder="p.ej. 60" data-rerender="true">
-        ${ex.personalPlazoMeses?`<div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">${mesesAAnios(ex.personalPlazoMeses)}</div>`:''}
-      </div>
-      <div class="grid3">
+      <div class="grid4">
+        <div class="field">
+          <label>Plazo (meses)</label>
+          <input type="text" inputmode="decimal" data-numeric="true" data-path="express.personalPlazoMeses" value="${ex.personalPlazoMeses}" placeholder="p.ej. 60" data-rerender="true">
+          ${ex.personalPlazoMeses?`<div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">${mesesAAnios(ex.personalPlazoMeses)}</div>`:''}
+        </div>
         <div class="stat"><div class="label">Importe necesario</div><div class="value small" style="color:${totalPersonal>0?'var(--red)':'var(--green)'};">${fmtMoney(totalPersonal)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">= Entrada + Gasto de compra − Ahorro</div></div>
         <div class="stat"><div class="label">Cuota mensual estimada</div><div class="value small">${fmtMoney(cuotaPersonal)}</div></div>
         <div class="stat"><div class="label">Comisión de apertura</div><div class="value small">${fmtMoney(aperturaPersonal)}</div></div>
@@ -1588,12 +1615,12 @@ function renderExpress(){
 
     <div class="card">
       <h3 class="card-title">Resultado</h3>
-      <div class="grid3">
+      <div class="grid4">
         <div class="stat"><div class="label">Cuotas totales / mes</div><div class="value small">${fmtMoney(totalCuotas)}</div></div>
         <div class="stat"><div class="label">Cuota hipoteca</div><div class="value small">${fmtMoney(cuotaHip)}</div></div>
         <div class="stat"><div class="label">Cuota préstamo personal</div><div class="value small">${fmtMoney(cuotaPersonal)}</div></div>
+        <div class="stat"><div class="label">Disponible libre al mes</div><div class="value small">${fmtMoney(disponibleLibre)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">= Ingresos − Cuotas − Gastos fijos</div></div>
       </div>
-      <div class="stat" style="margin-top:10px;"><div class="label">Disponible libre al mes</div><div class="value small">${fmtMoney(disponibleLibre)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">= Ingresos − Cuotas totales − Gastos fijos · para gastos variables y ahorro</div></div>
       <div class="hr"></div>
       <div class="card-title" style="font-size:15px;margin-bottom:8px;">Endeudamiento total <small style="font-weight:400;">cuotas / ingresos — orientativo, no un límite oficial</small></div>
       <div class="gauge-wrap">
@@ -1607,12 +1634,13 @@ function renderExpress(){
         <button class="btn secondary" onclick="resetExpress()">Restablecer simulación</button>
       </div>
       ${expressResultado ? `
-        <div class="note-block" style="margin-top:12px;">Creado como "Escenario express" en las Hojas 05, 06${expressResultado.personalId?' y 07':''}, e "Ingresos netos" guardado en la Hoja 01. Las medias asumidas (TIN, % de gastos) NO se copiaron — rellénalas allí si quieres un cálculo real.
+        <div class="note-block" style="margin-top:12px;">Creado como "Vivienda/Escenario express" en las Hojas 04, 05, 06${expressResultado.personalId?' y 07':''}, e "Ingresos netos" guardado en la Hoja 01. Las medias asumidas (TIN, % de gastos) NO se copiaron — rellénalas allí si quieres un cálculo real.
           <span style="display:inline-flex;gap:10px;margin-left:8px;">
-            <a style="cursor:pointer;text-decoration:underline;" onclick="setTab('perfil')">Ver en 01</a>
-            <a style="cursor:pointer;text-decoration:underline;" onclick="setTab('hipoteca')">Ver en 05</a>
-            <a style="cursor:pointer;text-decoration:underline;" onclick="setTab('gastos')">Ver en 06</a>
-            ${expressResultado.personalId?`<a style="cursor:pointer;text-decoration:underline;" onclick="setTab('personal')">Ver en 07</a>`:''}
+            <button type="button" class="link-btn" onclick="setTab('perfil')">Ver en 01</button>
+            <button type="button" class="link-btn" onclick="setTab('vivienda')">Ver en 04</button>
+            <button type="button" class="link-btn" onclick="setTab('hipoteca')">Ver en 05</button>
+            <button type="button" class="link-btn" onclick="setTab('gastos')">Ver en 06</button>
+            ${expressResultado.personalId?`<button type="button" class="link-btn" onclick="setTab('personal')">Ver en 07</button>`:''}
           </span>
         </div>` : ''}
       <div class="hr"></div>
@@ -1622,7 +1650,7 @@ function renderExpress(){
 }
 function resetExpress(){
   if(!confirm('¿Borrar los valores de esta simulación? No afecta a lo que ya hayas creado en otras hojas.')) return;
-  state.express = {ingresos:'', ahorroDisponible:'', deudasCuota:'', gastosFijos:'', precio:'', pctFinanciacion:'100', plazoAnios:'30', personalPlazoMeses:'60', extra:''};
+  state.express = {ingresos:'', ahorroDisponible:'', deudasCuota:'', gastosFijos:'', precio:'', pctFinanciacion:'100', plazoAnios:'30', tipo:'segunda-mano', personalPlazoMeses:'60', extra:''};
   expressResultado = null;
   saveState(); render();
 }
@@ -1638,9 +1666,18 @@ function crearEscenarioExpress(){
 
   if(ex.ingresos!==''&&ex.ingresos!==undefined){ state.perfil.p1.netoMensual = ex.ingresos; }
 
+  // Antes esto se vinculaba a viviendaActiva() — cualquiera que fuera, podía no tener nada que
+  // ver con el precio/tipo introducidos aquí. Ahora Express crea su propia vivienda con sus datos reales.
+  const viviendaId = uid();
+  state.viviendas.push({
+    id: viviendaId, nombre:'Vivienda express', activa: state.viviendas.length===0,
+    ubicaciones:'', tipoInmueble:'', precioMin: ex.precio, precioMax: ex.precio,
+    tipo: ex.tipo||'segunda-mano', reparto:'', notas:'Creada desde Simulación express.', expanded:true
+  });
+
   const hipId = uid();
   state.hipoteca.escenarios.push({
-    id: hipId, nombre:'Escenario express', viviendaId:(viviendaActiva()?viviendaActiva().id:''), importe: ex.precio, pctFinanciacion: ex.pctFinanciacion,
+    id: hipId, nombre:'Escenario express', viviendaId, importe: ex.precio, pctFinanciacion: ex.pctFinanciacion,
     tin:'', plazoAnios: ex.plazoAnios, tipoInteres:'fijo', vinculaciones:'',
     notas:'Creado desde Simulación express — rellena aquí el TIN real que te ofrezcan.', expanded:true
   });
@@ -1656,13 +1693,13 @@ function crearEscenarioExpress(){
     state.personal.escenarios.push({
       id: personalId, nombre:'Escenario express', hipotecaEscenarioId:hipId, importe: String(Math.round(totalPersonalConExtra)),
       tin:'', comisionApertura:'', tae:'', plazoMeses: ex.personalPlazoMeses,
-      proposito:'Generado desde Simulación express', notas:'', expanded:true
+      proposito:'Generado desde Simulación express', notas:'', incluirPostCompra:false, gastosPostCompra:[], expanded:true
     });
   }
   state.hipoteca.seleccionado = hipId;
   state.personal.gastoEscenarioSeleccionado = gastoId;
   if(personalId) state.personal.seleccionado = personalId;
-  expressResultado = {hipId, gastoId, personalId};
+  expressResultado = {viviendaId, hipId, gastoId, personalId};
   saveState(); render();
 }
 
@@ -1801,7 +1838,7 @@ function renderResumen(){
       </div>
     </div>
 
-    <div class="stat-row" style="grid-template-columns:repeat(3,1fr);">
+    <div class="stat-row stat-row-3">
       <div class="stat"><div class="label">Ingresos netos / mes</div><div class="value">${fmtMoney(ingresos)}</div></div>
       <div class="stat"><div class="label">Cuotas totales / mes</div><div class="value">${fmtMoney(totalCuotas)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">Deudas ${fmtMoney(deudasCuota)} · Hipoteca ${fmtMoney(cuotaHip)} · Personal ${fmtMoney(cuotaPer)}</div>${vincMensualHip>0?`<div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">La hipoteca ya incluye ${fmtMoney(vincMensualHip)}/mes de productos vinculados.</div>`:''}</div>
       <div class="stat"><div class="label">Brokers activos</div><div class="value">${state.brokers.length}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">${Object.entries(estadosBrokers).map(([k,v])=>`${v} ${k.toLowerCase()}`).join(' · ') || 'sin brokers todavía'}</div></div>
@@ -2134,13 +2171,13 @@ function renderPersonaForm(key, persona, titularNombre){
   return `
     <div class="card">
       <h3 class="card-title">${esc(titularNombre)}</h3>
-      <div class="grid3" style="grid-template-columns:1.2fr 0.5fr 1.05fr 1.15fr;gap:10px;">
+      <div class="grid3 hoja01-perfil-fila" style="gap:10px;">
         <div class="field"><label>Nombre del titular</label><input type="text" data-path="titulares.${key==='p1'?'t1':'t2'}" value="${esc(state.titulares[key==='p1'?'t1':'t2'])}" data-rerender="true"></div>
         <div class="field"><label>Edad</label><input type="text" inputmode="numeric" data-numeric="true" data-path="perfil.${key}.edad" value="${persona.edad}"></div>
         <div class="field"><label>Hijos/personas a cargo</label><input type="text" inputmode="numeric" data-numeric="true" data-path="perfil.${key}.personasACargo" value="${persona.personasACargo}"></div>
         <div class="field"><label>Neto mensual estimado (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="perfil.${key}.netoMensual" value="${persona.netoMensual}"></div>
       </div>
-      <div class="grid3" style="grid-template-columns:0.85fr 1.15fr 0.85fr 1fr 1.4fr;gap:10px;">
+      <div class="grid3 hoja01-contrato-fila" style="gap:10px;">
         <div class="field"><label>Tipo de contrato</label>
           <select data-path="perfil.${key}.tipoContrato">
             <option value="">Selecciona…</option>
@@ -2219,7 +2256,7 @@ function renderAhorros(){
         <label style="display:flex;align-items:center;gap:7px;cursor:pointer;font-weight:400;"><input type="radio" name="ahorrosModo" value="total" data-path="ahorros.modo" data-rerender="true" ${a.modo==='total'?'checked':''} style="width:16px;height:16px;"> Como total conjunto</label>
       </div>
     </div>
-    <div class="stat-row" style="grid-template-columns:repeat(3,1fr);">
+    <div class="stat-row stat-row-3">
       <div class="stat"><div class="label">Ahorro total</div><div class="value small">${fmtMoney(total)}</div></div>
       <div class="stat"><div class="label">Ahorro ${esc(state.titulares.t1)||'Titular 1'}</div><div class="value small">${fmtMoney(sumT1)}</div></div>
       <div class="stat"><div class="label">Ahorro ${esc(state.titulares.t2)||'Titular 2'}</div><div class="value small">${fmtMoney(sumT2)}</div></div>
@@ -2322,15 +2359,15 @@ function renderDeudas(){
         </div>
         ${e.expanded===false ? '' : `
         ${(e.deudas||[]).length===0 ? '<div class="empty" style="margin-top:10px;">Sin deudas en este escenario — por ejemplo, tu "Deuda 0".</div>' : e.deudas.map((d,di)=>`
-          <div class="grid3" style="margin-bottom:6px;margin-top:12px;align-items:end;">
+          <div class="grid5 deuda-fila" style="margin-bottom:8px;margin-top:12px;align-items:start;">
             <div class="field"><label>Concepto</label><input type="text" placeholder="p.ej. Préstamo coche" data-path="deudas.escenarios.${ei}.deudas.${di}.nombre" value="${esc(d.nombre)}"></div>
             <div class="field"><label>Saldo pendiente (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="deudas.escenarios.${ei}.deudas.${di}.saldoPendiente" value="${d.saldoPendiente}" data-rerender="true"><div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Capital pendiente según tu banco o financiera. Se usa para comparar el saldo total entre escenarios.</div>${avisoImporteNegativo(d.saldoPendiente,'El saldo')}</div>
             <div class="field"><label>Cuota mensual (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="deudas.escenarios.${ei}.deudas.${di}.cuotaMensual" value="${d.cuotaMensual}" data-rerender="true"><div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Pago mensual actual. Se usa para calcular tu endeudamiento.</div>${avisoImporteNegativo(d.cuotaMensual,'La cuota')}</div>
-          </div>
-          <div class="grid3" style="margin-bottom:8px;align-items:end;">
             <div class="field"><label>Meses restantes</label><input type="text" inputmode="numeric" data-numeric="true" data-path="deudas.escenarios.${ei}.deudas.${di}.mesesRestantes" value="${d.mesesRestantes}" data-rerender="true"><div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Plazo aproximado que queda. Se usa para estimar cuándo se libera esta cuota.</div>${avisoMesesDeuda(d.mesesRestantes)}</div>
             <div class="field"><label>Comisión cancelación anticipada</label><input type="text" placeholder="p.ej. máx. 1%" data-path="deudas.escenarios.${ei}.deudas.${di}.comisionCancelacion" value="${esc(d.comisionCancelacion)}"></div>
-            <div><button class="btn danger small" onclick="removeDeuda(${ei}, '${d.id}')">Eliminar</button></div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin-bottom:8px;">
+            <button class="btn danger small" onclick="removeDeuda(${ei}, '${d.id}')">Eliminar</button>
           </div>
           ${avisoCoherenciaDeudaHtml(d.saldoPendiente,d.cuotaMensual,d.mesesRestantes)}
           <div class="hr"></div>
@@ -2433,10 +2470,10 @@ function renderVivienda(){
           </div>
         </div>
         ${v.expanded===false ? '' : `
-        <div class="field" style="margin-top:10px;"><label>Provincia</label>
-          <select data-path="viviendas.${i}.ubicaciones">${opcionesProvincias(v.ubicaciones)}</select>
-        </div>
-        <div class="grid2">
+        <div class="grid3 vivienda-precio-fila" style="margin-top:10px;gap:12px;">
+          <div class="field"><label>Provincia</label>
+            <select data-path="viviendas.${i}.ubicaciones">${opcionesProvincias(v.ubicaciones)}</select>
+          </div>
           <div class="field"><label>Precio mínimo estimado (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="viviendas.${i}.precioMin" value="${v.precioMin}"></div>
           <div class="field"><label>Precio máximo estimado (€)</label><input type="text" inputmode="decimal" data-numeric="true" data-format="miles" data-path="viviendas.${i}.precioMax" value="${v.precioMax}"></div>
         </div>
@@ -2524,9 +2561,9 @@ function renderHipoteca(){
       const vincMensual = vinculacionesAnualTotal(e)/12;
       return `
       <div class="card">
-        <div class="hipoteca-compact-top" onclick="toggleExpand('hipoteca.escenarios', ${i})">
+        <div class="hipoteca-compact-top">
           <div class="hipoteca-compact-name">
-            <span class="chevron">${e.expanded===false?'▸':'▾'}</span>
+            <span class="chevron" style="cursor:pointer;" onclick="toggleExpand('hipoteca.escenarios', ${i})">${e.expanded===false?'▸':'▾'}</span>
             <div class="field" onclick="event.stopPropagation()">
               <label>Nombre del escenario</label>
               <input class="broker-name-input" type="text" data-path="hipoteca.escenarios.${i}.nombre" value="${esc(e.nombre)}">
@@ -2560,7 +2597,7 @@ function renderHipoteca(){
           `}
         </div>
         ${e.expanded===false ? '' : `
-        <div class="field" style="max-width:560px;margin-top:10px;">
+        <div class="field" style="max-width:330px;margin-top:10px;">
           <label>Vivienda vinculada (Hoja 04)</label>
           <select data-path="hipoteca.escenarios.${i}.viviendaId" data-rerender="true">
             <option value="">— Selecciona una vivienda —</option>
@@ -2595,7 +2632,7 @@ function renderHipoteca(){
           </div>` : ''}
         </div>
         ${e.tipoInteres==='mixto' ? `
-        <div class="grid3" style="grid-template-columns:repeat(4,1fr);gap:10px;">
+        <div class="grid4">
           <div class="field"><label>TIN tramo fijo (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="hipoteca.escenarios.${i}.tinTramoFijo" value="${e.tinTramoFijo}" data-rerender="true">${avisoTinNegativo(e.tinTramoFijo)}</div>
           <div class="field"><label>Años tramo fijo</label><input type="text" inputmode="decimal" data-numeric="true" data-path="hipoteca.escenarios.${i}.aniosTramoFijo" value="${e.aniosTramoFijo}" data-rerender="true">${avisoPlazoAnios(e.aniosTramoFijo)}</div>
           <div class="field"><label>Diferencial después (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="hipoteca.escenarios.${i}.diferencialTramoVariable" value="${e.diferencialTramoVariable}" data-rerender="true">${avisoTinNegativo(e.diferencialTramoVariable)}</div>
@@ -2628,7 +2665,7 @@ function renderHipoteca(){
         `).join('')}
         <button class="btn secondary small" onclick="addVinculacion(${i})">+ Añadir producto vinculado</button>
         <div class="hr"></div>
-        <div class="stat-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:8px;">
+        <div class="stat-row stat-row-3" style="margin-bottom:8px;">
           <div class="stat"><div class="label">Salida mensual inicial${calc.tipo==='mixto'?' · tramo fijo':''}</div><div class="value">${fmtMoney(cuota+vincMensual)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">Hipoteca ${fmtMoney(cuota)}${vincMensual>0?` + Vinculaciones ${fmtMoney(vincMensual)}`:' + Vinculaciones 0 €'}</div></div>
           <div class="stat"><div class="label">Intereses totales</div><div class="value small">${fmtMoney(intereses)}</div></div>
           <div class="stat"><div class="label">Total pagado hipoteca</div><div class="value small">${fmtMoney(totalPagado)}</div><div style="font-size:11px;color:var(--ink-faint);margin-top:2px;">Principal + intereses; no incluye productos vinculados.</div></div>
@@ -2646,7 +2683,7 @@ function renderHipoteca(){
         </table>
         ` : ''}
         ${(e.vinculaciones||[]).length>0 ? `
-        <div class="stat-row" style="grid-template-columns:repeat(2,1fr);margin-bottom:8px;">
+        <div class="stat-row stat-row-2" style="margin-bottom:8px;">
           <div class="stat"><div class="label">Vinculaciones / año</div><div class="value small">${fmtMoney(vinculacionesAnualTotal(e))}</div></div>
           <div class="stat"><div class="label">Coste financiero estimado <span style="font-weight:400;">(intereses + vinculaciones)</span></div><div class="value small">${fmtMoney(intereses + vinculacionesCosteTotalPlazo(e))}</div></div>
         </div>` : ''}
@@ -2862,7 +2899,7 @@ function renderPersonal(){
         <div class="field"><label>Finalidad</label><input type="text" placeholder="p.ej. impuestos y gastos de compra" data-path="personal.escenarios.${i}.proposito" value="${esc(e.proposito)}"></div>
         ${e.incluirPostCompra && totalGastosPostCompra(e)>0 ? `<div class="note-block" style="margin-top:0;">Importe efectivo usado en el cálculo: <strong>${fmtMoney(importeEf)}</strong> (${fmtMoney(e.importe)} solicitado + ${fmtMoney(totalGastosPostCompra(e))} de gastos post-compra incluidos).</div>` : ''}
         <div class="hr"></div>
-        <div class="stat-row" style="grid-template-columns:repeat(4,1fr);margin-bottom:8px;">
+        <div class="stat-row" style="margin-bottom:8px;">
           <div class="stat"><div class="label">Cuota mensual</div><div class="value">${fmtMoney(cuota)}</div></div>
           <div class="stat"><div class="label">Comisión apertura</div><div class="value small">${usaTaeInformada?'—':fmtMoney(apertura)}</div></div>
           <div class="stat"><div class="label">TAE ${usaTaeInformada?'informada':'estimada'}</div><div class="value small">${isNaN(taeMostrada)?'—':fmtPct(taeMostrada,2)}</div></div>
@@ -3037,7 +3074,7 @@ function renderGastos(){
           </div>
         </div>
         ${p.expanded===false ? '' : `
-        <div class="grid2" style="grid-template-columns:1.55fr 1fr;gap:12px;align-items:start;margin-top:10px;">
+        <div class="grid2 hoja06-hipoteca-fila" style="gap:12px;align-items:start;margin-top:10px;">
           <div class="field">
             <label>Escenario de hipoteca vinculado (Hoja 05)</label>
             <select onchange="setHipotecaGasto(${i}, this.value)">
@@ -3097,7 +3134,7 @@ function renderGastos(){
 
         <div class="hr"></div>
         <div class="section-flag"><strong style="font-size:13.5px;">Honorarios inmobiliaria — comprador</strong> <span style="font-size:11px;color:var(--ink-faint);">(opcional — no todas las operaciones tienen agencia, y no todas cobran al comprador)</span></div>
-        <div class="grid3" style="margin-top:10px;">
+        <div class="grid4" style="margin-top:10px;">
           <div class="field">
             <label>Tipo de honorario</label>
             <select data-path="gastos.provincias.${i}.honorariosTipo" data-rerender="true">
@@ -3121,18 +3158,16 @@ function renderGastos(){
             </select>
           </div>
           ` : ''}
+          ${(p.honorariosTipo==='porcentaje'||p.honorariosTipo==='fijo') && p.honorariosIncluyeIva!=='si' ? `
+          <div class="field"><label>IVA honorarios (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="gastos.provincias.${i}.honorariosIva" value="${p.honorariosIva}" placeholder="p.ej. 21" data-rerender="true">${avisoImporteNegativo(p.honorariosIva,'El IVA')}<div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">Sin valor por defecto — verifícalo.</div></div>
+          ` : ''}
         </div>
-        ${(p.honorariosTipo==='porcentaje'||p.honorariosTipo==='fijo') && p.honorariosIncluyeIva!=='si' ? `
-        <div class="grid3" style="margin-top:0;">
-          <div class="field"><label>IVA honorarios (%)</label><input type="text" inputmode="decimal" data-numeric="true" data-path="gastos.provincias.${i}.honorariosIva" value="${p.honorariosIva}" placeholder="p.ej. 21" data-rerender="true">${avisoImporteNegativo(p.honorariosIva,'El IVA')}<div style="font-size:11px;color:var(--ink-faint);margin-top:4px;">El 21% es el tipo general actual, pero verifícalo — este campo no lleva ningún valor por defecto.</div></div>
-        </div>
-        ` : ''}
         ${(() => {
           if(p.honorariosTipo!=='porcentaje' && p.honorariosTipo!=='fijo') return '';
           const h = calcHonorariosInmobiliaria(p);
           const basePregunta = p.honorariosTipo==='porcentaje' ? `${fmtPct(p.honorariosPct)} sobre ${fmtMoney(precioUsado)}` : 'importe fijo';
           return `
-          <div class="stat-row" style="grid-template-columns:repeat(3,1fr);margin-top:10px;">
+          <div class="stat-row stat-row-3" style="margin-top:10px;">
             <div class="stat"><div class="label">Honorarios${p.honorariosIncluyeIva==='si'?' (IVA incluido)':''}</div><div class="value small">${fmtMoney(h.base)}</div>${p.honorariosTipo==='porcentaje'?`<div style="font-size:10.5px;color:var(--ink-faint);margin-top:2px;">${basePregunta}</div>`:''}</div>
             ${p.honorariosIncluyeIva!=='si' ? `<div class="stat"><div class="label">IVA</div><div class="value small">${fmtMoney(h.iva)}</div></div>` : `<div class="stat"><div class="label">IVA</div><div class="value small">— incluido</div></div>`}
             <div class="stat"><div class="label">Total inmobiliaria</div><div class="value small">${fmtMoney(h.total)}</div></div>
@@ -3344,7 +3379,7 @@ function renderBrokers(){
           <button class="btn secondary small" onclick="triggerBrokerUpload(${i})">+ Adjuntar archivo(s)</button>
           ${b.adjuntos.length===0 ? '<div class="empty">Sin adjuntos todavía.</div>' : b.adjuntos.map(d=>`
             <div class="doc-item">
-              <div class="doc-item-row" style="grid-template-columns:1fr;">
+              <div class="doc-item-row-single">
                 <input type="text" data-path="brokers.${i}.adjuntos.${b.adjuntos.indexOf(d)}.titulo" value="${esc(d.titulo)}" placeholder="Título del adjunto">
               </div>
               <div class="doc-item-meta"><span>${d.fileName}</span><span>·</span><span>${fmtSize(d.fileSize)}</span><span>·</span><span>${d.fecha}</span></div>
@@ -3584,7 +3619,7 @@ function renderGastosFijos(){
     <div class="sheet-header"><span class="sheet-num">HOJA 09</span>${tabIcon('gastosfijos')}<span class="sheet-title">Otros gastos fijos</span></div>
     <p class="sheet-sub">Suministros, seguros, teléfono… lo que gastáis con regularidad, separado en dos columnas: lo que pagáis <strong>ahora, de alquiler</strong>, y lo que pagaréis <strong>una vez seáis propietarios</strong> — no son lo mismo. El alquiler (o el seguro de inquilino) normalmente desaparece al comprar; en cambio el IBI, la comunidad o el seguro de hogar solo empiezan a existir entonces. Ya puse algunos ejemplos habituales — bórralos si no aplican, o añade los tuyos.</p>
 
-    <div class="stat-row" style="grid-template-columns:repeat(2,1fr);">
+    <div class="stat-row stat-row-2">
       <div class="stat"><div class="label">Total gastos fijos / mes — ahora (alquilando)</div><div class="value small">${fmtMoney(totalAntes)}</div></div>
       <div class="stat"><div class="label">Total gastos fijos / mes — como propietario</div><div class="value small">${fmtMoney(totalDespues)}</div></div>
     </div>
@@ -3613,7 +3648,7 @@ function renderGastosFijos(){
       </div>
     </div>
 
-    <div class="stat-row" style="grid-template-columns:repeat(2,1fr);">
+    <div class="stat-row stat-row-2">
       <div class="stat"><div class="label">Total gastos fijos / mes — ahora (alquilando)</div><div class="value">${fmtMoney(totalAntes)}</div></div>
       <div class="stat"><div class="label">Total gastos fijos / mes — como propietario</div><div class="value">${fmtMoney(totalDespues)}</div></div>
     </div>
@@ -3906,7 +3941,7 @@ function renderCookieLayer1(){
       <button onclick="rechazarTodasCookies()" aria-label="Cerrar y rechazar analítica" title="Cerrar y rechazar analítica" style="float:right;background:none;border:none;color:#C9CFC5;font-size:18px;cursor:pointer;line-height:1;">✕</button>
       <div class="cookie-title">Antes de seguir</div>
       <p class="cookie-lead">La herramienta guarda tus escenarios en tu navegador. La analítica de uso es opcional.</p>
-      <p>Si la aceptas, cargamos GoatCounter para obtener estadísticas agregadas de visitas y uso. GoatCounter no coloca cookies ni identificadores persistentes en tu navegador y no almacena la dirección IP en su base de datos; para distinguir sesiones usa temporalmente en memoria la combinación de sitio, IP y User-Agent durante un máximo aproximado de 8 horas. No usamos esta analítica para publicidad. Puedes cambiar de opinión cuando quieras desde “🍪 Cookies”. Más información en la <a href="#" onclick="event.preventDefault();abrirPoliticaCookies();" style="color:#EDEAE0;">Política de Cookies</a>.</p>
+      <p>Si la aceptas, cargamos GoatCounter para obtener estadísticas agregadas de visitas y uso. GoatCounter no coloca cookies ni identificadores persistentes en tu navegador y no almacena la dirección IP en su base de datos; para distinguir sesiones usa temporalmente en memoria la combinación de sitio, IP y User-Agent durante un máximo aproximado de 8 horas. No usamos esta analítica para publicidad. Puedes cambiar de opinión cuando quieras desde "🍪 Cookies". Más información en la <button type="button" class="link-btn" onclick="abrirPoliticaCookies();" style="color:#EDEAE0;">Política de Cookies</button>.</p>
       <div class="cookie-btns">
         <button class="cookie-btn primary" onclick="aceptarTodasCookies()">Aceptar todas</button>
         <button class="cookie-btn primary" onclick="rechazarTodasCookies()">Rechazar todas</button>
@@ -3941,7 +3976,7 @@ function renderCookieLayer2(){
         <button class="cookie-btn primary" onclick="rechazarTodasCookies()">Rechazarlas todas</button>
         <button class="cookie-btn secondary" onclick="guardarPreferenciasCookies()">Guardar mis preferencias</button>
       </div>
-      <p style="margin-top:12px;"><a href="#" onclick="event.preventDefault();mostrarCookieLayer1();" style="color:#C9CFC5;font-size:12px;">← Volver</a> &nbsp;·&nbsp; <a href="#" onclick="event.preventDefault();abrirPoliticaCookies();" style="color:#C9CFC5;font-size:12px;">Ver la política de cookies completa</a></p>
+      <p style="margin-top:12px;"><button type="button" class="link-btn" onclick="mostrarCookieLayer1();" style="color:#C9CFC5;font-size:12px;">← Volver</button> &nbsp;·&nbsp; <button type="button" class="link-btn" onclick="abrirPoliticaCookies();" style="color:#C9CFC5;font-size:12px;">Ver la política de cookies completa</button></p>
     </div>
   `;
 }
