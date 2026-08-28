@@ -83,10 +83,23 @@ button.navitem:focus-visible{outline:2px solid var(--brass); outline-offset:-2px
 
 /* Main */
 #main{flex:1;min-width:0;padding:36px 44px 80px 44px;}
-.sheet-header{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border-strong);padding-bottom:10px;margin-bottom:18px;}
+.sheet-header{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border-strong);padding-bottom:10px;margin-bottom:18px;flex-wrap:wrap;}
 .sheet-num{font-family:var(--font-mono);font-size:12px;color:var(--brass-text);letter-spacing:.08em;}
 .sheet-title{font-family:var(--font-display);font-size:30px;font-weight:600;}
 .sheet-sub{font-family:var(--font-body);font-size:14px;color:var(--ink-soft);margin-top:-12px;margin-bottom:16px;}
+.ayuda-trigger{
+  display:inline-flex;align-items:center;gap:5px;margin-left:14px;
+  background:none;border:none;
+  padding:4px 2px;cursor:pointer;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--brass-text);
+}
+.ayuda-trigger:hover{color:var(--brass);}
+.ayuda-icon{font-size:17px;line-height:1;}
+.ayuda-popup{
+  position:relative;background:var(--brass-soft);border:1px solid var(--border-strong);border-radius:10px;
+  padding:16px 40px 16px 16px;margin:-8px 0 16px 0;font-size:13.5px;line-height:1.5;color:#5B4419;
+}
+.ayuda-popup-close{position:absolute;top:10px;right:10px;background:none;border:none;font-size:15px;cursor:pointer;color:#5B4419;line-height:1;padding:4px;}
+.ayuda-resumen{font-family:var(--font-body);font-size:13px;color:var(--ink-faint);margin:0 0 16px 0;}
 
 .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:14px;}
 .card-title{font-family:var(--font-display);font-size:18px;font-weight:600;margin:0 0 10px 0;}
@@ -662,6 +675,12 @@ tr.compare-best td{background:var(--green-soft);}
 .pill-select button{background:transparent;border:none;padding:6px 12px;font-size:12.5px;font-family:var(--font-body);cursor:pointer;color:var(--ink-soft);}
 .pill-select button.active{background:var(--navy);color:#fff;}
 
+/* Reglas base (escritorio) — deben ir ANTES de la media query de abajo, no después: con la misma
+   especificidad, en CSS gana la que aparece más tarde en el archivo, sin importar si está dentro
+   de un @media o no. Puestas después de la media query, estas dos ganaban SIEMPRE, también en móvil. */
+.navlist-bottom-wrap{display:none;}
+.sidebar-mas-btn{display:none;}
+
 @media (max-width:800px){
   #app{flex-direction:column;}
   #sidebar{width:100%;height:auto;position:relative;padding:16px 0;}
@@ -693,8 +712,6 @@ tr.compare-best td{background:var(--green-soft);}
   .navlist-bottom-wrap .navitem{border-left:none;border-bottom:3px solid transparent;white-space:nowrap;padding:8px 12px;}
   .navlist-bottom-wrap .navitem.active{border-left:none;border-bottom-color:var(--brass);}
 }
-.navlist-bottom-wrap{display:none;}
-.sidebar-mas-btn{display:none;}
 
 .brokers-layout{display:grid;grid-template-columns:1fr 380px;gap:22px;align-items:start;}
 .docs-col{position:sticky;top:20px;}
@@ -1204,6 +1221,22 @@ let state = defaultState();
 let activeTab = 'express';
 let pasoSeguimientoSeleccionadoId = null;
 let vistaNotasSeguimiento = 'paso'; // 'paso' | 'generales'
+let ayudaAbierta = null; // id de la hoja cuyo popup de ayuda está abierto, o null si ninguno
+function toggleAyuda(id){ ayudaAbierta = (ayudaAbierta===id) ? null : id; render(); }
+// Icono+etiqueta junto al título — abre un popup flotante debajo con el texto largo.
+// Sustituye a los note-block largos que antes ocupaban toda esa altura de golpe.
+function renderAyudaTrigger(id){
+  return `<button type="button" class="ayuda-trigger" onclick="toggleAyuda('${id}')" aria-expanded="${ayudaAbierta===id}">
+    <span class="ayuda-icon">ℹ️</span><span>Saber más</span>
+  </button>`;
+}
+function renderAyudaPopup(id, html){
+  if(ayudaAbierta!==id) return '';
+  return `<div class="ayuda-popup">
+    <button type="button" class="ayuda-popup-close" onclick="toggleAyuda('${id}')" aria-label="Cerrar">✕</button>
+    ${html}
+  </div>`;
+}
 let sidebarMasAbierto = false; // solo afecta a la vista móvil; no se guarda entre sesiones
 function toggleSidebarMas(){ sidebarMasAbierto = !sidebarMasAbierto; render(); }
 let notaEditandoId = null;
@@ -3145,9 +3178,10 @@ function renderPersonaForm(key, persona, titularNombre){
 }
 function renderPerfil(){
   return `
-    <div class="sheet-header"><span class="sheet-num">HOJA 01</span>${tabIcon('perfil')}<span class="sheet-title">Perfil financiero</span></div>
+    <div class="sheet-header"><span class="sheet-num">HOJA 01</span>${tabIcon('perfil')}<span class="sheet-title">Perfil financiero</span>${renderAyudaTrigger('perfil')}</div>
     <p class="sheet-sub">Situación laboral e ingresos de cada titular. Es lo primero que pide cualquier bróker o banco.</p>
-    <div class="note-block">📎 Esta hoja es solo para datos y cifras — para adjuntar los documentos de verdad (nóminas, vida laboral, contrato, declaración de la renta…), ve a la <strong>Hoja 08 — Asesores/Brokers</strong>, sección "Tus documentos", y ponles como categoría el nombre del titular al que pertenecen. El checklist de cada bróker, en esa misma hoja, ya trae marcados estos mismos documentos para que sepas qué falta enviarle a cada uno.</div>
+    ${renderAyudaPopup('perfil', '📎 Esta hoja es solo para datos y cifras — para adjuntar los documentos de verdad (nóminas, vida laboral, contrato, declaración de la renta…), ve a la <strong>Hoja 08 — Asesores/Brokers</strong>, sección "Tus documentos", y ponles como categoría el nombre del titular al que pertenecen. El checklist de cada bróker, en esa misma hoja, ya trae marcados estos mismos documentos para que sepas qué falta enviarle a cada uno.')}
+    <p class="ayuda-resumen">📎 Los documentos de verdad van en la Hoja 08, no aquí.</p>
     ${renderPersonaForm('p1', state.perfil.p1, state.titulares.t1)}
     ${renderPersonaForm('p2', state.perfil.p2, state.titulares.t2)}
   `;
@@ -3275,9 +3309,10 @@ function setGastoEscenarioSeleccionado(id){ state.personal.gastoEscenarioSelecci
 function renderDeudas(){
   const ahorroDisp = ahorroDisponibleCalc();
   return `
-    <div class="sheet-header"><span class="sheet-num">HOJA 03</span>${tabIcon('deudas')}<span class="sheet-title">Deudas actuales</span></div>
+    <div class="sheet-header"><span class="sheet-num">HOJA 03</span>${tabIcon('deudas')}<span class="sheet-title">Deudas actuales</span>${renderAyudaTrigger('deudas')}</div>
     <p class="sheet-sub">Coche, tarjetas, préstamos personales… cualquier financiación vigente, por pequeña que sea, cuenta para el banco. Crea varios escenarios si quieres comparar (p.ej. "Escenario 01" vs. "Coche cancelado con ahorro") — incluida una posible "Deuda 0" sin ninguna línea.</p>
-    <div class="note-block"><strong>Saldo, cuota y meses son datos distintos.</strong> La cuota mensual puede incluir intereses y otros costes, por lo que el saldo pendiente no tiene por qué coincidir con cuota × meses. Introduce los valores tal como aparecen en tu banco, contrato o cuadro de amortización. Hipoclaro avisa si detecta datos incompletos, una combinación que no cubriría ni siquiera el capital pendiente o una combinación que implique un interés aproximado especialmente alto. Ese interés implícito es solo una comprobación orientativa y no se usa en ningún cálculo.</div>
+    ${renderAyudaPopup('deudas', '<strong>Saldo, cuota y meses son datos distintos.</strong> La cuota mensual puede incluir intereses y otros costes, por lo que el saldo pendiente no tiene por qué coincidir con cuota × meses. Introduce los valores tal como aparecen en tu banco, contrato o cuadro de amortización. Hipoclaro avisa si detecta datos incompletos, una combinación que no cubriría ni siquiera el capital pendiente o una combinación que implique un interés aproximado especialmente alto. Ese interés implícito es solo una comprobación orientativa y no se usa en ningún cálculo.')}
+    <p class="ayuda-resumen">Introduce saldo, cuota y meses tal como aparecen en tu banco.</p>
     ${state.deudas.escenarios.length>1 ? expandCollapseButtons('deudas.escenarios') : ''}
     ${state.deudas.escenarios.map((e,ei)=>{
       const cuotaTotal = cuotaTotalEscenarioDeuda(e);
@@ -4027,10 +4062,11 @@ function renderGastos(){
   const ahorroDisponible = ahorroDisponibleParaCompraCalc();
   const ahorroUsadoDeudas = ahorroUsadoDeudasSeleccionadasCalc();
   return `
-    <div class="sheet-header"><span class="sheet-num">HOJA 06</span>${tabIcon('gastos')}<span class="sheet-title">Gastos de compra</span></div>
+    <div class="sheet-header"><span class="sheet-num">HOJA 06</span>${tabIcon('gastos')}<span class="sheet-title">Gastos de compra</span>${renderAyudaTrigger('gastos')}</div>
     <p class="sheet-sub">Cada escenario de gastos se vincula a un escenario de hipoteca de la Hoja 05. A través de ese vínculo Hipoclaro sabe qué vivienda de la Hoja 04 corresponde y toma automáticamente su provincia y si es segunda mano o nueva construcción.</p>
+    ${renderAyudaPopup('gastos', '⚠ <strong>Antes de firmar un contrato de arras:</strong> revisa qué tipo de arras se pactan y qué ocurre si no consigues la financiación. Si necesitas hipoteca, conviene que el contrato indique expresamente qué pasa con las cantidades entregadas si el banco deniega el préstamo y qué plazo tienes para obtener financiación. Las consecuencias dependen del tipo de arras y de la redacción concreta del contrato.')}
+    <p class="ayuda-resumen">⚠ Revisa las condiciones de las arras antes de firmar nada.</p>
     ${state.hipoteca.escenarios.length===0 ? `<div class="note-block" style="background:var(--red-soft);color:var(--red);">⚠ Primero crea al menos un escenario en la <strong>Hoja 05 — Hipoteca</strong> y vincúlalo a una vivienda de la Hoja 04.</div>` : ''}
-    <div class="note-block">⚠ <strong>Antes de firmar un contrato de arras:</strong> revisa qué tipo de arras se pactan y qué ocurre si no consigues la financiación. Si necesitas hipoteca, conviene que el contrato indique expresamente qué pasa con las cantidades entregadas si el banco deniega el préstamo y qué plazo tienes para obtener financiación. Las consecuencias dependen del tipo de arras y de la redacción concreta del contrato.</div>
     ${state.gastos.provincias.length>1 ? expandCollapseButtons('gastos.provincias') : ''}
     ${state.gastos.provincias.map((p,i)=>{
       const total = calcGastoCompra(p);
@@ -5697,12 +5733,10 @@ function renderComparador(){
   const escenarios=state.comparador.escenarios||[];
 
   return `
-    <div class="sheet-header"><span class="sheet-num">HOJA 11</span>${tabIcon('comparador')}<span class="sheet-title">Comparador de escenarios</span></div>
+    <div class="sheet-header"><span class="sheet-num">HOJA 11</span>${tabIcon('comparador')}<span class="sheet-title">Comparador de escenarios</span>${renderAyudaTrigger('comparador')}</div>
     <p class="sheet-sub">Combina Deudas (03) + Hipoteca (05) + Gastos de compra (06) + Préstamo personal (07) en escenarios globales y compáralos sin duplicar datos.</p>
-
-    <div class="note-block">
-      <strong>Un escenario global no copia números.</strong> Solo guarda qué escenarios de las Hojas 03, 05, 06 y 07 forman la combinación. Si cambias el precio, el TIN, los gastos o una cuota en su hoja de origen, esta tabla se actualiza automáticamente. Los criterios personalizados de abajo son solo para comparar: <strong>no entran en ningún cálculo financiero</strong>.
-    </div>
+    ${renderAyudaPopup('comparador', '<strong>Un escenario global no copia números.</strong> Solo guarda qué escenarios de las Hojas 03, 05, 06 y 07 forman la combinación. Si cambias el precio, el TIN, los gastos o una cuota en su hoja de origen, esta tabla se actualiza automáticamente. Los criterios personalizados de abajo son solo para comparar: <strong>no entran en ningún cálculo financiero</strong>.')}
+    <p class="ayuda-resumen">Un escenario global solo referencia otras hojas, no copia sus números.</p>
 
     <div class="card">
       <div class="comparador-head">
