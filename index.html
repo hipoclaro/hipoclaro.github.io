@@ -685,7 +685,15 @@ tr.compare-best td{background:var(--green-soft);}
   }
   #main{padding:24px 18px 60px 18px;}
   .stat-row{grid-template-columns:1fr 1fr;}
+  .navlist-bottom-wrap{
+    display:block;background:var(--navy-deep);padding:14px 0 18px 0;margin-top:8px;
+  }
+  .navlist-bottom-label{color:#9BA398;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;padding:0 16px 8px 16px;}
+  .navlist-bottom-wrap .navlist{display:flex;overflow-x:auto;gap:2px;padding:0 12px;}
+  .navlist-bottom-wrap .navitem{border-left:none;border-bottom:3px solid transparent;white-space:nowrap;padding:8px 12px;}
+  .navlist-bottom-wrap .navitem.active{border-left:none;border-bottom-color:var(--brass);}
 }
+.navlist-bottom-wrap{display:none;}
 .sidebar-mas-btn{display:none;}
 
 .brokers-layout{display:grid;grid-template-columns:1fr 380px;gap:22px;align-items:start;}
@@ -1846,6 +1854,15 @@ function personalCalc(e){
   const costeCalculado = usaTaeInformada ? interesesTotal : interesesTotal + (isNaN(apertura)?0:apertura);
   return { completa:true, importeEfectivo, meses, cuota, interesesTotal, totalPagado, apertura, tae, usaTaeInformada, costeCalculado };
 }
+// Fuente única de los umbrales de endeudamiento (33%/35%) — la usan tanto Resumen (gauges)
+// como Mi Plan (texto copiable), para que nunca puedan desalinearse entre sí.
+function veredictoEndeudamiento(r){
+  let gaugeColor='var(--green)', badgeClass='green', badgeText='Cómodo';
+  if(isNaN(r)){ gaugeColor='var(--border-strong)'; badgeClass='grey'; badgeText='Pendiente de completar'; }
+  else if(r>=35){ gaugeColor='var(--red)'; badgeClass='red'; badgeText='⚠ Elevado'; }
+  else if(r>=33){ gaugeColor='var(--yellow)'; badgeClass='yellow'; badgeText='Ajustado'; }
+  return {gaugeColor, badgeClass, badgeText};
+}
 
 /* ---------- Navegación ---------- */
 const TAB_ICON_PATHS = {
@@ -1962,6 +1979,12 @@ function render(){
   if(active && active.dataset && (active.dataset.path || active.id)){
     focusInfo = { path: active.dataset.path || null, id: active.id || null, sel: getSelSafe(active) };
   }
+  // Igual que con el foco: sin esto, cada redibujado (p.ej. al escribir en cualquier campo)
+  // sustituye la cinta de navegación entera y el scroll horizontal vuelve al principio (Hoja 00),
+  // obligando a arrastrar toda la cinta de nuevo para llegar a la hoja siguiente en móvil.
+  // Hay dos cintas iguales (arriba y abajo, esta última solo en móvil) — se tratan por posición.
+  const navlistsPrevios = document.querySelectorAll('.navlist');
+  const navScrollLefts = Array.from(navlistsPrevios).map(n=>n.scrollLeft);
   const app = document.getElementById('app');
   app.innerHTML = `
     <nav id="sidebar">
@@ -1996,8 +2019,16 @@ function render(){
       <button class="sidebar-mas-btn" onclick="toggleSidebarMas()">${sidebarMasAbierto?'✕ Cerrar':'⋯ Más'}</button>
     </nav>
     <main id="main">${renderTab(activeTab)}</main>
+    <nav class="navlist-bottom-wrap">
+      <div class="navlist-bottom-label">Ir a otra hoja</div>
+      <ul class="navlist">
+        ${TABS.map(t=>`<li><button type="button" class="navitem ${t.id===activeTab?'active':''}" onclick="setTab('${t.id}')" aria-current="${t.id===activeTab?'page':'false'}"><span class="nav-left"><span class="num">${t.num}</span><span>${t.label}</span></span>${(t.id!=='resumen'&&t.id!=='express')?`<span class="nav-dot ${tabHasData(t.id)?'filled':''}" title="${tabHasData(t.id)?'Ya tiene datos rellenados':(t.id==='notas'?'Solo plantilla inicial, sin personalizar':'Todavía vacía')}"></span>`:''}</button></li>`).join('')}
+      </ul>
+    </nav>
   `;
   bindGenericInputs();
+  const navlistsNuevos = document.querySelectorAll('.navlist');
+  navlistsNuevos.forEach((n,i)=>{ if(navScrollLefts[i]>0) n.scrollLeft = navScrollLefts[i]; });
   if(focusInfo){
     let el = null;
     if(focusInfo.path) el = document.querySelector(`[data-path="${focusInfo.path}"]`);
@@ -2295,13 +2326,6 @@ function renderResumen(){
   const totalCuotas = (hipotecaCompleta && personalCompleta)
     ? deudasCuota + cuotaHip + cuotaPer
     : NaN;
-  function veredictoEndeudamiento(r){
-    let gaugeColor='var(--green)', badgeClass='green', badgeText='Cómodo';
-    if(isNaN(r)){ gaugeColor='var(--border-strong)'; badgeClass='grey'; badgeText='Pendiente de completar'; }
-    else if(r>=35){ gaugeColor='var(--red)'; badgeClass='red'; badgeText='⚠ Elevado'; }
-    else if(r>=33){ gaugeColor='var(--yellow)'; badgeClass='yellow'; badgeText='Ajustado'; }
-    return {gaugeColor, badgeClass, badgeText};
-  }
   const ahorroTotal = ahorroTotalCalc();
   const ahorroDisponible = ahorroDisponibleCalc(); // Hoja 02: después del colchón
   const ahorroUsadoParaDeuda = ahorroUsadoDeudasSeleccionadasCalc(); // Hoja 03 seleccionada
@@ -3038,7 +3062,8 @@ function generarTextoPlan(){
       add('📊 ENDEUDAMIENTO SOLO CON HIPOTECA: pendiente de completar');
       add('   No se calcula hasta completar el escenario de hipoteca seleccionado en la Hoja 05.');
     }else{
-      add(`📊 ENDEUDAMIENTO SOLO CON HIPOTECA: ${fmtPct(ratioSoloHipoteca)}${ratioSoloHipoteca>=35?' ⚠️':(ratioSoloHipoteca<28?' ✅':'')}`);
+      const vSolo = veredictoEndeudamiento(ratioSoloHipoteca);
+      add(`📊 ENDEUDAMIENTO SOLO CON HIPOTECA: ${fmtPct(ratioSoloHipoteca)} — ${vSolo.badgeText}`);
       add(`   (${fmtMoney(deudasCuota)} deudas + ${fmtMoney(cuotaHipDeudaPlan)} hipoteca) / ${fmtMoney(ingresos)} ingresos = ${fmtPct(ratioSoloHipoteca)}`);
     }
 
@@ -3046,7 +3071,8 @@ function generarTextoPlan(){
       add('📊 ENDEUDAMIENTO CON HIPOTECA Y PRÉSTAMO PERSONAL: pendiente de completar');
       add('   No se calcula hasta completar los escenarios de hipoteca y préstamo personal seleccionados.');
     }else{
-      add(`📊 ENDEUDAMIENTO CON HIPOTECA Y PRÉSTAMO PERSONAL: ${fmtPct(ratioConPersonal)}${ratioConPersonal>=35?' ⚠️':(ratioConPersonal<28?' ✅':'')}`);
+      const vCon = veredictoEndeudamiento(ratioConPersonal);
+      add(`📊 ENDEUDAMIENTO CON HIPOTECA Y PRÉSTAMO PERSONAL: ${fmtPct(ratioConPersonal)} — ${vCon.badgeText}`);
       add(`   (${fmtMoney(deudasCuota)} deudas + ${fmtMoney(cuotaHipDeudaPlan)} hipoteca + ${fmtMoney(cuotaPer)} personal) / ${fmtMoney(ingresos)} ingresos = ${fmtPct(ratioConPersonal)}`);
     }
   }
@@ -3260,7 +3286,7 @@ function renderDeudas(){
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer;" onclick="toggleExpand('deudas.escenarios', ${ei})">
           <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
             <span class="chevron">${e.expanded===false?'▸':'▾'}</span>
-            <input class="broker-name-input" style="font-size:16px;" type="text" data-path="deudas.escenarios.${ei}.nombre" value="${esc(e.nombre)}" onclick="event.stopPropagation()">
+            <input class="broker-name-input" style="font-size:16px;" type="text" autocomplete="off" data-path="deudas.escenarios.${ei}.nombre" value="${esc(e.nombre)}" onclick="event.stopPropagation()">
           </div>
           <div style="display:flex;align-items:center;gap:8px;" onclick="event.stopPropagation()">
             ${e.expanded===false ? `<span class="badge grey">${fmtMoney(cuotaTotal)}/mes</span>` : ''}
@@ -3368,7 +3394,7 @@ function renderVivienda(){
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;cursor:pointer;" onclick="toggleExpand('viviendas', ${i})">
           <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
             <span class="chevron">${v.expanded===false?'▸':'▾'}</span>
-            <input class="broker-name-input" style="font-size:16px;" type="text" data-path="viviendas.${i}.nombre" value="${esc(v.nombre)}" placeholder="Nombre de esta opción (p.ej. Piso Madrid centro)" onclick="event.stopPropagation()">
+            <input class="broker-name-input" style="font-size:16px;" type="text" autocomplete="off" data-path="viviendas.${i}.nombre" value="${esc(v.nombre)}" placeholder="Nombre de esta opción (p.ej. Piso Madrid centro)" onclick="event.stopPropagation()">
           </div>
           <div style="display:flex;align-items:center;gap:14px;" onclick="event.stopPropagation()">
             <button class="btn secondary small" onclick="duplicarVivienda('${v.id}')">⧉ Duplicar</button>
@@ -3479,7 +3505,7 @@ function renderHipoteca(){
             <span class="chevron" style="cursor:pointer;" onclick="toggleExpand('hipoteca.escenarios', ${i})">${e.expanded===false?'▸':'▾'}</span>
             <div class="field" onclick="event.stopPropagation()">
               <label>Nombre del escenario</label>
-              <input class="broker-name-input" type="text" data-path="hipoteca.escenarios.${i}.nombre" value="${esc(e.nombre)}">
+              <input class="broker-name-input" type="text" autocomplete="off" data-path="hipoteca.escenarios.${i}.nombre" value="${esc(e.nombre)}">
             </div>
           </div>
 
@@ -3825,7 +3851,7 @@ function renderPersonal(){
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer;" onclick="toggleExpand('personal.escenarios', ${i})">
           <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
             <span class="chevron">${e.expanded===false?'▸':'▾'}</span>
-            <input class="broker-name-input" style="font-size:16px;" type="text" data-path="personal.escenarios.${i}.nombre" value="${esc(e.nombre)}" onclick="event.stopPropagation()">
+            <input class="broker-name-input" style="font-size:16px;" type="text" autocomplete="off" data-path="personal.escenarios.${i}.nombre" value="${esc(e.nombre)}" onclick="event.stopPropagation()">
           </div>
           <div style="display:flex;align-items:center;gap:8px;" onclick="event.stopPropagation()">
             ${e.expanded===false ? `<span class="badge grey">${calculoPendientePer?'Pendiente de completar':fmtMoney(cuota)+'/mes'}</span>` : ''}
@@ -4022,7 +4048,7 @@ function renderGastos(){
         <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;cursor:pointer;" onclick="toggleExpand('gastos.provincias', ${i})">
           <div style="display:flex;align-items:center;gap:10px;min-width:0;flex:1;">
             <span class="chevron">${p.expanded===false?'▸':'▾'}</span>
-            <input class="broker-name-input" style="font-size:16px;" type="text" data-path="gastos.provincias.${i}.nombre" value="${esc(p.nombre)}" placeholder="Nombre del escenario" onclick="event.stopPropagation()">
+            <input class="broker-name-input" style="font-size:16px;" type="text" autocomplete="off" data-path="gastos.provincias.${i}.nombre" value="${esc(p.nombre)}" placeholder="Nombre del escenario" onclick="event.stopPropagation()">
           </div>
           <div style="display:flex;align-items:center;gap:8px;" onclick="event.stopPropagation()">
             ${p.expanded===false ? `<span class="badge grey">${fmtMoney(total)} gasto</span>` : ''}
@@ -4287,7 +4313,7 @@ function renderBrokers(){
         <div class="broker-head" onclick="toggleBroker('${b.id}')">
           <div class="broker-head-left">
             <span class="chevron">${b.expanded?'▾':'▸'}</span>
-            <input class="broker-name-input" type="text" data-path="brokers.${i}.nombre" value="${esc(b.nombre)}" onclick="event.stopPropagation()">
+            <input class="broker-name-input" type="text" autocomplete="off" data-path="brokers.${i}.nombre" value="${esc(b.nombre)}" onclick="event.stopPropagation()">
           </div>
           <div style="display:flex;align-items:center;gap:10px;" onclick="event.stopPropagation()">
             <span class="badge ${estadoBadgeClass(b.estado)}">${b.estado}</span>
